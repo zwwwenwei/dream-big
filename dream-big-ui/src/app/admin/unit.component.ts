@@ -7,7 +7,7 @@ import { Unit } from '../model/unit';
   templateUrl: './unit.component.html',
   styleUrls: ['./unit.component.scss']
 })
-export class AppComponent {
+export class UnitComponent {
   title = 'dream-big-ui';
   units: Unit[] = [];
 
