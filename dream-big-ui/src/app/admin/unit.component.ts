@@ -19,6 +19,7 @@ export class UnitComponent {
         this.units = units;
       }
     });
+    
 
     const unit = this.units[0];
     unit.code = "somethiung";

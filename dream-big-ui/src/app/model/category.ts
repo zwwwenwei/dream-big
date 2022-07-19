@@ -4,7 +4,7 @@ export class Category extends Entity {
   id: number = -1;
   name: string = "";
   description: string = "";
-  default_weight: number = -1;
+  default_weight: string = "";
 
   /**
    * Indicates that the Unit has yet to be stored in the database

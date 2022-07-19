@@ -7,7 +7,7 @@ class CategoryApi < Grape::API
   
     requires :name, type: String, desc: 'Category name'
     requires :description, type: String, desc: 'The description of the category'
-    requires :default_weight, type: Number desc: 'default weight for category'
+    requires :default_weight, type: String :title, precision: 10, scale: 2 desc: 'default weight for category'
   end
   post '/category' do
     category_parameters = ActionController::Parameters.new(params)
@@ -29,7 +29,7 @@ class CategoryApi < Grape::API
     
     optional :name, type: String, desc: 'The categoryr name'
     optional :description, type: String, desc: 'The description of the category'
-    optional :default_weight, type: Number, desc: 'default weight for category'
+    optional :default_weight, type: String, desc: 'default weight for category'
   end
   put '/category/:id' do
     category_parameters = ActionController::Parameters.new(params)
