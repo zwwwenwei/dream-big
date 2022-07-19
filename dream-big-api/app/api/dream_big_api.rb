@@ -42,8 +42,10 @@ class DreamBigApi < Grape::API
     Rack::Response.new( {error: message}.to_json, status, { 'Content-type' => 'text/error' } )
   end
 
-  mount DreamBigApi
-
+  #mount DreamBigApi
+  mount UnitApi
+  mount CategoryApi
+  
   add_swagger_documentation \
     base_path: nil,
     api_version: 'v1',
@@ -52,7 +54,7 @@ class DreamBigApi < Grape::API
       title: 'Dream-big-api API Documentaion',
       description: 'Dreambig-api is an entity service and web socket proof of concept.',
       license: 'AGPL v3.0',
-      license_url: 'https://github.com/doubtfire-lms/dream-big/blob/main/LICENSE
+      license_url: 'https://github.com/doubtfire-lms/dream-big/blob/main/LICENSE'
     },
     mount_path: 'swagger_doc'
 
