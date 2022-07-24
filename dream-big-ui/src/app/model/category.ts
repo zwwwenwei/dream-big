@@ -1,5 +1,13 @@
 import { Entity } from 'ngx-entity-service';
 
+const KEYS =
+  [
+    'id',
+    'name',
+    'description',
+    'default_weight'
+  ];
+
 export class Category extends Entity {
   id: number = -1;
   name: string = "";

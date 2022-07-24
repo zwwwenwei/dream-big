@@ -1,0 +1,2 @@
+class DiscTemplate < ApplicationRecord
+end

@@ -1,5 +1,13 @@
 import { Entity } from 'ngx-entity-service';
 
+const KEYS = 
+[
+  'id',
+  'code',
+  'name',
+  'description'
+]
+
 export class Unit extends Entity {
   id: number = -1;
   code: string = "";
