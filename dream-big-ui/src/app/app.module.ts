@@ -11,11 +11,14 @@ import { CategoryService } from './services/category.service';
 import { UnitComponent } from './admin/unit.component';
 import { CategoryComponent } from './admin/category.component';
 
+import { UserListComponent } from './admin/user-list/user-list.component';
+import { UserService } from './services/user.service';
 
 @NgModule({
   declarations: [
     AppComponent,
     UnitComponent,
+    UserListComponent,
     CategoryComponent
   ],
   imports: [
@@ -25,6 +28,7 @@ import { CategoryComponent } from './admin/category.component';
   ],
   providers: [
     UnitService,
+    UserService,
     CategoryService,
 
   ],
