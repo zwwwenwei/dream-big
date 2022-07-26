@@ -20,9 +20,7 @@ export class UnitComponent {
       }
       
     });
-
-   
-
+    
     const unit = this.units[0];
     unit.id = 0;
     unitService.update(unit).subscribe({
