@@ -17,17 +17,17 @@ services:
       DEV_DB_HOST: dream-big-dev-db
     command:
       /bin/bash -c 'rm -f /api/tmp/pids/server.pid && rails s -b 0.0.0.0'
-  ui:
-    container_name: dream-big-ui
-    build: ./dream-big-ui
-    ports:
-      - "4200:4200"
-    volumes:
-      - ./dream-big-ui:/dream-big-ui
-    depends_on:
-      - api
-    command:
-      /bin/bash -c 'npm install; npm start'
+  # ui:
+  #   container_name: dream-big-ui
+  #   build: ./dream-big-ui
+  #   ports:
+  #     - "4200:4200"
+  #   volumes:
+  #     - ./dream-big-ui:/dream-big-ui
+  #   depends_on:
+  #     - api
+  #   command:
+  #     /bin/bash -c 'npm install; npm start'
   dev-db:
     container_name: dream-big-dev-db
     image: mariadb

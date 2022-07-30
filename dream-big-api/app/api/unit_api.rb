@@ -18,7 +18,7 @@ class UnitApi < Grape::API
 
     # Auth...
 
-    result = unit.create!(unit_parameters)
+    result = Unit.create!(unit_parameters)
 
     present result, with: Entities::UnitEntity
   end
@@ -50,12 +50,12 @@ class UnitApi < Grape::API
     requires :id, type: Integer, desc: 'The id of the unit to delete'
   end
   delete '/units/:id' do
-    unit.find(params[:id]).destroy!
+    Unit.find(params[:id]).destroy!
     true
   end
 
   get '/units' do
-    result = unit.all
+    result = Unit.all
 
     present result, with: Entities::UnitEntity
   end

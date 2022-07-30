@@ -22,8 +22,14 @@ export class CategoryService extends CachedEntityService<Category> {
     httpClient: HttpClient,
   ) {
     super(httpClient, API_URL);
+  
+  this.mapping.addKeys(
+    'id',
+    'name',
+    'description',
+    'weight',
+  );
   }
-
   public override createInstanceFrom(json: any, other?: any): Category {
     return new Category();
   }

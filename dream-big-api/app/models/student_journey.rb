@@ -1,0 +1,2 @@
+class StudentJourney < ApplicationRecord
+end

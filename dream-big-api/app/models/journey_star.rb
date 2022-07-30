@@ -1,0 +1,2 @@
+class JourneyStar < ApplicationRecord
+end

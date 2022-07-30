@@ -3,28 +3,42 @@ import { CategoryService } from '../services/category.service';
 import { Category } from '../model/category';
 
 @Component({
-  selector: 'app-root',
+  selector: 'app-categorys',
   templateUrl: './category.component.html',
   styleUrls: ['./category.component.scss']
 })
 export class CategoryComponent {
   title = 'dream-big-ui';
-  category: Category[] = [];
+  categorys: Category[] = [];
 
   constructor(
     private categoryService: CategoryService
   ) {
-    categoryService.query().subscribe({
-      next: (category) => {
-        this.category = category;
+    this.categoryService.query().subscribe({
+      next: (categorys) => {
+        this.categorys = categorys;
       }
     });
 
-    const category = this.category[0];
-    category.name = "somethiung";
-    categoryService.update(category).subscribe({
-      next: (category) => { console.log("success") },
-      error: (message) => { console.log("error") }
-    });
+    // const category = this.category[0];
+    // category.name = "somethiung";
+    // categoryService.update(category).subscribe({
+    //   next: (category) => { console.log("success") },
+    //   error: (message) => { console.log("error") }
+    // });
+  }
+
+  public addCategory(name: string, description: string, weight: string) {
+    const data = {
+      name,
+      description,
+      weight
+    }
+
+    this.categoryService.create(data).subscribe(
+      (category: Category) => {
+        this.categorys.push(category);
+      }
+    );
   }
 }
