@@ -5,9 +5,10 @@ import { CategoryComponent } from './admin/category.component';
 import { UserListComponent } from './admin/user-list/user-list.component';
 
 const routes: Routes = [
-  {path: '', component: UnitComponent},
   {path:'units', component: UnitComponent },
-  {path:'categorys', component: CategoryComponent}
+  {path:'categorys', component: CategoryComponent},
+  {path:'users', component: UserListComponent},
+
 ];
 
 @NgModule({

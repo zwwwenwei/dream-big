@@ -14,18 +14,31 @@ export class UnitComponent {
   constructor(
     private unitService: UnitService
   ) {
-    unitService.query().subscribe({
+    this.unitService.query().subscribe({
       next: (units) => {
         this.units = units;
       }
-      
     });
-    
-    const unit = this.units[0];
-    unit.id = 0;
-    unitService.update(unit).subscribe({
-      next: (unit) => { console.log("success") },
-      error: (message) => { console.log("error") }
-    });
+
+    // const unit = this.units[0];
+    // unit.id = 0;
+    // this.unitService.update(unit).subscribe({
+    //   next: (unit) => { console.log("success") },
+    //   error: (message) => { console.log("error") }
+    // });
+  }
+  public addUnit(code: string, name: string, description: string) {
+    const data = {
+      code,
+      name,
+      description
+    }
+
+
+    this.unitService.create(data).subscribe(
+      (unit: Unit) => {
+        this.units.push(unit);
+      }
+    );
   }
 }

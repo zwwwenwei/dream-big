@@ -6,8 +6,9 @@ class DreamBigApi < Grape::API
   format :json
 
   before do
-    header['Access-Control-Allow-Origin'] = '*'
-    header['Access-Control-Request-Method'] = '*'
+    headers['Access-Control-Allow-Origin'] = '*'
+    headers['Access-Control-Allow-Methods'] = 'POST, PUT, DELETE, GET, OPTIONS'
+    headers['Access-Control-Allow-Headers'] = 'Origin, X-Requested-With, Content-Type, Accept, Authorization'
   end
 
   rescue_from :all do |e|
@@ -45,7 +46,8 @@ class DreamBigApi < Grape::API
   #mount DreamBigApi
   mount UnitApi
   mount CategoryApi
-  
+  mount UsersApi
+
   add_swagger_documentation \
     base_path: nil,
     api_version: 'v1',
