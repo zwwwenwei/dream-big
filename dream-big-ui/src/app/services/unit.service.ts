@@ -5,14 +5,6 @@ import API_URL from 'src/app/config/constants/apiURL';
 import { AppInjector } from 'src/app/app-injector';
 import { Unit } from 'src/app/model/unit';
 
-export type IloStats = {
-  median: number;
-  lower: number;
-  upper: number;
-  min: number;
-  max: number;
-}[];
-
 @Injectable()
 export class UnitService extends CachedEntityService<Unit> {
   protected readonly endpointFormat = 'units/:id:';
@@ -22,6 +14,14 @@ export class UnitService extends CachedEntityService<Unit> {
     httpClient: HttpClient,
   ) {
     super(httpClient, API_URL);
+    this.mapping.addKeys(
+      'id',
+      'name',
+      'code',
+      'description',
+    );
+
+
   }
 
   public override createInstanceFrom(json: any, other?: any): Unit {

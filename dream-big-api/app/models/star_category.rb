@@ -1,0 +1,2 @@
+class StarCategory < ApplicationRecord
+end

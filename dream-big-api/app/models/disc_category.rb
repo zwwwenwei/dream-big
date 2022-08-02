@@ -1,0 +1,2 @@
+class DiscCategory < ApplicationRecord
+end

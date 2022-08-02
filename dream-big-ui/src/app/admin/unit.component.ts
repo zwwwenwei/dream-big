@@ -3,7 +3,7 @@ import { UnitService } from '../services/unit.service';
 import { Unit } from '../model/unit';
 
 @Component({
-  selector: 'app-root',
+  selector: 'app-units',
   templateUrl: './unit.component.html',
   styleUrls: ['./unit.component.scss']
 })
@@ -18,11 +18,11 @@ export class UnitComponent {
       next: (units) => {
         this.units = units;
       }
+      
     });
     
-
     const unit = this.units[0];
-    unit.code = "somethiung";
+    unit.id = 0;
     unitService.update(unit).subscribe({
       next: (unit) => { console.log("success") },
       error: (message) => { console.log("error") }
