@@ -16,7 +16,7 @@ services:
       DEV_DB_PASSWORD: pwd
       DEV_DB_HOST: dream-big-dev-db
     command:
-      /bin/bash -c 'rm -f /api/tmp/pids/server.pid && rails s -b 0.0.0.0'
+      /bin/bash -c 'rm -f /api/tmp/pids/server.pid && bundle install && rails s -b 0.0.0.0'
   # ui:
   #   container_name: dream-big-ui
   #   build: ./dream-big-ui
