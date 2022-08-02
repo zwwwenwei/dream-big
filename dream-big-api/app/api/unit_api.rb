@@ -1,6 +1,19 @@
 require 'grape'
 
 class UnitApi < Grape::API
+  desc 'Allow retrieval of a single unit'
+  get '/units/:id' do
+    unit_parameters = ActionController::Parameters.new(params)
+      .permit(
+        :id
+      )
+
+    # Auth
+
+    result = Unit.find(params[:id])
+    present result, with: Entities::UnitEntity
+  end
+
 
   desc 'Allow creation of a unit'
   params do
