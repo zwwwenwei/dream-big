@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { BrowserModule } from '@angular/platform-browser';
 import {HttpClientModule} from '@angular/common/http';
-import { ReactiveFormsModule } from '@angular/forms';
+import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 
 import { AppRoutingModule } from './app-routing.module';
 import { AppComponent } from './app.component';
@@ -13,6 +13,7 @@ import { CategoryComponent } from './admin/category.component';
 
 import { UserListComponent } from './admin/user-list/user-list.component';
 import { UserService } from './services/user.service';
+import { CanvasComponent } from './admin/canvas.component';
 
 
 @NgModule({
@@ -20,13 +21,14 @@ import { UserService } from './services/user.service';
     AppComponent,
     UserListComponent,
     CategoryComponent,
-
+    CanvasComponent
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
-    ReactiveFormsModule
+    ReactiveFormsModule,
+    FormsModule
   ],
   providers: [
     UnitService,

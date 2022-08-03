@@ -1,0 +1,69 @@
+<div class="container">
+  <div class="row mt-4">
+    <div class="form-group col">
+      <span>Category scores</span>
+      <input
+        [(ngModel)]="cat1"
+        type="text"
+        class="form-control mb-2"
+        placeholder="Leadership"
+        (input)="makeDrawStar()"
+      />
+      <input
+        [(ngModel)]="cat2"
+        type="text"
+        class="form-control mb-2"
+        placeholder="Experience"
+        (input)="makeDrawStar()"
+      />
+      <input
+        [(ngModel)]="cat3"
+        type="text"
+        class="form-control mb-2"
+        placeholder="Studying"
+        (input)="makeDrawStar()"
+      />
+      <input
+        [(ngModel)]="cat4"
+        type="text"
+        class="form-control mb-2"
+        placeholder="Networking"
+        (input)="makeDrawStar()"
+      />
+      <input
+        [(ngModel)]="cat5"
+        type="text"
+        class="form-control mb-2"
+        placeholder="Teamwork"
+        (input)="makeDrawStar()"
+      />
+
+      <!-- <span>Star Rotation</span>
+      <input [(ngModel)]="rotation" type="number" class="form-control" (input)="makeDrawStar()"/> -->
+
+      <span>Star size</span>
+      <input [(ngModel)]="star_size" type="number" class="form-control" (input)="makeDrawStar()"/>
+      <span>Center point of the star (x,y)</span>
+      <input
+        [(ngModel)]="c_x"
+        placeholder="x"
+        type="number"
+        class="form-control"
+        value="400"
+        (input)="makeDrawStar()"
+      />
+      <input
+        [(ngModel)]="c_y"
+        placeholder="y"
+        type="number"
+        class="form-control"
+        (input)="makeDrawStar()"
+        value="200"
+      />
+
+    </div>
+    <div class="col">
+      <canvas #canvas height="1000" width="1000"></canvas>
+    </div>
+  </div>
+</div>
