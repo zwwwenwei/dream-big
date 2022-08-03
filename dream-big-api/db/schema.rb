@@ -49,12 +49,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_30_111111) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "messages", charset: "utf8mb4", force: :cascade do |t|
-    t.text "content"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
   create_table "role_types", charset: "utf8mb4", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
