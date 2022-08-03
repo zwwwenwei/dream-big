@@ -15,7 +15,8 @@ export class CanvasComponent implements AfterViewInit {
     cat5: number = 10
     star_size: number = 5
     c_x: number = 400;
-    c_y:number = 200;
+    c_y: number = 200;
+    rotation: number = 0;
 
     ngAfterViewInit(): void {
         this.context = this.canvas.nativeElement.getContext('2d')!;
@@ -30,9 +31,13 @@ export class CanvasComponent implements AfterViewInit {
         console.log('redrawing star');
         this.context.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
 
-        const center_x = 400;
-        const center_y = 200;
-        const star_coords = this.drawStar(center_x, center_y, 5, this.star_size * 5 * 8, this.star_size * 5 * 3);
+        // not a great way to rotate...
+        // should try to rotate star before drawing it
+        // this.context.translate(this.c_x, this.c_y);
+        // this.context.rotate(this.rotation*(Math.PI/180));
+        // this.context.translate(-this.c_x, -this.c_y);
+
+        const star_coords = this.drawStar(this.c_x, this.c_y, 5, this.star_size * 5 * 8, this.star_size * 5 * 3);
 
         const colours = [
             'red',
@@ -51,16 +56,32 @@ export class CanvasComponent implements AfterViewInit {
         var prev_x = star_coords[star_coords.length - 1].edge_x;
         var prev_y = star_coords[star_coords.length - 1].edge_y;
         for (var i = 0; i < 5; i++) {
-            const p_xy = this.calculate_line_point(center_x, center_y, star_coords[i].point_x, star_coords[i].point_y, scores[i])
+            var score = scores[i];
+            // scale the score between 1-100 and ensure it can't escape the star
+            // these magic numbers should be replaced with constants
+            score = Math.min(this.star_size * 5 * 8 / 100 * score, this.star_size * 5 * 8 / 100 * 100);
+
+            const p_xy = this.calculateLinePoint(this.c_x, this.c_y, star_coords[i].point_x, star_coords[i].point_y, score)
             const points = star_coords[i];
 
-            this.drawCatScore(center_x, center_y, p_xy.x, p_xy.y, points.edge_x, points.edge_y, prev_x, prev_y, colours[i]);
+            this.drawCatScore(this.c_x, this.c_y, p_xy.x, p_xy.y, points.edge_x, points.edge_y, prev_x, prev_y, colours[i]);
             prev_x = points.edge_x;
             prev_y = points.edge_y;
         }
     }
 
-    private calculate_line_point(x1: number, y1: number, x2: number, y2: number, distance: number) {
+
+    /**
+     * Finds the point on a line given by two coordinates that is distance units away from x1,y1
+     * 
+     * @param x1 x1 position on given line
+     * @param y1 y1 position on given line
+     * @param x2 x2 position on given line
+     * @param y2 y2 position on given line
+     * @param distance the distance to travel on the given line to find the desired point
+     * @returns a point on the given line that is distance units along it
+     */
+    private calculateLinePoint(x1: number, y1: number, x2: number, y2: number, distance: number) {
         var vx = x2 - x1;
         var vy = y2 - y1;
         var mag = Math.sqrt(vx * vx + vy * vy);
@@ -74,7 +95,6 @@ export class CanvasComponent implements AfterViewInit {
 
     private drawCatScore(cx: number, cy: number, px: number, py: number, x1: number, y1: number, x2: number, y2: number, colour: string) {
         this.context.beginPath();
-
         this.context.moveTo(cx, cy);
         this.context.lineTo(x2, y2);
         this.context.lineTo(px, py);
@@ -122,7 +142,6 @@ export class CanvasComponent implements AfterViewInit {
             y = cy + Math.sin(rot) * innerRadius;
             spike_coords.edge_x = x;
             spike_coords.edge_y = y;
-
             this.context.lineTo(x, y)
             rot += step
 
