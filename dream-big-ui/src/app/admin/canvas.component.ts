@@ -1,5 +1,23 @@
 import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 
+interface Point {
+    x: number;
+    y: number;
+}
+
+interface Polygon {
+    points: Array<Point>;
+    highlight: boolean;
+    colour: string;
+}
+
+interface StarCoord {
+    spike_x: number;
+    spike_y: number;
+    edge_x: number;
+    edge_y: number;
+}
+
 @Component({
     selector: 'app-canvas',
     templateUrl: './canvas.component.html'
@@ -13,39 +31,72 @@ export class CanvasComponent implements AfterViewInit {
     cat3: number = 10
     cat4: number = 10
     cat5: number = 10
-    star_size: number = 5
+    starSize: number = 5
     c_x: number = 400;
     c_y: number = 200;
     rotation: number = 0;
+    catPolygons: Array<Polygon> = [];
+    firstPolygonIdx: number = -1;
+    polygonCollision: boolean = false;
 
     ngAfterViewInit(): void {
         this.context = this.canvas.nativeElement.getContext('2d')!;
-        this.makeDrawStar();
+        this.makeDrawStar(true);
     }
 
-    public submitStarChanges() {
-        this.makeDrawStar();
+    public onMouseMove(e: any) {
+        this.checkCatPolygonCollisions(e.offsetX, e.offsetY);
     }
 
-    public makeDrawStar() {
-        console.log('redrawing star');
+    private checkCatPolygonCollisions(x: number, y: number) {
+        this.firstPolygonIdx = -1;
+        for (var i = 0; i < this.catPolygons.length; i++) {
+            const polygon = this.catPolygons[i];
+            var is_inside = this.pointIsInPoly(x, y, polygon.points);
+            if (is_inside) {
+                this.catPolygons[i].highlight = true;
+                this.firstPolygonIdx = i;
+            } else {
+                this.catPolygons[i].highlight = false;
+            }
+        }
+        if (this.firstPolygonIdx >= 0 || this.polygonCollision) {
+            this.makeDrawStar(false);
+            this.polygonCollision = this.firstPolygonIdx >= 0;
+        }
+    }
+
+
+    public redrawStar() {
+        this.makeDrawStar(true);
+    }
+
+    public makeDrawStar(hasChanged: boolean) {
+        // clear the canvas so the star can be redrawn
         this.context.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
 
-        // not a great way to rotate...
-        // should try to rotate star before drawing it
-        // this.context.translate(this.c_x, this.c_y);
-        // this.context.rotate(this.rotation*(Math.PI/180));
-        // this.context.translate(-this.c_x, -this.c_y);
+        // draw the star to the canvas and retrieve the points for all spikes and inner vertices
+        let starCoords = this.drawStar(this.c_x, this.c_y, 5, this.starSize * 5 * 8, this.starSize * 5 * 3);
 
-        const star_coords = this.drawStar(this.c_x, this.c_y, 5, this.star_size * 5 * 8, this.star_size * 5 * 3);
+        // check if the category polygons should be recreated
+        if (hasChanged || this.catPolygons.length == 0) {
+            this.catPolygons = [];
+            this.getCatPolygons(starCoords);
+        }
 
-        const colours = [
-            'red',
-            'pink',
-            'orange',
-            'blue',
-            'green'
-        ]
+        // check if the mouse has collided with a polygon
+        if (this.firstPolygonIdx >= 0) {
+            // reorder the polygon array to ensure the one that has been collided with is first in the list
+            this.catPolygons = this.reorder(this.catPolygons, this.firstPolygonIdx);
+
+            // to have the full outline of the collided polygon shown, reverse the list;
+            // this.category_polygons.reverse();
+        }
+
+        this.drawCatPolygons();
+    }
+
+    private getCatPolygons(starCoords: Array<StarCoord>) {
         const scores = [
             this.cat1, //red
             this.cat2, //pink
@@ -53,26 +104,163 @@ export class CanvasComponent implements AfterViewInit {
             this.cat4, //blue
             this.cat5 //green
         ]
-        var prev_x = star_coords[star_coords.length - 1].edge_x;
-        var prev_y = star_coords[star_coords.length - 1].edge_y;
+        const colours = [
+            'firebrick',
+            'turquoise',
+            'khaki',
+            'skyblue',
+            'DarkSeaGreen'
+        ]
+
+        // each polygon connects to two inner vertices, but only has the values for one.
+        // to get the opposite point of the inner vertex, use the value from the previous polygon in the list
+        var prev_x = starCoords[starCoords.length - 1].edge_x;
+        var prev_y = starCoords[starCoords.length - 1].edge_y;
         for (var i = 0; i < 5; i++) {
             var score = scores[i];
-            // scale the score between 1-100 and ensure it can't escape the star
             // these magic numbers should be replaced with constants
-            score = Math.min(this.star_size * 5 * 8 / 100 * score, this.star_size * 5 * 8 / 100 * 100);
+            // limit the score to be between 1-100 to ensure it can't escape the star shape
+            // the outerStar radius is scaled by a factor of 8 to achieve the ratio for the desired star shape, so the score must be scaled simiarly
+            // scale the starSize value by a factor of 5 for ease of use
+            score = Math.min(this.starSize * 5 * 8 / 100 * score, this.starSize * 5 * 8 / 100 * 100);
 
-            const p_xy = this.calculateLinePoint(this.c_x, this.c_y, star_coords[i].point_x, star_coords[i].point_y, score)
-            const points = star_coords[i];
+            const p_xy = this.calculateLinePoint(this.c_x, this.c_y, starCoords[i].spike_x, starCoords[i].spike_y, score);
 
-            this.drawCatScore(this.c_x, this.c_y, p_xy.x, p_xy.y, points.edge_x, points.edge_y, prev_x, prev_y, colours[i]);
-            prev_x = points.edge_x;
-            prev_y = points.edge_y;
+            // these points have been declared in a specific order, which is required to draw the polygon
+            this.catPolygons.push({
+                points: [
+                    { x: this.c_x, y: this.c_y },
+                    { x: starCoords[i].edge_x, y: starCoords[i].edge_y },
+                    { x: p_xy.x, y: p_xy.y },
+                    { x: prev_x, y: prev_y },
+                ],
+                highlight: false,
+                colour: colours[i]
+            });
+            prev_x = starCoords[i].edge_x;
+            prev_y = starCoords[i].edge_y;
         }
     }
 
 
+    private drawCatPolygons() {
+        for (var i = 0; i < this.catPolygons.length; i++) {
+            const poly = this.catPolygons[i];
+            var start_x = poly.points[0].x;
+            var start_y = poly.points[0].y;
+            this.context.beginPath();
+            this.context.moveTo(start_x, start_y);
+            for (var j = 1; j < poly.points.length; j++) {
+                this.context.lineTo(poly.points[j].x, poly.points[j].y);
+            }
+            this.context.lineTo(start_x, start_y);
+            this.context.closePath();
+            if (poly.highlight) {
+                this.context.lineWidth = 5;
+                this.context.strokeStyle = 'gold';
+            } else {
+                this.context.lineWidth = 1;
+                this.context.strokeStyle = 'black';
+            }
+
+            this.context.stroke();
+            this.context.fillStyle = poly.colour;
+            this.context.fill();
+        }
+    }
+
     /**
-     * Finds the point on a line given by two coordinates that is distance units away from x1,y1
+     * 
+     * @param cx 
+     * @param cy 
+     * @param spikes 
+     * @param outerRadius 
+     * @param innerRadius 
+     * @returns starCoords
+     */
+    private drawStar(cx: number, cy: number, spikes: number, outerRadius: number, innerRadius: number): Array<StarCoord> {
+        // use a ratio of 8:3 for outerRadius:innerRadius to get desired star shape
+        var rotation_radians = this.rotation * Math.PI / 180;
+        var rot = (Math.PI / 2 * 3) + rotation_radians;
+        var x = cx + Math.cos(rot) * outerRadius;
+        var y = cy + Math.sin(rot) * outerRadius;
+        var step = Math.PI / spikes;
+
+        this.context.strokeStyle = "black";
+        this.context.beginPath();
+        this.context.moveTo(x, y)
+        const starCoords: any[] = [];
+
+        for (var i = 0; i < spikes; i++) {
+            let star_coord: StarCoord = {
+                spike_x: 0,
+                spike_y: 0,
+                edge_x: 0,
+                edge_y: 0,
+            };
+
+            x = cx + Math.cos(rot) * outerRadius;
+            y = cy + Math.sin(rot) * outerRadius;
+            star_coord.spike_x = x;
+            star_coord.spike_y = y;
+            this.context.lineTo(x, y)
+            rot += step
+
+            x = cx + Math.cos(rot) * innerRadius;
+            y = cy + Math.sin(rot) * innerRadius;
+            star_coord.edge_x = x;
+            star_coord.edge_y = y;
+            this.context.lineTo(x, y)
+            rot += step
+
+            starCoords.push(star_coord);
+        }
+        this.context.closePath();
+        this.context.lineWidth = 3;
+        this.context.strokeStyle = 'black';
+        this.context.stroke();
+        this.context.fillStyle = 'lightgrey';
+        this.context.fill();
+        return starCoords;
+    }
+
+
+    /**
+     * https://stackoverflow.com/questions/217578/how-can-i-determine-whether-a-2d-point-is-within-a-polygon/17490923#17490923
+     * @param x 
+     * @param y 
+     * @param polygonPoints 
+     * @returns boolean
+     */
+    private pointIsInPoly(x: number, y: number, polygonPoints: Array<Point>): boolean {
+        var isInside = false;
+        var minX = polygonPoints[0].x, maxX = polygonPoints[0].x;
+        var minY = polygonPoints[0].y, maxY = polygonPoints[0].y;
+        for (var n = 1; n < polygonPoints.length; n++) {
+            var q = polygonPoints[n];
+            minX = Math.min(q.x, minX);
+            maxX = Math.max(q.x, maxX);
+            minY = Math.min(q.y, minY);
+            maxY = Math.max(q.y, maxY);
+        }
+
+        if (x < minX || x > maxX || y < minY || y > maxY) {
+            return false;
+        }
+
+        var i = 0, j = polygonPoints.length - 1;
+        for (j; i < polygonPoints.length; j = i++) {
+            if ((polygonPoints[i].y > y) != (polygonPoints[j].y > y) &&
+                x < (polygonPoints[j].x - polygonPoints[i].x) * (y - polygonPoints[i].y) / (polygonPoints[j].y - polygonPoints[i].y) + polygonPoints[i].x) {
+                isInside = !isInside;
+            }
+        }
+
+        return isInside;
+    }
+
+    /**
+     * Find the point on a line given by two coordinates that is distance units away from x1,y1
      * 
      * @param x1 x1 position on given line
      * @param y1 y1 position on given line
@@ -92,69 +280,7 @@ export class CanvasComponent implements AfterViewInit {
         return { x: px, y: py }
     }
 
-
-    private drawCatScore(cx: number, cy: number, px: number, py: number, x1: number, y1: number, x2: number, y2: number, colour: string) {
-        this.context.beginPath();
-        this.context.moveTo(cx, cy);
-        this.context.lineTo(x2, y2);
-        this.context.lineTo(px, py);
-        this.context.lineTo(x1, y1);
-        this.context.moveTo(cx, cy);
-
-        this.context.closePath();
-        this.context.lineWidth = 1;
-
-        this.context.strokeStyle = 'black';
-        this.context.stroke();
-        this.context.fillStyle = colour;
-        this.context.fill();
-    }
-
-    private drawStar(cx: number, cy: number, spikes: number, outerRadius: number, innerRadius: number) {
-        // use a ratio of 8:3 for outerRadius:innerRadius to get desired star shape
-
-        var rot = Math.PI / 2 * 3;
-        var x = cx;
-        var y = cy;
-        var step = Math.PI / spikes;
-
-        this.context.strokeStyle = "#000";
-        this.context.beginPath();
-        this.context.moveTo(cx, cy - outerRadius)
-        const star_coords: any[] = [];
-
-        for (var i = 0; i < spikes; i++) {
-            let spike_coords = {
-                point_x: 0,
-                point_y: 0,
-                edge_x: 0,
-                edge_y: 0,
-            }
-
-            x = cx + Math.cos(rot) * outerRadius;
-            y = cy + Math.sin(rot) * outerRadius;
-            spike_coords.point_x = x;
-            spike_coords.point_y = y;
-            this.context.lineTo(x, y)
-            rot += step
-
-            x = cx + Math.cos(rot) * innerRadius;
-            y = cy + Math.sin(rot) * innerRadius;
-            spike_coords.edge_x = x;
-            spike_coords.edge_y = y;
-            this.context.lineTo(x, y)
-            rot += step
-
-            star_coords.push(spike_coords);
-        }
-
-        this.context.lineTo(cx, cy - outerRadius)
-        this.context.closePath();
-        this.context.lineWidth = 5;
-        this.context.strokeStyle = 'blue';
-        this.context.stroke();
-        this.context.fillStyle = 'skyblue';
-        this.context.fill();
-        return star_coords;
-    }
+    private reorder(data: Array<any>, index: number) {
+        return data.slice(index).concat(data.slice(0, index))
+    };
 }
