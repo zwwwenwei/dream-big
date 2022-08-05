@@ -1,48 +1,77 @@
 <div class="container">
   <div class="row mt-4">
-    <div class="col">
+    <div class="col-2">
       <div class="form-group">
         <span>Category scores</span>
-        <input *ngFor="let cat of categories"
-          [(ngModel)]="cat.score"
-          type="number"
-          class="form-control mb-2"
-          placeholder="cat.name"
-          (input)="redrawStar()"
-        />
-        <button class="form-control my-2 btn btn-sm btn-primary" (click)="randomiseCatScores()">Randomise</button>
+        <div *ngFor="let cat of categories" class="row">
+          <div class="col-2" style="height: 30px; margin: auto">
+            <button
+              disabled
+              class="btn"
+              [ngStyle]="{ 'background-color': cat.colour }"
+            ></button>
+          </div>
+          <input
+            [(ngModel)]="cat.score"
+            type="range"
+            min="1"
+            max="100"
+            class="py-3 col"
+            placeholder="cat.name"
+            (input)="redrawStar()"
+          />
+        </div>
+        <button
+          class="form-control my-2 btn btn-sm btn-primary"
+          (click)="randomiseCatScores()"
+        >
+          Randomise
+        </button>
       </div>
-      <span>Star Rotation</span>
-      <input [(ngModel)]="rotation" type="number" class="form-control" (input)="redrawStar()"/>
-      <div class="form-group">
-        <span>Star size</span>
+      <div class="row mt-2">
+        <div class="form-group">
+          <span>Rotation</span>
+          <input
+            [(ngModel)]="rotation"
+            type="range"
+            min="0"
+            max="360"
+            class="mb-3"
+            (input)="redrawStar()"
+          />
+
+          <span>Size</span>
+          <input [(ngModel)]="starSize" type="range" (input)="redrawStar()" />
+        </div>
+      </div>
+      <!-- <span>Center point of the star (x,y)</span>
+      <div class="form-group row">
         <input
-          [(ngModel)]="starSize"
-          type="number"
-          class="form-control"
-          (input)="redrawStar()"
-        />
-        <span>Center point of the star (x,y)</span>
-        <input
+          id="center_x"
           [(ngModel)]="c_x"
           placeholder="x"
           type="number"
-          class="form-control"
-          value="400"
+          class="form-control col"
           (input)="redrawStar()"
         />
         <input
+          id="center_y"
           [(ngModel)]="c_y"
           placeholder="y"
           type="number"
-          class="form-control"
+          class="form-control col"
           (input)="redrawStar()"
-          value="200"
         />
-      </div>
+      </div> -->
     </div>
+
     <div class="col">
-      <canvas #canvas height="1000" width="1000" (mousemove)="onMouseMove($event)"></canvas>
+      <canvas
+        #canvas
+        height="1000"
+        width="1000"
+        (mousemove)="onMouseMove($event)"
+      ></canvas>
     </div>
   </div>
 </div>

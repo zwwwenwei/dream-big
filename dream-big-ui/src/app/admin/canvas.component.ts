@@ -60,12 +60,8 @@ export class CanvasComponent implements AfterViewInit {
             colour: 'DarkSeaGreen'
         },
     ];
-    cat1: number = 10
-    cat2: number = 10
-    cat3: number = 10
-    cat4: number = 10
-    cat5: number = 10
-    starSize: number = 5
+
+    starSize: number = 20;
     c_x: number = 400;
     c_y: number = 200;
     rotation: number = 0;
@@ -94,6 +90,8 @@ export class CanvasComponent implements AfterViewInit {
                 this.catPolygons[i].highlight = false;
             }
         }
+        // use polygonCollision to ensure the cat polygons are redrawn the frame after collision stops.
+        // this allows the polygons to update one final time, and clears the highlighted polygon
         if (this.firstPolygonIdx >= 0 || this.polygonCollision) {
             this.makeDrawStar(false);
             this.polygonCollision = this.firstPolygonIdx >= 0;
@@ -116,7 +114,7 @@ export class CanvasComponent implements AfterViewInit {
         this.context.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
 
         // draw the star to the canvas and retrieve the points for all spikes and inner vertices
-        let starCoords = this.drawStar(this.c_x, this.c_y, 5, this.starSize * 5 * 8, this.starSize * 5 * 3);
+        let starCoords = this.drawStar(this.c_x, this.c_y, 5, this.starSize * 8, this.starSize * 3);
 
         // check if the category polygons should be recreated
         if (hasChanged || this.catPolygons.length == 0) {
@@ -146,8 +144,7 @@ export class CanvasComponent implements AfterViewInit {
             // these magic numbers should be replaced with constants
             // limit the score to be between 1-100 to ensure it can't escape the star shape
             // the outerStar radius is scaled by a factor of 8 to achieve the ratio for the desired star shape, so the score must be scaled simiarly
-            // scale the starSize value by a factor of 5 for ease of use
-            score = Math.min(this.starSize * 5 * 8 / 100 * score, this.starSize * 5 * 8 / 100 * 100);
+            score = Math.min(this.starSize * 8 / 100 * score, this.starSize * 8 / 100 * 100);
 
             // find the point which has a distance of score along the line defined by the center point of the star (c_x, c_y) and the point at the corresponding spike
             const p_xy = this.calculateLinePoint(this.c_x, this.c_y, starCoords[i].spike_x, starCoords[i].spike_y, score);
