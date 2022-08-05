@@ -18,6 +18,12 @@ interface StarCoord {
     edge_y: number;
 }
 
+interface Category {
+    name: string;
+    score: number;
+    colour: string;
+}
+
 @Component({
     selector: 'app-canvas',
     templateUrl: './canvas.component.html'
@@ -26,6 +32,34 @@ export class CanvasComponent implements AfterViewInit {
     @ViewChild('canvas')
     canvas: ElementRef<HTMLCanvasElement> = {} as ElementRef<HTMLCanvasElement>;
     public context: CanvasRenderingContext2D = {} as CanvasRenderingContext2D;
+
+    categories: Array<Category> = [
+        {
+            name: "Leadership",
+            score: 10,
+            colour: 'firebrick'
+        },
+        {
+            name: "Experience",
+            score: 10,
+            colour: 'turquoise'
+        },
+        {
+            name: "Knowledge",
+            score: 10,
+            colour: 'khaki'
+        },
+        {
+            name: "Teamwork",
+            score: 10,
+            colour: 'skyblue'
+        },
+        {
+            name: "Networking",
+            score: 10,
+            colour: 'DarkSeaGreen'
+        },
+    ];
     cat1: number = 10
     cat2: number = 10
     cat3: number = 10
@@ -66,6 +100,12 @@ export class CanvasComponent implements AfterViewInit {
         }
     }
 
+    public randomiseCatScores() {
+        this.categories.forEach((cat) => {
+            cat.score = Math.floor(Math.random()*100+1);
+        })
+        this.makeDrawStar(true);
+    }
 
     public redrawStar() {
         this.makeDrawStar(true);
@@ -97,33 +137,19 @@ export class CanvasComponent implements AfterViewInit {
     }
 
     private getCatPolygons(starCoords: Array<StarCoord>) {
-        const scores = [
-            this.cat1, //red
-            this.cat2, //pink
-            this.cat3,  //orange
-            this.cat4, //blue
-            this.cat5 //green
-        ]
-        const colours = [
-            'firebrick',
-            'turquoise',
-            'khaki',
-            'skyblue',
-            'DarkSeaGreen'
-        ]
-
         // each polygon connects to two inner vertices, but only has the values for one.
         // to get the opposite point of the inner vertex, use the value from the previous polygon in the list
         var prev_x = starCoords[starCoords.length - 1].edge_x;
         var prev_y = starCoords[starCoords.length - 1].edge_y;
         for (var i = 0; i < 5; i++) {
-            var score = scores[i];
+            var score = this.categories[i].score;
             // these magic numbers should be replaced with constants
             // limit the score to be between 1-100 to ensure it can't escape the star shape
             // the outerStar radius is scaled by a factor of 8 to achieve the ratio for the desired star shape, so the score must be scaled simiarly
             // scale the starSize value by a factor of 5 for ease of use
             score = Math.min(this.starSize * 5 * 8 / 100 * score, this.starSize * 5 * 8 / 100 * 100);
 
+            // find the point which has a distance of score along the line defined by the center point of the star (c_x, c_y) and the point at the corresponding spike
             const p_xy = this.calculateLinePoint(this.c_x, this.c_y, starCoords[i].spike_x, starCoords[i].spike_y, score);
 
             // these points have been declared in a specific order, which is required to draw the polygon
@@ -135,7 +161,7 @@ export class CanvasComponent implements AfterViewInit {
                     { x: prev_x, y: prev_y },
                 ],
                 highlight: false,
-                colour: colours[i]
+                colour: this.categories[i].colour
             });
             prev_x = starCoords[i].edge_x;
             prev_y = starCoords[i].edge_y;

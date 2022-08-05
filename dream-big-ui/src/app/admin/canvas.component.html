@@ -3,41 +3,14 @@
     <div class="col">
       <div class="form-group">
         <span>Category scores</span>
-        <input
-          [(ngModel)]="cat1"
+        <input *ngFor="let cat of categories"
+          [(ngModel)]="cat.score"
           type="number"
           class="form-control mb-2"
-          placeholder="Leadership"
+          placeholder="cat.name"
           (input)="redrawStar()"
         />
-        <input
-          [(ngModel)]="cat2"
-          type="number"
-          class="form-control mb-2"
-          placeholder="Experience"
-          (input)="redrawStar()"
-        />
-        <input
-          [(ngModel)]="cat3"
-          type="number"
-          class="form-control mb-2"
-          placeholder="Studying"
-          (input)="redrawStar()"
-        />
-        <input
-          [(ngModel)]="cat4"
-          type="number"
-          class="form-control mb-2"
-          placeholder="Networking"
-          (input)="redrawStar()"
-        />
-        <input
-          [(ngModel)]="cat5"
-          type="number"
-          class="form-control mb-2"
-          placeholder="Teamwork"
-          (input)="redrawStar()"
-        />
+        <button class="form-control my-2 btn btn-sm btn-primary" (click)="randomiseCatScores()">Randomise</button>
       </div>
       <span>Star Rotation</span>
       <input [(ngModel)]="rotation" type="number" class="form-control" (input)="redrawStar()"/>
