@@ -32,34 +32,34 @@ export class CanvasComponent implements AfterViewInit {
     @ViewChild('canvas')
     canvas: ElementRef<HTMLCanvasElement> = {} as ElementRef<HTMLCanvasElement>;
     public context: CanvasRenderingContext2D = {} as CanvasRenderingContext2D;
-
-    categories: Array<Category> = [
-        {
-            name: "Leadership",
-            score: 10,
-            colour: 'firebrick'
-        },
-        {
-            name: "Experience",
-            score: 10,
-            colour: 'turquoise'
-        },
-        {
-            name: "Knowledge",
-            score: 10,
-            colour: 'khaki'
-        },
-        {
-            name: "Teamwork",
-            score: 10,
-            colour: 'skyblue'
-        },
-        {
-            name: "Networking",
-            score: 10,
-            colour: 'DarkSeaGreen'
-        },
-    ];
+    categories: Array<Category> = [];
+    // categories: Array<Category> = [
+    //     {
+    //         name: "aaa",
+    //         score: 10,
+    //         colour: 'firebrick'
+    //     },
+    //     {
+    //         name: "Experience",
+    //         score: 10,
+    //         colour: 'turquoise'
+    //     },
+    //     {
+    //         name: "Knowledge",
+    //         score: 10,
+    //         colour: 'khaki'
+    //     },
+    //     {
+    //         name: "Teamwork",
+    //         score: 10,
+    //         colour: 'skyblue'
+    //     },
+    //     {
+    //         name: "Networking",
+    //         score: 10,
+    //         colour: 'DarkSeaGreen'
+    //     },
+    // ];
 
     starSize: number = 20;
     c_x: number = 400;
@@ -68,9 +68,28 @@ export class CanvasComponent implements AfterViewInit {
     catPolygons: Array<Polygon> = [];
     firstPolygonIdx: number = -1;
     polygonCollision: boolean = false;
+    numSpikes: number = 7;
 
     ngAfterViewInit(): void {
         this.context = this.canvas.nativeElement.getContext('2d')!;
+        this.createCategories();
+        this.makeDrawStar(true);
+    }
+
+    public createCategories() {
+        this.categories = [];
+        for (var i = 0; i < this.numSpikes; i++) {
+            const cat = {
+                name: 'aaa',
+                score: 10,
+                colour: this.getRandomColourCode()
+            }
+            this.categories.push(cat);
+        }
+    }
+
+    public changeSpikes() {
+        this.createCategories();
         this.makeDrawStar(true);
     }
 
@@ -100,7 +119,7 @@ export class CanvasComponent implements AfterViewInit {
 
     public randomiseCatScores() {
         this.categories.forEach((cat) => {
-            cat.score = Math.floor(Math.random()*100+1);
+            cat.score = Math.floor(Math.random() * 100 + 1);
         })
         this.makeDrawStar(true);
     }
@@ -114,7 +133,7 @@ export class CanvasComponent implements AfterViewInit {
         this.context.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
 
         // draw the star to the canvas and retrieve the points for all spikes and inner vertices
-        let starCoords = this.drawStar(this.c_x, this.c_y, 5, this.starSize * 8, this.starSize * 3);
+        let starCoords = this.drawStar(this.c_x, this.c_y, this.numSpikes, this.starSize * 8, this.starSize * 3);
 
         // check if the category polygons should be recreated
         if (hasChanged || this.catPolygons.length == 0) {
@@ -139,7 +158,7 @@ export class CanvasComponent implements AfterViewInit {
         // to get the opposite point of the inner vertex, use the value from the previous polygon in the list
         var prev_x = starCoords[starCoords.length - 1].edge_x;
         var prev_y = starCoords[starCoords.length - 1].edge_y;
-        for (var i = 0; i < 5; i++) {
+        for (var i = 0; i < this.categories.length; i++) {
             var score = this.categories[i].score;
             // these magic numbers should be replaced with constants
             // limit the score to be between 1-100 to ensure it can't escape the star shape
@@ -306,4 +325,14 @@ export class CanvasComponent implements AfterViewInit {
     private reorder(data: Array<any>, index: number) {
         return data.slice(index).concat(data.slice(0, index))
     };
+
+    private getRandomColourCode() {
+        var makeColorCode = '0123456789ABCDEF';
+        var code = '#';
+        for (var count = 0; count < 6; count++) {
+            code = code + makeColorCode[Math.floor(Math.random() * 16)];
+        }
+        return code;
+    }
+
 }

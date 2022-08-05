@@ -2,6 +2,26 @@
   <div class="row mt-4">
     <div class="col-2">
       <div class="form-group">
+        <span>Rotation</span>
+        <input
+          [(ngModel)]="rotation"
+          type="range"
+          min="0"
+          max="360"
+          class="mb-1"
+          (input)="redrawStar()"
+        />
+        <span>Size</span>
+        <input [(ngModel)]="starSize" type="range" (input)="redrawStar()" />
+        <span>Number of Spikes</span>
+        <input
+          class="form-control"
+          [(ngModel)]="numSpikes"
+          type="number"
+          (input)="changeSpikes()"
+        />
+      </div>
+      <div class="form-group mt-2">
         <span>Category scores</span>
         <div *ngFor="let cat of categories" class="row">
           <div class="col-2" style="height: 30px; margin: auto">
@@ -16,7 +36,7 @@
             type="range"
             min="1"
             max="100"
-            class="py-3 col"
+            class="my-2 col"
             placeholder="cat.name"
             (input)="redrawStar()"
           />
@@ -28,22 +48,7 @@
           Randomise
         </button>
       </div>
-      <div class="row mt-2">
-        <div class="form-group">
-          <span>Rotation</span>
-          <input
-            [(ngModel)]="rotation"
-            type="range"
-            min="0"
-            max="360"
-            class="mb-3"
-            (input)="redrawStar()"
-          />
 
-          <span>Size</span>
-          <input [(ngModel)]="starSize" type="range" (input)="redrawStar()" />
-        </div>
-      </div>
       <!-- <span>Center point of the star (x,y)</span>
       <div class="form-group row">
         <input
