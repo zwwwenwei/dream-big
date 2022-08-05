@@ -2,6 +2,31 @@
   <div class="row mt-4">
     <div class="col-2">
       <div class="form-group">
+        <span>Outer : Inner angle ratio</span>
+        <div class="row">
+          <div class="col-6">
+            <input
+              [(ngModel)]="outerRatio"
+              type="text"
+              min="0"
+              max="360"
+              class="mb-1 form-control"
+              (input)="redrawStar()"
+            />
+          </div>
+          <div class="col-6">
+            <input
+              [(ngModel)]="innerRatio"
+              type="text"
+              min="0"
+              max="360"
+              class="mb-1 form-control"
+              (input)="redrawStar()"
+            />
+          </div>
+
+        </div>
+
         <span>Rotation</span>
         <input
           [(ngModel)]="rotation"
