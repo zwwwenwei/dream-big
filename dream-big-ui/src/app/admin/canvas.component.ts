@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-
+import words from '../../assets/words.json';
 interface Point {
     x: number;
     y: number;
@@ -9,6 +9,7 @@ interface Polygon {
     points: Array<Point>;
     highlight: boolean;
     colour: string;
+    category: Category;
 }
 
 interface StarCoord {
@@ -63,10 +64,11 @@ export class CanvasComponent implements AfterViewInit {
 
     starSize: number = 20;
     c_x: number = 400;
-    c_y: number = 200;
+    c_y: number = 250;
     rotation: number = 0;
     catPolygons: Array<Polygon> = [];
     firstPolygonIdx: number = -1;
+    collidedPolygon: Polygon = {} as Polygon;
     polygonCollision: boolean = false;
     numSpikes: number = 5;
     outerRatio: number = 8;
@@ -82,7 +84,7 @@ export class CanvasComponent implements AfterViewInit {
         this.categories = [];
         for (var i = 0; i < this.numSpikes; i++) {
             const cat = {
-                name: 'aaa',
+                name: words[this.getRandomNumberBetween(0, words.length - 1)],
                 score: 10,
                 colour: this.getRandomColourCode()
             }
@@ -96,7 +98,35 @@ export class CanvasComponent implements AfterViewInit {
     }
 
     public onMouseMove(e: any) {
-        this.checkCatPolygonCollisions(e.offsetX, e.offsetY);
+        var collision = this.checkCatPolygonCollisions(e.offsetX, e.offsetY);
+        if (collision) {
+            this.makeDrawStar(false);
+            this.drawText(e.offsetX, e.offsetY);
+        }
+    }
+
+    // private drawBox(x: number, y: number, height: number, width: number) {
+    //     this.context.moveTo(x, y)
+    //     this.context.beginPath()
+    //     this.context.lineTo(x, y + height)
+    //     this.context.lineTo(x+width, y+height)
+    //     this.context.lineTo(x+width, y)
+    //     this.context.lineTo(x, y)
+    //     this.context.closePath();
+    //     this.context.lineWidth = 3
+    //     this.context.strokeStyle = 'black'
+    //     this.context.stroke();
+    //     this.context.fillStyle = 'white'
+    //     this.context.fill();
+    // }
+
+    private drawText(x: number, y: number) {
+        // this.drawBox(x+30, y+30, 40, 100);
+
+        this.context.font = "20px Arial";
+        this.context.fillStyle = 'black';
+        this.context.fillText(`${this.catPolygons[this.firstPolygonIdx].category.name}`, 30, 30);
+        this.context.fillText(`Score: ${this.catPolygons[this.firstPolygonIdx].category.score}`, 30, 55);
     }
 
     private checkCatPolygonCollisions(x: number, y: number) {
@@ -114,14 +144,16 @@ export class CanvasComponent implements AfterViewInit {
         // use polygonCollision to ensure the cat polygons are redrawn the frame after collision stops.
         // this allows the polygons to update one final time, and clears the highlighted polygon
         if (this.firstPolygonIdx >= 0 || this.polygonCollision) {
-            this.makeDrawStar(false);
             this.polygonCollision = this.firstPolygonIdx >= 0;
+            this.collidedPolygon = this.catPolygons[this.firstPolygonIdx];
+            return true;
         }
+        return false;
     }
 
     public randomiseCatScores() {
         this.categories.forEach((cat) => {
-            cat.score = Math.floor(Math.random() * 100 + 1);
+            cat.score = this.getRandomNumberBetween(1, 100);
         })
         this.makeDrawStar(true);
     }
@@ -147,6 +179,7 @@ export class CanvasComponent implements AfterViewInit {
         if (this.firstPolygonIdx >= 0) {
             // reorder the polygon array to ensure the one that has been collided with is first in the list
             this.catPolygons = this.reorder(this.catPolygons, this.firstPolygonIdx);
+            this.catPolygons = this.reorder(this.catPolygons, 1);
 
             // to have the full outline of the collided polygon shown, reverse the list;
             // this.category_polygons.reverse();
@@ -178,7 +211,8 @@ export class CanvasComponent implements AfterViewInit {
                     { x: prev_x, y: prev_y },
                 ],
                 highlight: false,
-                colour: this.categories[i].colour
+                colour: this.categories[i].colour,
+                category: this.categories[i]
             });
             prev_x = starCoords[i].edge_x;
             prev_y = starCoords[i].edge_y;
@@ -199,19 +233,32 @@ export class CanvasComponent implements AfterViewInit {
             this.context.lineTo(start_x, start_y);
             this.context.closePath();
             if (poly.highlight) {
+
                 this.context.lineWidth = 5;
                 this.context.strokeStyle = 'gold';
+
             } else {
                 this.context.lineWidth = 1;
                 this.context.strokeStyle = 'black';
             }
 
             this.context.stroke();
-            this.context.fillStyle = poly.colour;
+            this.context.fillStyle = poly.colour
             this.context.fill();
         }
     }
 
+
+    private drawCircle(cx: number, cy: number, radius: number) {
+        this.context.beginPath();
+        this.context.arc(cx, cy, radius, 0, 2 * Math.PI, false);
+        this.context.closePath()
+        this.context.fillStyle = 'aliceblue';
+        this.context.fill();
+        this.context.lineWidth = 2;
+        this.context.strokeStyle = 'midnightblue';
+        this.context.stroke();
+    }
     /**
      * 
      * @param cx 
@@ -222,6 +269,8 @@ export class CanvasComponent implements AfterViewInit {
      * @returns starCoords
      */
     private drawStar(cx: number, cy: number, spikes: number, outerRadius: number, innerRadius: number): Array<StarCoord> {
+
+        this.drawCircle(cx, cy, outerRadius + 10);
         // use a ratio of 8:3 for outerRadius:innerRadius to get desired star shape
         var rotation_radians = this.rotation * Math.PI / 180;
         var rot = (Math.PI / 2 * 3) + rotation_radians;
@@ -334,6 +383,21 @@ export class CanvasComponent implements AfterViewInit {
             code = code + makeColorCode[Math.floor(Math.random() * 16)];
         }
         return code;
+    }
+    private hexToRgb(hexCode: any, transparency = 1) {
+        let c = hexCode;
+        if (/^#([a-f0-9]{3}){1,2}$/.test(c)) {
+            if (c.length == 4) {
+                c = '#' + [c[1], c[1], c[2], c[2], c[3], c[3]].join('');
+            }
+            c = '0x' + c.substring(1);
+            return 'rgb(' + [(c >> 16) & 255, (c >> 8) & 255, c & 255].join(',') + `,${transparency})`;
+        }
+        return '';
+    }
+
+    private getRandomNumberBetween(min: number, max: number) {
+        return Math.floor(Math.random() * (max - min + 1) + min);
     }
 
 }
