@@ -14,6 +14,9 @@ import { CategoryComponent } from './admin/category.component';
 import { UserListComponent } from './admin/user-list/user-list.component';
 import { UserService } from './services/user.service';
 import { CanvasComponent } from './admin/canvas.component';
+import { LandingPageComponent } from './Components/landing-page/landing-page.component';
+import { NavbarComponent } from './Components/navbar/navbar.component';
+import { AdminNavbarComponent } from './Components/admin-navbar/admin-navbar.component';
 
 
 @NgModule({
@@ -21,7 +24,10 @@ import { CanvasComponent } from './admin/canvas.component';
     AppComponent,
     UserListComponent,
     CategoryComponent,
-    CanvasComponent
+    CanvasComponent,
+    LandingPageComponent,
+    NavbarComponent,
+    AdminNavbarComponent
   ],
   imports: [
     BrowserModule,

@@ -1,0 +1,86 @@
+
+nav {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 48px;
+    padding: 8px;
+    background-color: #D32F2F;
+    color: #fff;
+}
+
+div[actions] {
+    display: flex;
+    align-items: center;
+    height: 100%;
+}
+
+[user-avatar] {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    height: 100%;
+    width: 48px;
+    border: none;
+    border-radius: 9999px;
+    background-color: rgba(0,0,0,0.2);
+}
+
+[user-avatar] > img {
+    object-fit: cover;
+}
+
+[notification-bell] {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    width: 48px;
+    border: none;
+    border-radius: 9999px;
+    background: none;
+    font-size: 32px;
+    cursor: pointer;
+    margin: 0 8px;
+}
+
+[notification-bell] > [count] {
+    position: absolute;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    top: 0;
+    right: 0;
+    transform: translate(0%, 0%);
+    background-color: red;
+    border-radius: 100%;
+    font-size: 12px;
+    height: 16px;
+    width: 16px;
+}
+
+select {
+    min-width: 128px;
+    padding: 8px;
+    border-radius: 4px;
+    font-size: 1rem;
+    background: none;
+    color: inherit;
+    border-color: currentColor;
+    margin-left: 16px;
+}
+
+label {
+    min-width: 128px;
+    border: 1px solid currentColor;
+    border-radius: 16px;
+    padding: 8px;
+    text-align: center;
+}
+
+nav > img {
+    border-radius: 9999px;
+    max-height: calc(100% - 4px);
+}
