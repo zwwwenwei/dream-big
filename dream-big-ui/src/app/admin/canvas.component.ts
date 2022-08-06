@@ -8,7 +8,6 @@ interface Point {
 interface Polygon {
     points: Array<Point>;
     highlight: boolean;
-    colour: string;
     category: Category;
 }
 
@@ -34,37 +33,9 @@ export class CanvasComponent implements AfterViewInit {
     canvas: ElementRef<HTMLCanvasElement> = {} as ElementRef<HTMLCanvasElement>;
     public context: CanvasRenderingContext2D = {} as CanvasRenderingContext2D;
     categories: Array<Category> = [];
-    // categories: Array<Category> = [
-    //     {
-    //         name: "aaa",
-    //         score: 10,
-    //         colour: 'firebrick'
-    //     },
-    //     {
-    //         name: "Experience",
-    //         score: 10,
-    //         colour: 'turquoise'
-    //     },
-    //     {
-    //         name: "Knowledge",
-    //         score: 10,
-    //         colour: 'khaki'
-    //     },
-    //     {
-    //         name: "Teamwork",
-    //         score: 10,
-    //         colour: 'skyblue'
-    //     },
-    //     {
-    //         name: "Networking",
-    //         score: 10,
-    //         colour: 'DarkSeaGreen'
-    //     },
-    // ];
-
     starSize: number = 20;
-    c_x: number = 400;
-    c_y: number = 250;
+    centerX: number = 400;
+    centerY: number = 250;
     rotation: number = 0;
     catPolygons: Array<Polygon> = [];
     firstPolygonIdx: number = -1;
@@ -81,9 +52,6 @@ export class CanvasComponent implements AfterViewInit {
             this.makeDrawStar(true);
         }, 0);
     }
-
-
-
 
     public createCategories() {
         this.categories = [];
@@ -110,6 +78,7 @@ export class CanvasComponent implements AfterViewInit {
         }
     }
 
+    // might be needed in the future?
     // private drawBox(x: number, y: number, height: number, width: number) {
     //     this.context.moveTo(x, y)
     //     this.context.beginPath()
@@ -173,7 +142,7 @@ export class CanvasComponent implements AfterViewInit {
         this.context.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
 
         // draw the star to the canvas and retrieve the points for all spikes and inner vertices
-        let starCoords = this.drawStar(this.c_x, this.c_y, this.numSpikes, this.starSize * this.outerRatio, this.starSize * this.innerRatio);
+        let starCoords = this.drawStar(this.centerX, this.centerY, this.numSpikes, this.starSize * this.outerRatio, this.starSize * this.innerRatio);
 
         // check if the category polygons should be recreated
         if (hasChanged || this.catPolygons.length == 0) {
@@ -183,12 +152,8 @@ export class CanvasComponent implements AfterViewInit {
 
         // check if the mouse has collided with a polygon
         if (this.firstPolygonIdx >= 0) {
-            // reorder the polygon array to ensure the one that has been collided with is first in the list
-            this.catPolygons = this.reorder(this.catPolygons, this.firstPolygonIdx);
-            this.catPolygons = this.reorder(this.catPolygons, 1);
-
-            // to have the full outline of the collided polygon shown, reverse the list;
-            // this.category_polygons.reverse();
+            // reorder the polygon array to ensure the one that has been collided with is last in the list (will be drawn ontop of the others)
+            this.catPolygons = this.reorder(this.catPolygons, this.firstPolygonIdx+1);
         }
 
         this.drawCatPolygons();
@@ -206,18 +171,17 @@ export class CanvasComponent implements AfterViewInit {
             score = Math.min(this.starSize * this.outerRatio / 100 * score, this.starSize * this.outerRatio / 100 * 100);
 
             // find the point which has a distance of score along the line defined by the center point of the star (c_x, c_y) and the point at the corresponding spike
-            const p_xy = this.calculateLinePoint(this.c_x, this.c_y, starCoords[i].spike_x, starCoords[i].spike_y, score);
+            const p_xy = this.calculateLinePoint(this.centerX, this.centerY, starCoords[i].spike_x, starCoords[i].spike_y, score);
 
             // these points have been declared in a specific order, which is required to draw the polygon
             this.catPolygons.push({
                 points: [
-                    { x: this.c_x, y: this.c_y },
+                    { x: this.centerX, y: this.centerY },
                     { x: starCoords[i].edge_x, y: starCoords[i].edge_y },
                     { x: p_xy.x, y: p_xy.y },
                     { x: prev_x, y: prev_y },
                 ],
                 highlight: false,
-                colour: this.categories[i].colour,
                 category: this.categories[i]
             });
             prev_x = starCoords[i].edge_x;
@@ -249,7 +213,7 @@ export class CanvasComponent implements AfterViewInit {
             }
 
             this.context.stroke();
-            this.context.fillStyle = poly.colour
+            this.context.fillStyle = poly.category.colour
             this.context.fill();
         }
     }
@@ -287,7 +251,7 @@ export class CanvasComponent implements AfterViewInit {
         this.context.strokeStyle = "black";
         this.context.beginPath();
         this.context.moveTo(x, y)
-        const starCoords: any[] = [];
+        const starCoords: StarCoord[] = [];
 
         for (var i = 0; i < spikes; i++) {
             let star_coord: StarCoord = {
@@ -322,6 +286,7 @@ export class CanvasComponent implements AfterViewInit {
         return starCoords;
     }
 
+// --------------------------- FUNCTIONS BELOW COULD PROBABLY BE MOVED TO A HELPER FILE -----------------------
 
     /**
      * https://stackoverflow.com/questions/217578/how-can-i-determine-whether-a-2d-point-is-within-a-polygon/17490923#17490923
@@ -390,17 +355,18 @@ export class CanvasComponent implements AfterViewInit {
         }
         return code;
     }
-    private hexToRgb(hexCode: any, transparency = 1) {
-        let c = hexCode;
-        if (/^#([a-f0-9]{3}){1,2}$/.test(c)) {
-            if (c.length == 4) {
-                c = '#' + [c[1], c[1], c[2], c[2], c[3], c[3]].join('');
-            }
-            c = '0x' + c.substring(1);
-            return 'rgb(' + [(c >> 16) & 255, (c >> 8) & 255, c & 255].join(',') + `,${transparency})`;
-        }
-        return '';
-    }
+
+    // private hexToRgb(hexCode: any, transparency = 1) {
+    //     let c = hexCode;
+    //     if (/^#([a-f0-9]{3}){1,2}$/.test(c)) {
+    //         if (c.length == 4) {
+    //             c = '#' + [c[1], c[1], c[2], c[2], c[3], c[3]].join('');
+    //         }
+    //         c = '0x' + c.substring(1);
+    //         return 'rgb(' + [(c >> 16) & 255, (c >> 8) & 255, c & 255].join(',') + `,${transparency})`;
+    //     }
+    //     return '';
+    // }
 
     private getRandomNumberBetween(min: number, max: number) {
         return Math.floor(Math.random() * (max - min + 1) + min);
