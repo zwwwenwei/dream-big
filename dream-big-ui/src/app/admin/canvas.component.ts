@@ -1,4 +1,4 @@
-import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
+import { Component, ViewChild, ElementRef, AfterViewInit, ChangeDetectorRef } from '@angular/core';
 import words from '../../assets/words.json';
 interface Point {
     x: number;
@@ -68,7 +68,6 @@ export class CanvasComponent implements AfterViewInit {
     rotation: number = 0;
     catPolygons: Array<Polygon> = [];
     firstPolygonIdx: number = -1;
-    collidedPolygon: Polygon = {} as Polygon;
     polygonCollision: boolean = false;
     numSpikes: number = 5;
     outerRatio: number = 8;
@@ -76,9 +75,15 @@ export class CanvasComponent implements AfterViewInit {
 
     ngAfterViewInit(): void {
         this.context = this.canvas.nativeElement.getContext('2d')!;
-        this.createCategories();
-        this.makeDrawStar(true);
+
+        setTimeout(() => {
+            this.createCategories();
+            this.makeDrawStar(true);
+        }, 0);
     }
+
+
+
 
     public createCategories() {
         this.categories = [];
@@ -122,11 +127,12 @@ export class CanvasComponent implements AfterViewInit {
 
     private drawText(x: number, y: number) {
         // this.drawBox(x+30, y+30, 40, 100);
-
-        this.context.font = "20px Arial";
-        this.context.fillStyle = 'black';
-        this.context.fillText(`${this.catPolygons[this.firstPolygonIdx].category.name}`, 30, 30);
-        this.context.fillText(`Score: ${this.catPolygons[this.firstPolygonIdx].category.score}`, 30, 55);
+        if (this.firstPolygonIdx < this.catPolygons.length && this.firstPolygonIdx > -1) {
+            this.context.font = "20px Arial";
+            this.context.fillStyle = 'black';
+            this.context.fillText(`${this.catPolygons[this.firstPolygonIdx].category.name}`, 30, 30);
+            this.context.fillText(`Score: ${this.catPolygons[this.firstPolygonIdx].category.score}`, 30, 55);
+        }
     }
 
     private checkCatPolygonCollisions(x: number, y: number) {
@@ -145,7 +151,7 @@ export class CanvasComponent implements AfterViewInit {
         // this allows the polygons to update one final time, and clears the highlighted polygon
         if (this.firstPolygonIdx >= 0 || this.polygonCollision) {
             this.polygonCollision = this.firstPolygonIdx >= 0;
-            this.collidedPolygon = this.catPolygons[this.firstPolygonIdx];
+
             return true;
         }
         return false;
