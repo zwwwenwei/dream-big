@@ -11,7 +11,7 @@
               min="0"
               max="360"
               class="mb-1 form-control"
-              (input)="redrawStar()"
+              (input)="onInputChange()"
             />
           </div>
           <div class="col-6">
@@ -21,7 +21,7 @@
               min="0"
               max="360"
               class="mb-1 form-control"
-              (input)="redrawStar()"
+              (input)="onInputChange()"
             />
           </div>
         </div>
@@ -33,28 +33,28 @@
           min="0"
           max="360"
           class="mb-1"
-          (input)="redrawStar()"
+          (input)="onInputChange()"
         />
         <span>Size</span>
-        <input [(ngModel)]="starSize" type="range" (input)="redrawStar()" />
+        <input [(ngModel)]="starSize" type="range" (input)="onInputChange()" />
         <span>Number of Spikes</span>
         <input
           class="form-control"
           [(ngModel)]="numSpikes"
           type="number"
-          (input)="changeSpikes()"
+          (input)="onInputChange(true)"
         />
       </div>
       <div class="form-group mt-2">
         <div class="row">
-        <span class="col" style="margin:auto">Category scores</span>
-        <button
-          class="col-4 my-2 btn btn-sm btn-primary"
-          (click)="randomiseCatScores()"
-        >
-          Random
-        </button>
-      </div>
+          <span class="col" style="margin: auto">Category scores</span>
+          <button
+            class="col-4 my-2 btn btn-sm btn-primary"
+            (click)="randomiseCatScores()"
+          >
+            Random
+          </button>
+        </div>
         <div *ngFor="let cat of categories" class="row">
           <div class="col-2" style="height: 30px; margin: auto">
             <button
@@ -70,39 +70,21 @@
             max="100"
             class="my-2 col"
             placeholder="cat.name"
-            (input)="redrawStar()"
+            (input)="onInputChange()"
           />
         </div>
       </div>
-
-      <!-- <span>Center point of the star (x,y)</span>
-      <div class="form-group row">
-        <input
-          id="center_x"
-          [(ngModel)]="centerX"
-          placeholder="x"
-          type="number"
-          class="form-control col"
-          (input)="redrawStar()"
-        />
-        <input
-          id="center_y"
-          [(ngModel)]="centerY"
-          placeholder="y"
-          type="number"
-          class="form-control col"
-          (input)="redrawStar()"
-        />
-      </div> -->
     </div>
-
     <div class="col">
-      <canvas
-        #canvas
-        height="1000"
-        width="1000"
-        (mousemove)="onMouseMove($event)"
-      ></canvas>
+      <app-star
+        [categories]="categories"
+        [starSize]="starSize"
+        [centerPoint]="centerPoint"
+        [rotation]="rotation"
+        [outerRatio]="outerRatio"
+        [innerRatio]="innerRatio"
+        [numSpikes]="numSpikes"
+      ></app-star>
     </div>
   </div>
 </div>
