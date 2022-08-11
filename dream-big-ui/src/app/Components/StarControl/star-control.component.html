@@ -1,0 +1,90 @@
+<div class="container">
+  <div class="row mt-4">
+    <div class="col-2">
+      <div class="form-group">
+        <span>Outer : Inner angle ratio</span>
+        <div class="row">
+          <div class="col-6">
+            <input
+              [(ngModel)]="outerRatio"
+              type="text"
+              min="0"
+              max="360"
+              class="mb-1 form-control"
+              (input)="onInputChange()"
+            />
+          </div>
+          <div class="col-6">
+            <input
+              [(ngModel)]="innerRatio"
+              type="text"
+              min="0"
+              max="360"
+              class="mb-1 form-control"
+              (input)="onInputChange()"
+            />
+          </div>
+        </div>
+
+        <span>Rotation</span>
+        <input
+          [(ngModel)]="rotation"
+          type="range"
+          min="0"
+          max="360"
+          class="mb-1"
+          (input)="onInputChange()"
+        />
+        <span>Size</span>
+        <input [(ngModel)]="starSize" type="range" (input)="onInputChange()" />
+        <span>Number of Spikes</span>
+        <input
+          class="form-control"
+          [(ngModel)]="numSpikes"
+          type="number"
+          (input)="onInputChange(true)"
+        />
+      </div>
+      <div class="form-group mt-2">
+        <div class="row">
+          <span class="col" style="margin: auto">Category scores</span>
+          <button
+            class="col-4 my-2 btn btn-sm btn-primary"
+            (click)="randomiseCatScores()"
+          >
+            Random
+          </button>
+        </div>
+        <div *ngFor="let cat of categories" class="row">
+          <div class="col-2" style="height: 30px; margin: auto">
+            <button
+              disabled
+              class="btn"
+              [ngStyle]="{ 'background-color': cat.colour }"
+            ></button>
+          </div>
+          <input
+            [(ngModel)]="cat.score"
+            type="range"
+            min="1"
+            max="100"
+            class="my-2 col"
+            placeholder="cat.name"
+            (input)="onInputChange()"
+          />
+        </div>
+      </div>
+    </div>
+    <div class="col">
+      <app-star
+        [categories]="categories"
+        [starSize]="starSize"
+        [centerPoint]="centerPoint"
+        [rotation]="rotation"
+        [outerRatio]="outerRatio"
+        [innerRatio]="innerRatio"
+        [numSpikes]="numSpikes"
+      ></app-star>
+    </div>
+  </div>
+</div>
