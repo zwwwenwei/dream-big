@@ -11,82 +11,70 @@ export class StarComponent implements AfterViewInit {
 
     @Input() categories: Array<Category> = [];
     @Input() starSize: number = 20;
-    @Input() centerPoint: Point = {x:400, y:250};
+    @Input() centerPoint: Point = { x: 400, y: 250 };
     @Input() rotation: number = 0;
     @Input() outerRatio: number = 8;
     @Input() innerRatio: number = 3;
     @Input() numSpikes: number = 5;
 
     catPolygons: Array<Polygon> = [];
-    firstPolygonIdx: number = -1;
+    collidedPolygon: Polygon = {} as Polygon;
     polygonCollision: boolean = false;
-    
 
     ngAfterViewInit(): void {
         this.context = this.canvas.nativeElement.getContext('2d')!;
 
         setTimeout(() => {
-            this.makeDrawStar(true);
+            this.makeStarGraphic(true);
         }, 0);
     }
 
     public onMouseMove(e: any) {
         var collision = this.checkCatPolygonCollisions(e.offsetX, e.offsetY);
         if (collision) {
-            this.makeDrawStar(false);
+            this.makeStarGraphic(false);
             this.drawText(e.offsetX, e.offsetY);
         }
     }
 
-    // might be needed in the future?
-    // private drawBox(x: number, y: number, height: number, width: number) {
-    //     this.context.moveTo(x, y)
-    //     this.context.beginPath()
-    //     this.context.lineTo(x, y + height)
-    //     this.context.lineTo(x+width, y+height)
-    //     this.context.lineTo(x+width, y)
-    //     this.context.lineTo(x, y)
-    //     this.context.closePath();
-    //     this.context.lineWidth = 3
-    //     this.context.strokeStyle = 'black'
-    //     this.context.stroke();
-    //     this.context.fillStyle = 'white'
-    //     this.context.fill();
-    // }
+
+    private getPolygonIdx(polygon: Polygon) {
+        return this.catPolygons.findIndex(a => a == polygon);
+    }
 
     private drawText(x: number, y: number) {
-        // this.drawBox(x+30, y+30, 40, 100);
-        if (this.firstPolygonIdx < this.catPolygons.length && this.firstPolygonIdx > -1) {
+        var polygon = this.collidedPolygon;
+
+        if (Object.entries(polygon).length) {
             this.context.font = "20px Arial";
             this.context.fillStyle = 'black';
-            this.context.fillText(`${this.catPolygons[this.firstPolygonIdx].category.name}`, 30, 30);
-            this.context.fillText(`Score: ${this.catPolygons[this.firstPolygonIdx].category.score}`, 30, 55);
+            this.context.fillText(`${polygon.category.name}`, 30, 30);
+            this.context.fillText(`Score: ${polygon.category.score}`, 30, 55);
         }
     }
 
     private checkCatPolygonCollisions(x: number, y: number) {
-        this.firstPolygonIdx = -1;
+        this.collidedPolygon = {} as Polygon;
         for (var i = 0; i < this.catPolygons.length; i++) {
-            const polygon = this.catPolygons[i];
-            var is_inside = this.pointIsInPoly(x, y, polygon.points);
+            var is_inside = this.pointIsInPoly(x, y, this.catPolygons[i].points);
             if (is_inside) {
                 this.catPolygons[i].highlight = true;
-                this.firstPolygonIdx = i;
+                this.collidedPolygon = this.catPolygons[i];
             } else {
                 this.catPolygons[i].highlight = false;
             }
         }
         // use polygonCollision to ensure the cat polygons are redrawn the frame after collision stops.
         // this allows the polygons to update one final time, and clears the highlighted polygon
-        if (this.firstPolygonIdx >= 0 || this.polygonCollision) {
-            this.polygonCollision = this.firstPolygonIdx >= 0;
+        if (Object.entries(this.collidedPolygon).length || this.polygonCollision) {
+            this.polygonCollision = !!Object.entries(this.collidedPolygon).length;
 
             return true;
         }
         return false;
     }
 
-    public makeDrawStar(hasChanged: boolean) {
+    public makeStarGraphic(hasChanged: boolean) {
         // clear the canvas so the star can be redrawn
         this.context.clearRect(0, 0, this.canvas.nativeElement.width, this.canvas.nativeElement.height);
 
@@ -95,20 +83,21 @@ export class StarComponent implements AfterViewInit {
 
         // check if the category polygons should be recreated
         if (hasChanged || this.catPolygons.length == 0) {
-            this.catPolygons = [];
-            this.getCatPolygons(starCoords);
+            this.catPolygons = this.getCatPolygons(starCoords);
         }
 
         // check if the mouse has collided with a polygon
-        if (this.firstPolygonIdx >= 0) {
+        if (!!Object.entries(this.collidedPolygon).length) {
+            const collidedPolygonIdx = this.getPolygonIdx(this.collidedPolygon);
             // reorder the polygon array to ensure the one that has been collided with is last in the list (will be drawn ontop of the others)
-            this.catPolygons = this.reorder(this.catPolygons, this.firstPolygonIdx + 1);
+            this.catPolygons = this.reorder(this.catPolygons, collidedPolygonIdx + 1);
         }
 
-        this.drawCatPolygons(); 
+        this.drawCatPolygons();
     }
 
     private getCatPolygons(starCoords: Array<StarCoord>) {
+        let catPolygons: Polygon[] = [];
         // each polygon connects to two inner vertices, but only has the values for one.
         // to get the opposite point of the inner vertex, use the value from the previous polygon in the list
         var prev_x = starCoords[starCoords.length - 1].edge_x;
@@ -116,14 +105,21 @@ export class StarComponent implements AfterViewInit {
         for (var i = 0; i < this.categories.length; i++) {
             var score = this.categories[i].score;
 
-            // limit the score to be between 1-100 to ensure it can't escape the star shape
-            score = Math.min(this.starSize * this.outerRatio / 100 * score, this.starSize * this.outerRatio / 100 * 100);
+
+
+            // take the score as a percentage of the length of the star spike
+            // or take 100% of the length of the star spike (to ensure the spike can't be overfilled)
+            score = Math.min(this.starSize * this.outerRatio / 100 * score, this.starSize * this.outerRatio);
+
+            // fill the inner pentagon of the star by smallest allowable line length to be 30
+            
+
 
             // find the point which has a distance of score along the line defined by the center point of the star (c_x, c_y) and the point at the corresponding spike
             const p_xy = this.calculateLinePoint(this.centerPoint.x, this.centerPoint.y, starCoords[i].spike_x, starCoords[i].spike_y, score);
 
             // these points have been declared in a specific order, which is required to draw the polygon
-            this.catPolygons.push({
+            catPolygons.push({
                 points: [
                     { x: this.centerPoint.x, y: this.centerPoint.y },
                     { x: starCoords[i].edge_x, y: starCoords[i].edge_y },
@@ -136,6 +132,7 @@ export class StarComponent implements AfterViewInit {
             prev_x = starCoords[i].edge_x;
             prev_y = starCoords[i].edge_y;
         }
+        return catPolygons;
     }
 
 
@@ -166,7 +163,6 @@ export class StarComponent implements AfterViewInit {
             this.context.fill();
         }
     }
-
 
     private drawCircle(cx: number, cy: number, radius: number) {
         this.context.beginPath();
