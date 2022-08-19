@@ -1,2 +1,0 @@
-class JourneyStar < ApplicationRecord
-end

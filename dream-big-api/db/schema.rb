@@ -10,13 +10,35 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_07_30_111111) do
-  create_table "avatar_body_part_kinds", charset: "utf8mb4", force: :cascade do |t|
+ActiveRecord::Schema[7.0].define(version: 2022_08_18_233620) do
+  create_table "avatar_accessories", charset: "utf8mb4", force: :cascade do |t|
+    t.string "color"
+    t.string "shape"
+    t.string "texture"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "avatar_body_parts", charset: "utf8mb4", force: :cascade do |t|
+  create_table "avatar_hairs", charset: "utf8mb4", force: :cascade do |t|
+    t.string "color"
+    t.string "shape"
+    t.string "texture"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "avatar_heads", charset: "utf8mb4", force: :cascade do |t|
+    t.string "color"
+    t.string "shape"
+    t.string "texture"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "avatar_torsos", charset: "utf8mb4", force: :cascade do |t|
+    t.string "color"
+    t.string "shape"
+    t.string "texture"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -27,24 +49,44 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_30_111111) do
   end
 
   create_table "categories", charset: "utf8mb4", force: :cascade do |t|
-    t.string "name"
-    t.string "description", limit: 4096
-    t.string "weight"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "disc_categories", charset: "utf8mb4", force: :cascade do |t|
+  create_table "course_units", charset: "utf8mb4", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "disc_templates", charset: "utf8mb4", force: :cascade do |t|
+  create_table "course_versions", charset: "utf8mb4", force: :cascade do |t|
+    t.date "startdate"
+    t.date "enddate"
+    t.date "datecensus"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "courses", charset: "utf8mb4", force: :cascade do |t|
+    t.string "courseName"
+    t.string "courseDesc"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "journey_stars", charset: "utf8mb4", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "planet_skins", charset: "utf8mb4", force: :cascade do |t|
+    t.string "color"
+    t.string "asset"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "planets", charset: "utf8mb4", force: :cascade do |t|
+    t.boolean "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -59,17 +101,41 @@ ActiveRecord::Schema[7.0].define(version: 2022_07_30_111111) do
     t.datetime "updated_at", null: false
   end
 
-  create_table "star_categories", charset: "utf8mb4", force: :cascade do |t|
+  create_table "star_skins", charset: "utf8mb4", force: :cascade do |t|
+    t.string "colour"
+    t.string "asset"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "student_discs", charset: "utf8mb4", force: :cascade do |t|
+  create_table "star_systems", charset: "utf8mb4", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "stars", charset: "utf8mb4", force: :cascade do |t|
+    t.string "goals"
+    t.string "reflection"
+    t.boolean "status"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "student_courses", charset: "utf8mb4", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
   create_table "student_journeys", charset: "utf8mb4", force: :cascade do |t|
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+  end
+
+  create_table "students", charset: "utf8mb4", force: :cascade do |t|
+    t.string "studentName"
+    t.integer "Phone"
+    t.string "address"
+    t.string "type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end

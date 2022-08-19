@@ -1,2 +1,0 @@
-class StudentDisc < ApplicationRecord
-end

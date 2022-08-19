@@ -1,0 +1,2 @@
+class AvatarTorso < ApplicationRecord
+end

@@ -1,2 +1,0 @@
-class AvatarBodyPartKind < ApplicationRecord
-end

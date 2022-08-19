@@ -1,0 +1,2 @@
+class CourseVersion < ApplicationRecord
+end

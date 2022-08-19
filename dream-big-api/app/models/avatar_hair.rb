@@ -1,0 +1,2 @@
+class AvatarHair < ApplicationRecord
+end
