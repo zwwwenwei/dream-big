@@ -25,7 +25,7 @@ export class CategoryService extends CachedEntityService<Category> {
   
   this.mapping.addKeys(
     'id',
-    'name',
+    'categoryName',
     'description',
     'weight',
   );

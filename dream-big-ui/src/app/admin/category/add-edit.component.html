@@ -2,10 +2,10 @@
 <h1 *ngIf="!isAddMode">Edit Category</h1>
 <form id="uForm" [formGroup]="form" (ngSubmit)="onSubmit()">
   <div class="mb-3 form-group">
-    <label for="categoryName" class="form-label">Name</label>
+    <label for="categoryName" class="form-label">CategoryName</label>
     <input
       type="text"
-      formControlName="name"
+      formControlName="categoryName"
       class="form-control"
       [ngClass]="{ 'is-invalid': submitted && f['name'].errors }"
       id="categoryName"

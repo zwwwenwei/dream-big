@@ -3,16 +3,16 @@ import { Entity } from 'ngx-entity-service';
 const KEYS =
   [
     'id',
-    'name',
+    'categoryName',
     'description',
     'weight'
   ];
 
 export class Category extends Entity {
   id: number = -1;
-  name: string = "";
+  categoryName: string = "";
   description: string = "";
-  weight: string = "";
+  weight: number = -1;
 
   /**
    * Indicates that the Unit has yet to be stored in the database

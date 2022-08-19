@@ -28,9 +28,9 @@ export class CategoryComponent {
     // });
   }
 
-  public addCategory(name: string, description: string, weight: string) {
+  public addCategory(categoryName: string, description: string, weight: number) {
     const data = {
-      name,
+      categoryName,
       description,
       weight
     }

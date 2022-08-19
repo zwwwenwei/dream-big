@@ -29,7 +29,7 @@ export class AddEditComponent implements OnInit {
 
         this.form = this.formBuilder.group({
             code: ['', [Validators.required,]],
-            name: ['', [Validators.required,]],
+            categoryName: ['', [Validators.required,]],
             description: ['', [Validators.required,]],
         });
 

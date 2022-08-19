@@ -4,14 +4,14 @@
     <h2>DreamBig Admin Page</h2>
     <h3>Create Category</h3>
     <div class="input-group mb-3">
-      <input type="text" class="form-control" placeholder="Name" aria-label="Name" aria-describedby="basic-addon1"
-        #name>
+      <input type="text" class="form-control" placeholder="CategoryName" aria-label="CategoryName" aria-describedby="basic-addon1"
+        #categoryName>
       <input type="text" class="form-control" placeholder="Description" aria-label="Description" aria-describedby="basic-addon1"
         #description>
-      <input type="text" class="form-control" placeholder="Default Weight" aria-label="Default Weight" aria-describedby="basic-addon1"
+      <input type="number" class="form-control" placeholder=0 aria-label="Default Weight" aria-describedby="basic-addon1"
         #weight>
         <button class="btn btn-outline-secondary" type="button" id="button-addon2"
-        (click)="addCategory(name.value, description.value, weight.value)">Add Category</button>
+        (click)="addCategory(categoryName.value, description.value, weight.value)">Add Category</button>
     </div>
   </div>
   
@@ -19,14 +19,14 @@
     <table class="table table-hover">
       <thead>
         <tr>
-          <th scope="col">Name</th>
+          <th scope="col">CategeoryName</th>
           <th scope="col">Description</th>
           <th scope="col">Weight</th>
         </tr>
       </thead>
       <tbody *ngFor="let category of categorys">
         <tr class="table-light">
-          <td>{{category.name}}</td>
+          <td>{{category.categoryName}}</td>
           <td>{{category.description}}</td>
           <td>{{category.weight}}</td>
       </tbody>
