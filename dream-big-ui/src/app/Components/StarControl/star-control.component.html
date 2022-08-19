@@ -1,6 +1,6 @@
 <div class="container">
   <div class="row mt-4">
-    <div class="col-2">
+    <div class="col-md-2">
       <div class="form-group">
         <span>Outer : Inner angle ratio</span>
         <div class="row">
@@ -55,27 +55,29 @@
             Random
           </button>
         </div>
-        <div *ngFor="let cat of categories" class="row">
-          <div class="col-2" style="height: 30px; margin: auto">
-            <button
-              disabled
-              class="btn"
-              [ngStyle]="{ 'background-color': cat.colour }"
-            ></button>
+          <div *ngFor="let cat of categories" class="row">
+            <div class="col-2" style="height: 30px; margin: auto">
+              <button
+                [id]="cat.name"
+                disabled
+                class="btn"
+                [ngStyle]="{ 'background-color': cat.colour }"
+              ></button>
+            </div>
+            <input
+              [(ngModel)]="cat.score"
+              type="range"
+              min="0"
+              max="100"
+              class="my-2 col"
+              placeholder="cat.name"
+              (input)="onInputChange()"
+            />
           </div>
-          <input
-            [(ngModel)]="cat.score"
-            type="range"
-            min="1"
-            max="100"
-            class="my-2 col"
-            placeholder="cat.name"
-            (input)="onInputChange()"
-          />
-        </div>
+
       </div>
     </div>
-    <div class="col">
+    <div class="col-md-8">
       <app-star
         [categories]="categories"
         [starSize]="starSize"

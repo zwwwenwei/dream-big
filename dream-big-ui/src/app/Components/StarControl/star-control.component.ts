@@ -1,4 +1,4 @@
-import { Component, ViewChild, AfterViewInit, OnInit } from '@angular/core';
+import { Component, ViewChild, OnInit } from '@angular/core';
 import words from '../../../assets/words.json';
 import { StarComponent } from '../Star/star.component';
 import { Point, Category } from '../../model/star-types';
@@ -34,26 +34,26 @@ export class StarControlComponent implements OnInit {
         }
     }
 
-    onInputChange(recreateCategories=false) {
-        if(recreateCategories) {
+    public onInputChange(recreateCategories = false) {
+        if (recreateCategories) {
             this.createCategories();
         }
-        
+
         // ensure all values in parent have finished updating before redrawing star
         setTimeout(() => {
-            this.star.makeDrawStar(true);
+            this.star.makeStarGraphic(true);
         }, 0);
     }
 
     public randomiseCatScores() {
         this.createCategories();
         this.categories.forEach((cat) => {
-            cat.score = this.getRandomNumberBetween(1, 100);
+            cat.score = this.getRandomNumberBetween(0, 100);
         })
 
         // ensure all values in parent have finished updating before redrawing star
         setTimeout(() => {
-            this.star.makeDrawStar(true);
+            this.star.makeStarGraphic(true);
         }, 0);
     }
 
