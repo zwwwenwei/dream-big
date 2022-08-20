@@ -49,6 +49,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_18_233620) do
   end
 
   create_table "categories", charset: "utf8mb4", force: :cascade do |t|
+    t.string "categoryName"
+    t.string "description"
+    t.integer "weight"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -74,6 +77,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_18_233620) do
   end
 
   create_table "journey_stars", charset: "utf8mb4", force: :cascade do |t|
+    t.boolean "isMaxed"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -92,6 +96,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_18_233620) do
   end
 
   create_table "role_types", charset: "utf8mb4", force: :cascade do |t|
+    t.string "roleName"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -109,6 +114,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_18_233620) do
   end
 
   create_table "star_systems", charset: "utf8mb4", force: :cascade do |t|
+    t.boolean "status"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -127,6 +133,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_18_233620) do
   end
 
   create_table "student_journeys", charset: "utf8mb4", force: :cascade do |t|
+    t.float "timeline"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -157,6 +164,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_18_233620) do
   end
 
   create_table "weight_values", charset: "utf8mb4", force: :cascade do |t|
+    t.integer "weight"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
