@@ -1,5 +1,5 @@
 module Entities
-    class PlanetEntity < Grape::Entity
+    class PlanetsEntity < Grape::Entity
       expose :id
       expose :status
     end
