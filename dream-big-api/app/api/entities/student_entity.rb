@@ -1,9 +1,10 @@
 module Entities
     class StudentEntity < Grape::Entity
       expose :id
-      expose :studentName
-      expose :Phone
+      expose :name
+      expose :phone
       expose :address
-      expose :type  
+      expose :student_type 
+      expose :user 
     end
   end

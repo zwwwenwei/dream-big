@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_08_18_233620) do
+ActiveRecord::Schema[7.0].define(version: 2022_08_23_000001) do
   create_table "avatar_accessories", charset: "utf8mb4", force: :cascade do |t|
     t.string "color"
     t.string "shape"
@@ -142,9 +142,11 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_18_233620) do
     t.string "name"
     t.integer "phone"
     t.string "address"
-    t.string "type"
+    t.string "student_type"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.bigint "user_id"
+    t.index ["user_id"], name: "fk_rails_148c9e88f4"
   end
 
   create_table "units", charset: "utf8mb4", force: :cascade do |t|
@@ -169,4 +171,5 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_18_233620) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "students", "users"
 end

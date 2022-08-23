@@ -1,23 +1,37 @@
 require 'grape'
 
 class StudentApi < Grape::API
+  desc 'Allow retrieval of a single student'
+  get '/student/:id' do
+    student_parameters = ActionController::Parameters.new(params)
+      .permit(
+        :id
+      )
+
+    # Auth
+
+    result = Student.find(params[:id])
+    present result, with: Entities::StudentEntity
+  end
 
   desc 'Allow creation of a Student'
   params do
   
-    requires :studentName, type: String, desc: 'student Name'
-    requires :Phone, type: String, desc: 'student Phone number'
+    requires :name, type: String, desc: 'student Name'
+    requires :phone, type: String, desc: 'student Phone number'
     requires :address, type: String, desc: 'student address'
-    requires :type, type: String, desc: 'student type'
+    requires :user_id, type: Integer, desc: 'student user'
+    optional :student_type, type: String, desc: 'student type'
 
   end
   post '/student' do
     student_parameters = ActionController::Parameters.new(params)
       .permit(
-        :studentName,
-        :Phone,
+        :name,
+        :phone,
         :address,
-        :type
+        :student_type,
+        :user_id
       )
 
     # Auth...
@@ -30,18 +44,20 @@ class StudentApi < Grape::API
   desc 'Allow updating of a student'
   params do
     
-    optional :studentName, type: String, desc: 'student name'
-    optional :Phone, type: String, desc: 'student phone'
+    optional :name, type: String, desc: 'student name'
+    optional :phone, type: String, desc: 'student phone'
     optional :address, type: String, desc: 'student address'
-    optional :type, type: String, desc: 'student type'
+    optional :student_type, type: String, desc: 'student type'
+    optional :user_id, type: Integer, desc: 'student user'
   end
   put '/student/:id' do
     student_parameters = ActionController::Parameters.new(params)
       .permit(
-        :studentName,
-        :Phone,
+        :name,
+        :phone,
         :address,
-        :type
+        :student_type,
+        :user_id
         #Ex:- :default =>''
       )
 
@@ -58,7 +74,7 @@ class StudentApi < Grape::API
     requires :id, type: Integer, desc: 'The id of the student to delete'
   end
   delete '/student/:id' do
-    Studenet.find(params[:id]).destroy!
+    Student.find(params[:id]).destroy!
     true
   end
 

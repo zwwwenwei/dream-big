@@ -36,5 +36,8 @@ services:
       MYSQL_DATABASE: dream_big_api_development
       MYSQL_USER: dream
       MYSQL_PASSWORD: pwd
+
+    ports:
+      - "3306:3306"
     volumes:
       - ./data/database:/var/lib/mysql
