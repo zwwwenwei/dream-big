@@ -14,7 +14,10 @@ import { LandingPageComponent } from './Components/landing-page/landing-page.com
 import { NavbarComponent } from './Components/navbar/navbar.component';
 import { StarControlComponent } from './Components/StarControl/star-control.component';
 import { StarComponent } from './Components/Star/star.component';
+
 import { AdminModule } from './admin/admin.module';
+import { TableComponentModule } from './admin/generic/table.component';
+
 
 @NgModule({
   declarations: [
@@ -30,7 +33,8 @@ import { AdminModule } from './admin/admin.module';
     HttpClientModule,
     ReactiveFormsModule,
     FormsModule,
-    AdminModule
+    AdminModule,
+    TableComponentModule
   ],
   providers: [
     UnitService,

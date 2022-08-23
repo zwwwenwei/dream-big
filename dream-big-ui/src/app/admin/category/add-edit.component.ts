@@ -82,8 +82,8 @@ export class AddEditComponent implements OnInit {
         const formData = this.form.value;
         delete formData['body'];
  
-        const unit = await this.CategoryService.get(this.id).toPromise();
-        this.CategoryService.update(unit, {body:this.form.value})
+        const category = await this.CategoryService.get(this.id).toPromise();
+        this.CategoryService.update(category, {body:this.form.value})
             .subscribe({
                 next: () => {
                     // this.alertService.success('User updated', { keepAfterRouteChange: true });

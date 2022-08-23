@@ -45,7 +45,9 @@ class UsersApi < Grape::API
         :password
       )
 
-    User.find(params[:id]).update! user_parameters
+    result = User.find(params[:id])
+    result.update! user_parameters
+    present result, with: Entities::UsersEntity
   end
 
   desc 'Delete the user with the indicated id'
