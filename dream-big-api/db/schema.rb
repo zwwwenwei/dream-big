@@ -49,7 +49,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_18_233620) do
   end
 
   create_table "categories", charset: "utf8mb4", force: :cascade do |t|
-    t.string "categoryName"
+    t.string "name"
     t.string "description"
     t.integer "weight"
     t.datetime "created_at", null: false
@@ -70,7 +70,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_18_233620) do
   end
 
   create_table "courses", charset: "utf8mb4", force: :cascade do |t|
-    t.string "courseName"
+    t.string "name"
     t.string "courseDesc"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -96,7 +96,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_18_233620) do
   end
 
   create_table "role_types", charset: "utf8mb4", force: :cascade do |t|
-    t.string "roleName"
+    t.string "name"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
@@ -139,8 +139,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_18_233620) do
   end
 
   create_table "students", charset: "utf8mb4", force: :cascade do |t|
-    t.string "studentName"
-    t.integer "Phone"
+    t.string "name"
+    t.integer "phone"
     t.string "address"
     t.string "type"
     t.datetime "created_at", null: false

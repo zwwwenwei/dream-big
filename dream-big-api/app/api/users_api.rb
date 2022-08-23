@@ -2,6 +2,18 @@ require 'grape'
 
 class UsersApi < Grape::API
 
+  get '/users/:id' do
+    user_parameters = ActionController::Parameters.new(params)
+      .permit(
+        :id
+      )
+
+    # Auth
+
+    result = User.find(params[:id])
+    present result, with: Entities::UsersEntity
+  end
+
   desc 'Allow creation of a user'
   params do
     requires :username, type: String, desc: 'The username used for login'

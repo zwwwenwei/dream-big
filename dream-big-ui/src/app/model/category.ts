@@ -3,14 +3,14 @@ import { Entity } from 'ngx-entity-service';
 const KEYS =
   [
     'id',
-    'categoryName',
+    'name',
     'description',
     'weight'
   ];
 
 export class Category extends Entity {
   id: number = -1;
-  categoryName: string = "";
+  name: string = "";
   description: string = "";
   weight: string = "";
 

@@ -1,6 +1,6 @@
 class Unit < ApplicationRecord
 
     #Associations
-    belongs_to :course_units
+    # belongs_to :course_units
 
 end

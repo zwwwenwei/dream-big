@@ -1,13 +1,25 @@
 require 'grape'
 
 class CategoryApi < Grape::API
+  desc 'Allow retrieval of a single category'
+  get '/category/:id' do
+    category_parameters = ActionController::Parameters.new(params)
+      .permit(
+        :id
+      )
+
+    # Auth
+
+    result = Category.find(params[:id])
+    present result, with: Entities::CategoryEntity
+  end
 
   desc 'Allow creation of a category'
   params do
   
     requires :name, type: String, desc: 'Category name'
     requires :description, type: String, desc: 'The description of the category'
-    requires :weight, type: String, desc: 'default weight for category'
+    requires :weight, type: Integer, desc: 'default weight for category'
   end
   post '/category' do
     category_parameters = ActionController::Parameters.new(params)

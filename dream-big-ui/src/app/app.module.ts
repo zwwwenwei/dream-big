@@ -9,39 +9,33 @@ import { AppComponent } from './app.component';
 import { UnitService } from './services/unit.service';
 import { CategoryService } from './services/category.service';
 
-import { CategoryComponent } from './admin/category.component';
-
-import { UserListComponent } from './admin/user-list/user-list.component';
 import { UserService } from './services/user.service';
 import { LandingPageComponent } from './Components/landing-page/landing-page.component';
 import { NavbarComponent } from './Components/navbar/navbar.component';
-import { AdminNavbarComponent } from './Components/admin-navbar/admin-navbar.component';
 import { StarControlComponent } from './Components/StarControl/star-control.component';
 import { StarComponent } from './Components/Star/star.component';
+import { AdminModule } from './admin/admin.module';
 
 @NgModule({
   declarations: [
     AppComponent,
-    UserListComponent,
-    CategoryComponent,
     LandingPageComponent,
     NavbarComponent,
-    AdminNavbarComponent,
     StarControlComponent,
-    StarComponent
+    StarComponent,
   ],
   imports: [
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     ReactiveFormsModule,
-    FormsModule
+    FormsModule,
+    AdminModule
   ],
   providers: [
     UnitService,
     UserService,
     CategoryService,
-
   ],
   bootstrap: [AppComponent]
 })

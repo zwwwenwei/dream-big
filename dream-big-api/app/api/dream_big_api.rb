@@ -38,6 +38,7 @@ class DreamBigApi < Grape::API
       puts e.backtrace.join("\n")
 
       message = "Sorry... something went wrong with your request."
+      message= e.inspect
       status = 500
     end
     Rack::Response.new( {error: message}.to_json, status, { 'Content-type' => 'text/error' } )
