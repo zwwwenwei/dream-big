@@ -11,7 +11,7 @@ import { AdminComponent } from './admin.component';
         CommonModule,
         ReactiveFormsModule,
         AdminRoutingModule,
-        RouterModule
+        RouterModule,
     ],
     declarations: [
         AdminComponent

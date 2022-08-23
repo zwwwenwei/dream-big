@@ -10,7 +10,7 @@ const adminModule = () => import('./admin/admin.module').then(x => x.AdminModule
 const routes: Routes = [
   { path: '', component: LandingPageComponent },
   { path: 'star', component: StarControlComponent },
-  { path: 'admin', loadChildren: adminModule }
+  { path: 'admin', loadChildren: adminModule },
 ];
 
 @NgModule({

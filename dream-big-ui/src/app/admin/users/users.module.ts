@@ -6,13 +6,15 @@ import { UsersRoutingModule } from './users-routing.module';
 import { LayoutComponent } from './layout.component';
 import { ListComponent } from './list.component';
 import { AddEditComponent } from './add-edit.component';
+import { TableComponentModule } from '../generic/table.component';
 
 @NgModule({
     imports: [
         CommonModule,
         ReactiveFormsModule,
         UsersRoutingModule,
-        RouterModule
+        RouterModule,
+        TableComponentModule,
     ],
     declarations: [
         LayoutComponent,

@@ -1,10 +1,9 @@
 import { Component, Input, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
-import { first, map } from 'rxjs/operators';
 
 import { UserService } from 'src/app/services/user.service';
-import { Category } from 'src/app/model/category';
+
 
 @Component({
     templateUrl: './add-edit.component.html'
@@ -82,9 +81,8 @@ export class AddEditComponent implements OnInit {
         const formData = this.form.value;
         delete formData['body'];
  
-        const unit = await this.userService.get(this.id).toPromise();
-        this.userService.update(unit, {body:this.form.value})
-            .subscribe({
+        const user = await this.userService.get(this.id).toPromise();
+        this.userService.update(user, {body:this.form.value}).subscribe({
                 next: () => {
                     // this.alertService.success('User updated', { keepAfterRouteChange: true });
                     console.log('User Updated')
