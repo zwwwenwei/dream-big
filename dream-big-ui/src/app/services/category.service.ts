@@ -2,7 +2,6 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CachedEntityService, Entity, EntityMapping } from 'ngx-entity-service';
 import API_URL from 'src/app/config/constants/apiURL';
-import { AppInjector } from 'src/app/app-injector';
 import { Category } from 'src/app/model/category';
 
 export type IloStats = {
@@ -25,7 +24,7 @@ export class CategoryService extends CachedEntityService<Category> {
   
   this.mapping.addKeys(
     'id',
-    'categoryName',
+    'name',
     'description',
     'weight',
   );

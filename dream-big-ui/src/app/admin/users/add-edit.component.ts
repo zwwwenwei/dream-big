@@ -3,7 +3,7 @@ import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
 import { first, map } from 'rxjs/operators';
 
-import { CategoryService } from 'src/app/services/category.service';
+import { UserService } from 'src/app/services/user.service';
 import { Category } from 'src/app/model/category';
 
 @Component({
@@ -20,7 +20,7 @@ export class AddEditComponent implements OnInit {
         private formBuilder: FormBuilder,
         private route: ActivatedRoute,
         private router: Router,
-        private CategoryService: CategoryService
+        private userService: UserService
     ) { }
 
     ngOnInit() {
@@ -28,13 +28,13 @@ export class AddEditComponent implements OnInit {
         this.isAddMode = !this.id;
 
         this.form = this.formBuilder.group({
-            name: ['', [Validators.required,]],
-            description: ['', [Validators.required,]],
-            weight: ['', [Validators.required,Validators.pattern("^[0-9]*$")]],
+            username: ['', [Validators.required]],
+            name: ['', [Validators.required]],
+            password: ['', [Validators.required]],
         });
 
         if (!this.isAddMode) {
-            this.CategoryService.get(this.id).subscribe(x => this.form.patchValue(x));
+            this.userService.get(this.id).subscribe(x => this.form.patchValue(x));
         }
     }
 
@@ -54,21 +54,21 @@ export class AddEditComponent implements OnInit {
 
         this.loading = true;
         if (this.isAddMode) {
-            this.createCategory();
+            this.createUser();
         } else {
-            this.updateCategory();
+            this.updateUser();
         }
     }
 
-    private createCategory() {
-        this.CategoryService.create(this.form.value).subscribe({
+    private createUser() {
+        this.userService.create(this.form.value).subscribe({
             next: () => {
                 // this.alertService.success('User updated', { keepAfterRouteChange: true });
-                console.log('Category created')
+                console.log('User created')
                 this.router.navigate(['../'], { relativeTo: this.route });
             },
             error: error => {
-                console.log('Error creating category ', error);
+                console.log('Error creating user ', error);
 
                 // this.alertService.error(error);
                 this.loading = false;
@@ -76,22 +76,22 @@ export class AddEditComponent implements OnInit {
         });
     }
 
-    private async updateCategory() {
+    private async updateUser() {
         // need to retrieve the form data and remove the 'body' field
         // so the remaining data only has fields that the service can use
         const formData = this.form.value;
         delete formData['body'];
  
-        const unit = await this.CategoryService.get(this.id).toPromise();
-        this.CategoryService.update(unit, {body:this.form.value})
+        const unit = await this.userService.get(this.id).toPromise();
+        this.userService.update(unit, {body:this.form.value})
             .subscribe({
                 next: () => {
                     // this.alertService.success('User updated', { keepAfterRouteChange: true });
-                    console.log('Category Updated')
+                    console.log('User Updated')
                     this.router.navigate(['../../'], { relativeTo: this.route });
                 },
                 error: error => {
-                    console.log('Error updating category ', error);
+                    console.log('Error updating user ', error);
 
                     // this.alertService.error(error);
                     this.loading = false;

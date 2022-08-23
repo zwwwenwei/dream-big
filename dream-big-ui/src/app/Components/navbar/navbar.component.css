@@ -5,7 +5,7 @@ nav {
     justify-content: space-between;
     height: 48px;
     padding: 8px;
-    background-color: #D32F2F;
+    background-color: #c9d2d4;
     color: #fff;
 }
 
@@ -13,22 +13,6 @@ div[actions] {
     display: flex;
     align-items: center;
     height: 100%;
-}
-
-[user-avatar] {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    overflow: hidden;
-    height: 100%;
-    width: 48px;
-    border: none;
-    border-radius: 9999px;
-    background-color: rgba(0,0,0,0.2);
-}
-
-[user-avatar] > img {
-    object-fit: cover;
 }
 
 [notification-bell] {

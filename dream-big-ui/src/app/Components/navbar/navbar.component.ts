@@ -7,7 +7,6 @@ import { Component, OnInit } from '@angular/core';
 })
 export class NavbarComponent implements OnInit {
   public count: number = 1;
-  public label: string = "To admin page"
 
   constructor() { }
 

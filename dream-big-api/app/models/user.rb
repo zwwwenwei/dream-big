@@ -4,6 +4,6 @@ class User < ApplicationRecord
     validates :password, presence: true
     
     #Associations
-    has_one :student, dependent: ::destroy
+    has_one :student
 
 end
