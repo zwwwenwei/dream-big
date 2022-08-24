@@ -1,5 +1,5 @@
 class Student < ApplicationRecord
     #assocations
-    belongs_to: users
-    has_one: student_journey
+    belongs_to :user
+    # has_one: student_journey
 end

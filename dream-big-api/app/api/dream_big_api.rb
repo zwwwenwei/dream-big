@@ -48,6 +48,7 @@ class DreamBigApi < Grape::API
   mount UnitApi
   mount CategoryApi
   mount UsersApi
+  mount StudentApi
 
   add_swagger_documentation \
     base_path: nil,

@@ -17,6 +17,7 @@ import { StarComponent } from './Components/Star/star.component';
 
 import { AdminModule } from './admin/admin.module';
 import { TableComponentModule } from './admin/generic/table.component';
+import { StudentService } from './services/student.service';
 
 
 @NgModule({
@@ -40,6 +41,7 @@ import { TableComponentModule } from './admin/generic/table.component';
     UnitService,
     UserService,
     CategoryService,
+    StudentService
   ],
   bootstrap: [AppComponent]
 })
