@@ -41,7 +41,6 @@
     </div>
     <div class="mb-3 form-group">
       <select class="form-select" formControlName="user_id">
-        <option [ngValue]="null" disabled>Choose user</option>
         <option *ngFor="let user of users" [ngValue]="user.id">
           {{ user.name }}
         </option>

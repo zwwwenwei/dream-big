@@ -5,6 +5,7 @@ module Entities
       expose :phone
       expose :address
       expose :student_type 
-      expose :user 
+      expose :user
+      expose :user_id
     end
   end

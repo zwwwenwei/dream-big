@@ -5,5 +5,6 @@ class CreateStarSkins < ActiveRecord::Migration[7.0]
       t.string :asset
       t.timestamps
     end
+    
   end
 end

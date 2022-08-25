@@ -38,7 +38,10 @@ export class AddEditComponent implements OnInit {
         });
 
         if (!this.isAddMode) {
-            this.studentService.get(this.id).subscribe(x => this.form.patchValue(x));
+            this.studentService.get(this.id).subscribe((x) => {
+                this.form.patchValue(x);
+                console.log(x);
+            });
         }
         this.userService.query().subscribe({
             next: (users) => {
