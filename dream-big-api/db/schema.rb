@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_08_23_000001) do
+ActiveRecord::Schema[7.0].define(version: 2022_08_18_224456) do
   create_table "avatar_accessories", charset: "utf8mb4", force: :cascade do |t|
     t.string "color"
     t.string "shape"
@@ -83,6 +83,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_23_000001) do
   end
 
   create_table "planet_skins", charset: "utf8mb4", force: :cascade do |t|
+    t.string "name"
     t.string "color"
     t.string "asset"
     t.datetime "created_at", null: false
@@ -90,9 +91,14 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_23_000001) do
   end
 
   create_table "planets", charset: "utf8mb4", force: :cascade do |t|
+    t.string "name"
     t.boolean "status"
+    t.bigint "star_system_id"
+    t.bigint "skin_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["skin_id"], name: "fk_rails_a26b5012c8"
+    t.index ["star_system_id"], name: "fk_rails_301d41c9cb"
   end
 
   create_table "role_types", charset: "utf8mb4", force: :cascade do |t|
@@ -114,17 +120,25 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_23_000001) do
   end
 
   create_table "star_systems", charset: "utf8mb4", force: :cascade do |t|
+    t.string "name"
     t.boolean "status"
+    t.bigint "student_journey_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["student_journey_id"], name: "fk_rails_b3ad9a271c"
   end
 
   create_table "stars", charset: "utf8mb4", force: :cascade do |t|
+    t.string "name"
     t.string "goals"
     t.string "reflection"
     t.boolean "status"
+    t.bigint "star_system_id"
+    t.bigint "skin_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["skin_id"], name: "fk_rails_03e4effcfa"
+    t.index ["star_system_id"], name: "fk_rails_23decec5d5"
   end
 
   create_table "student_courses", charset: "utf8mb4", force: :cascade do |t|
@@ -134,8 +148,10 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_23_000001) do
 
   create_table "student_journeys", charset: "utf8mb4", force: :cascade do |t|
     t.float "timeline"
+    t.bigint "student_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["student_id"], name: "fk_rails_cc2571c819"
   end
 
   create_table "students", charset: "utf8mb4", force: :cascade do |t|
@@ -171,5 +187,11 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_23_000001) do
     t.datetime "updated_at", null: false
   end
 
+  add_foreign_key "planets", "planet_skins", column: "skin_id"
+  add_foreign_key "planets", "star_systems", on_delete: :cascade
+  add_foreign_key "star_systems", "student_journeys", on_delete: :cascade
+  add_foreign_key "stars", "star_skins", column: "skin_id"
+  add_foreign_key "stars", "star_systems", on_delete: :cascade
+  add_foreign_key "student_journeys", "students", on_delete: :cascade
   add_foreign_key "students", "users"
 end
