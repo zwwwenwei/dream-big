@@ -313,6 +313,7 @@ DEPENDENCIES
   grape-entity
   grape-swagger
   grape-swagger-rails
+  i18n
   jwt
   listen
   minitest
