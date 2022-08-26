@@ -46,6 +46,14 @@ export class ListComponent implements OnInit {
         });
     }
 
+    ngOnChanges() {
+        this.studentService.query().subscribe({
+            next: (students) => {
+                this.students = students;
+            }
+        });
+    }
+
     deleteStudent(id: number) {
         this.studentService.delete(id).subscribe(() => { this.students = this.students.filter((u: Student) => u.id != id) });
     }

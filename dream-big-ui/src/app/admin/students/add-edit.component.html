@@ -40,6 +40,7 @@
       </div>
     </div>
     <div class="mb-3 form-group">
+      <label for="user_id">User</label>
       <select class="form-select" formControlName="user_id">
         <option *ngFor="let user of users" [ngValue]="user.id">
           {{ user.name }}
@@ -54,7 +55,7 @@
         ></span>
         Save
       </button>
-      <a routerLink="/admin/students" class="btn btn-link">Cancel</a>
+      <a routerLink="/admin/journeys" class="btn btn-link">Cancel</a>
     </div>
   </form>
 </div>

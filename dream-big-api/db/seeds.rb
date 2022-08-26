@@ -92,18 +92,18 @@ end
 # import_from_csv(Rails.root.join('db','resources','units.csv'), Unit, ['name', 'description', 'code'])
 
 
-# user_data = {
-#   'name': method(:faker_first_name),
-#   'username': method(:faker_name),
-#   'password': method(:faker_name),
-# }
-# student_data = {
-#   'name': method(:faker_name),
-#   'phone': method(:faker_phone),
-#   'address': method(:faker_name),
-# }
+user_data = {
+  'name': method(:faker_first_name),
+  'username': method(:faker_name),
+  'password': method(:faker_name),
+}
+student_data = {
+  'name': method(:faker_name),
+  'phone': method(:faker_phone),
+  'address': method(:faker_name),
+}
 
-# seed_data_parent_child(User, user_data, Student, student_data, 2)
+seed_data_parent_child(User, user_data, Student, student_data, 5)
 
 
 users = seed_sequence_data(User, ['name', 'username', 'password'], 5)
@@ -113,3 +113,4 @@ star_systems = seed_child_data(student_journeys, StarSystem, ['status', 'name'])
 stars = seed_child_data(star_systems, Star, ['name', 'status'])
 planets = seed_child_data(star_systems, Planet, ['status', 'name'])
 
+seed_sequence_data(Category, ['name', 'description', 'weight'], 5)
