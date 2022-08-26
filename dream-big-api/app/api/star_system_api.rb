@@ -6,12 +6,15 @@ class StarSystemApi < Grape::API
   params do
   
     requires :status, type: String, desc: 'Status of a star system (complete/incomplete)'
+    requires :student_journey_id, type: Integer, desc: 'Journey ID'
 
   end
+
   post '/starsystem' do
     starsystem_parameters = ActionController::Parameters.new(params)
       .permit(
-        :status
+        :status,
+        :student_journey_id
       )
 
     # Auth...
@@ -25,11 +28,15 @@ class StarSystemApi < Grape::API
   params do
     
     optional :status, type: String, desc: 'Status of a star system'
+    requires :student_journey_id, type: Integer, desc: 'Journey ID'
+
   end
   put '/starsystem/:id' do
     starsystem_parameters = ActionController::Parameters.new(params)
       .permit(
-        :system
+        :system,
+        :student_journey_id
+
         #Ex:- :default =>''
       )
 
@@ -50,8 +57,12 @@ class StarSystemApi < Grape::API
     true
   end
 
+  desc 'Get all star systems with the indicated journey_id'
+  params do
+    requires :student_journey_id, type: Integer, desc: 'The id of the student_journey'
+  end
   get '/starsystem' do
-    result = StarSystem.all
+    result = StarSystem.where(student_journey_id: params[:student_journey_id])
 
     present result, with: Entities::StarSystemEntity
   end
