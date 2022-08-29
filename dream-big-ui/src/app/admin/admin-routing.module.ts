@@ -5,7 +5,8 @@ import { AdminComponent } from './admin.component';
 const unitsModule = () => import('./units/units.module').then(x => x.UnitsModule);
 const categoriesModule = () => import('./category/categories.module').then(x => x.CategoryModule);
 const usersModule = () => import('./users/users.module').then(x => x.UserModule);
-const studentsModule = () => import('./students/students.module').then(x => x.StudentModule)
+const studentsModule = () => import('./students/students.module').then(x => x.StudentModule);
+const studentJourneysModule = () => import('./student_journeys/student_journeys.module').then(x => x.StudentJourneyModule);
 
 
 
@@ -17,6 +18,7 @@ const routes: Routes = [
             { path: 'categories', loadChildren: categoriesModule },
             { path: 'users', loadChildren: usersModule },
             { path: 'students', loadChildren: studentsModule },
+            { path: 'journeys', loadChildren: studentJourneysModule },
         ]
     }
 ];

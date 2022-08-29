@@ -3,5 +3,6 @@ module Entities
       expose :id
       expose :asset
       expose :color
+      expose :name
     end
   end
