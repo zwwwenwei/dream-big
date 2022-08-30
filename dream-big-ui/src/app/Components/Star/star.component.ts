@@ -14,7 +14,7 @@ export class StarComponent implements AfterViewInit {
     public starPath: any;
     @Input() categories: Array<Category> = [];
     @Input() starSize: number = 20;
-    @Input() centerPoint: any = { x: 400, y: 250 };
+    @Input() centrePoint: any = { x: 400, y: 250 };
     @Input() rotation: number = 0;
     @Input() outerRatio: number = 8;
     @Input() innerRatio: number = 3;
@@ -31,22 +31,53 @@ export class StarComponent implements AfterViewInit {
     ngAfterViewInit(): void {
         this.project = new Project(this.canvas.nativeElement);
         setTimeout(() => {
-            this.makeStarGraphic(true);
+            this.drawScene(true);
         }, 0);
     }
 
     public onMouseMove(e: any) {
-        var collision = this.updatePolygonCollisions(new Point(e.offsetX, e.offsetY));
-        if (collision) {
-            this.makeStarGraphic(false);
-            this.drawText(e.offsetX, e.offsetY);
+        // ensure the objects on the page have fully loaded before trying to perform logic
+        if (this.starPath) {
+            const mousePoint = new Point(e.offsetX, e.offsetY);
+            this.catPolygons.forEach((poly) => {
+                poly.highlight = poly == this.collidedPolygon;
+            });
+            if (this.starPath.contains(mousePoint)) {
+                this.getCollidedPolygon(mousePoint);
+
+                setTimeout(() => {
+                    this.drawScene(false);
+                    this.drawText(mousePoint);
+                }, 0);
+
+            } else {
+                this.polygonCollision = false;
+            }
         }
     }
+
+
+    private getCollidedPolygon(xy: paper.Point) {
+        this.collidedPolygon = {} as Polygon;
+        for (var i = 0; i < this.catPolygons.length; i++) {
+            if (this.catPolygons[i].path.contains(xy)) {
+                this.collidedPolygon = this.catPolygons[i];
+            }
+        }
+        // use a boolean variable to ensure the cat polygons are redrawn the frame after collision stops.
+        // this allows the polygons to update one final time, and clears the highlighted polygon
+        if (Object.entries(this.collidedPolygon).length || this.polygonCollision) {
+            this.polygonCollision = !!Object.entries(this.collidedPolygon).length;
+            return true;
+        }
+        return false;
+    }
+
     private getPolygonIdx(polygon: Polygon) {
         return this.catPolygons.findIndex(a => a == polygon);
     }
 
-    private drawText(x: number, y: number) {
+    private drawText(xy: paper.Point) {
         var polygon = this.collidedPolygon;
 
         if (Object.entries(polygon).length) {
@@ -61,12 +92,13 @@ export class StarComponent implements AfterViewInit {
         }
     }
 
-    public makeStarGraphic(hasChanged: boolean) {
+    public drawScene(hasChanged: boolean) {
         // clear the canvas so the star can be redrawn
         this.project.clear();
-        // draw the star to the canvas and retrieve the points for all inner and outer spikes
-        // scale the star size by the set inner and outer ratio to retrieve the inner and outer radius of the star
-        this.starCoords = this.drawStar(this.numSpikes,);
+        this.drawCircle(this.starSize * this.outerRatio + 20);
+
+        // draw the star to the canvas and retrieve the points for all inner and outer spikes points
+        this.starCoords = this.drawStar(this.numSpikes);
 
         // check if the category polygons should be recreated
         if (hasChanged || this.catPolygons.length == 0) {
@@ -86,7 +118,21 @@ export class StarComponent implements AfterViewInit {
     private getCatPolygons() {
         let catPolygons: Polygon[] = [];
         var prevCategory = this.categories[this.categories.length - 1];
+
         for (var i = 0; i < this.categories.length; i++) {
+            /**
+             * need to calculate where to place the inner spikes of the inner star.
+             * to do this, will draw a line from the centre of the star to an inner spike of the outer star
+             * the inner star's inner spike point will be a point along this line.
+             * scale category score to ensure it can never be larger than the outer star's spike length
+             * it can then be used to find the point along the line which is the scaled score distance away from the centre point of the star
+             * 
+             * also need to inspect the previous and next categories, as this polygon will share an inner spike with each of them.
+             * choose the inner spike locations by calculating the scores of the previous, current and future categories.
+             * determine whether to use this polygon's inner spike length or the previous one by using the maximum value (do it for the future polygon as well)
+             * 
+             * then find the points along the lines towards the outer star's inner spikes. do this for the left and right inner spikes.
+             */
             const nextCategory = i == this.categories.length - 1 ? this.categories[0] : this.categories[i + 1];
             const starCoord = this.starCoords[i];
 
@@ -101,25 +147,28 @@ export class StarComponent implements AfterViewInit {
             const scaledPrevInnerScore = (this.starSize * this.innerRatio / 100) * prevScore;
             const scaledNextInnerScore = (this.starSize * this.innerRatio / 100) * nextScore;
 
-
             var outerSpikeLength = Math.min(scaledOuterScore, this.starSize * this.outerRatio);
+
+            // find all the possible inner spike lengths
             var innerSpikeLength = Math.min(scaledInnerScore, this.starSize * this.innerRatio);
             var prevInnerSpikeLength = Math.min(scaledPrevInnerScore, this.starSize * this.innerRatio);
             var nextInnerSpikeLength = Math.min(scaledNextInnerScore, this.starSize * this.innerRatio);
 
-            const scoreXY = this.calculateLinePoint(this.centerPoint.x, this.centerPoint.y, starCoord.spike.x, starCoord.spike.y, outerSpikeLength);
-
+            // determine the max length between this polygon and its neighbours
             const maxEdgeLengthL = Math.max(prevInnerSpikeLength, innerSpikeLength);
             const maxEdgeLengthR = Math.max(nextInnerSpikeLength, innerSpikeLength)
-            const edgeL = this.calculateLinePoint(this.centerPoint.x, this.centerPoint.y, starCoord.edgeL.x, starCoord.edgeL.y, maxEdgeLengthL);
-            const edgeR = this.calculateLinePoint(this.centerPoint.x, this.centerPoint.y, starCoord.edgeR.x, starCoord.edgeR.y, maxEdgeLengthR);
+
+            // calculate the points on the corresponding inner spike lines, using the maximum edge length for each inner spike
+            const edgeL = this.calculateLinePoint(this.centrePoint.x, this.centrePoint.y, starCoord.edgeL.x, starCoord.edgeL.y, maxEdgeLengthL);
+            const edgeR = this.calculateLinePoint(this.centrePoint.x, this.centrePoint.y, starCoord.edgeR.x, starCoord.edgeR.y, maxEdgeLengthR);
+            const scoreXY = this.calculateLinePoint(this.centrePoint.x, this.centrePoint.y, starCoord.spike.x, starCoord.spike.y, outerSpikeLength);
 
             catPolygons.push({
                 points: {
                     spike: new Point(scoreXY),
                     edgeR: new Point(edgeL),
                     edgeL: new Point(edgeR),
-                    centre: this.centerPoint,
+                    centre: this.centrePoint,
                 },
                 highlight: false,
                 category: this.categories[i],
@@ -135,7 +184,6 @@ export class StarComponent implements AfterViewInit {
             const poly = this.catPolygons[i];
 
             var polyPath = new Path();
-
             polyPath.moveTo(poly.points.centre);
             polyPath.lineTo(poly.points.edgeL);
             polyPath.lineTo(poly.points.spike);
@@ -154,26 +202,7 @@ export class StarComponent implements AfterViewInit {
             this.catPolygons[i].path = polyPath;
         }
     }
-    private updatePolygonCollisions(xy: paper.Point) {
-        this.collidedPolygon = {} as Polygon;
-        for (var i = 0; i < this.catPolygons.length; i++) {
-            this.catPolygons[i].highlight = false;
 
-            var is_inside = this.catPolygons[i].path.contains(xy);
-            if (is_inside) {
-                this.catPolygons[i].highlight = true;
-                this.collidedPolygon = this.catPolygons[i];
-            }
-        }
-        // use polygonCollision to ensure the cat polygons are redrawn the frame after collision stops.
-        // this allows the polygons to update one final time, and clears the highlighted polygon
-        if (Object.entries(this.collidedPolygon).length || this.polygonCollision) {
-            this.polygonCollision = !!Object.entries(this.collidedPolygon).length;
-
-            return true;
-        }
-        return false;
-    }
     private drawStarPointCategories() {
         for (var i = 0; i < this.starCoords.length; i++) {
             var spikePath = new Path();
@@ -186,64 +215,63 @@ export class StarComponent implements AfterViewInit {
     }
 
     private drawStar(spikes: number): Array<StarCoord> {
-        this.drawCircle(this.starSize * this.outerRatio + 20);
         var outerRadius = this.starSize * this.outerRatio;
         var innerRadius = this.starSize * this.innerRatio;
 
-        var rotation_radians = this.rotation * Math.PI / 180;
-        var rot = (Math.PI / 2 * 3) + rotation_radians;
+        var rotationRadians = this.rotation * Math.PI / 180;
+        var rot = (Math.PI / 2 * 3) + rotationRadians;
         var step = Math.PI / spikes;
 
         var starPath = new Path();
 
-        var x = this.centerPoint.x + Math.cos(rot) * outerRadius;
-        var y = this.centerPoint.y + Math.sin(rot) * outerRadius;
+        var x = this.centrePoint.x + Math.cos(rot) * outerRadius;
+        var y = this.centrePoint.y + Math.sin(rot) * outerRadius;
 
         starPath.add(new Point(x, y));
 
         var prevEdge = new Point(
-            this.centerPoint.x + Math.cos(rot + (step * (spikes * 2 - 1))) * innerRadius,
-            this.centerPoint.y + Math.sin(rot + (step * (spikes * 2 - 1))) * innerRadius
+            this.centrePoint.x + Math.cos(rot + (step * (spikes * 2 - 1))) * innerRadius,
+            this.centrePoint.y + Math.sin(rot + (step * (spikes * 2 - 1))) * innerRadius
         );
 
         const starCoords: StarCoord[] = [];
 
         for (var i = 0; i < spikes; i++) {
-            let star_coord: StarCoord = {
+            let starCoord: StarCoord = {
                 spike: new Point({ x: 0, y: 0 }),
                 edgeR: new Point({ x: 0, y: 0 }),
                 edgeL: new Point({ x: 0, y: 0 }),
             };
 
-            x = this.centerPoint.x + Math.cos(rot) * outerRadius;
-            y = this.centerPoint.y + Math.sin(rot) * outerRadius;
-            star_coord.spike.x = x;
-            star_coord.spike.y = y;
+            x = this.centrePoint.x + Math.cos(rot) * outerRadius;
+            y = this.centrePoint.y + Math.sin(rot) * outerRadius;
+            starCoord.spike.x = x;
+            starCoord.spike.y = y;
             starPath.add(new Point(x, y));
 
             rot += step
 
-            x = this.centerPoint.x + Math.cos(rot) * innerRadius;
-            y = this.centerPoint.y + Math.sin(rot) * innerRadius;
+            x = this.centrePoint.x + Math.cos(rot) * innerRadius;
+            y = this.centrePoint.y + Math.sin(rot) * innerRadius;
 
-            star_coord.edgeR.x = x;
-            star_coord.edgeR.y = y;
-            star_coord.edgeL = prevEdge;
+            starCoord.edgeR.x = x;
+            starCoord.edgeR.y = y;
+            starCoord.edgeL = prevEdge;
             starPath.add(new Point(x, y));
             rot += step
 
-            starCoords.push(star_coord);
+            starCoords.push(starCoord);
             prevEdge = new Point(x, y)
         }
 
         starPath.closePath();
         starPath.strokeWidth = 3;
         starPath.strokeColor = new Color('black');
-
+        this.starPath = starPath;
         return starCoords;
     }
     private drawCircle(radius: number) {
-        var path = new Path.Circle(this.centerPoint, radius);
+        var path = new Path.Circle(this.centrePoint, radius);
         path.strokeColor = new Color('midnightblue');
         path.fillColor = new Color('aliceblue');
         path.strokeWidth = 2
