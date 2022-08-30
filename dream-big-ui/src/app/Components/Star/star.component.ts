@@ -42,18 +42,17 @@ export class StarComponent implements AfterViewInit {
             this.catPolygons.forEach((poly) => {
                 poly.highlight = poly == this.collidedPolygon;
             });
-            if (this.starPath.contains(mousePoint)) {
-                this.getCollidedPolygon(mousePoint);
+            this.getCollidedPolygon(mousePoint);
 
-                setTimeout(() => {
-                    this.drawScene(false);
-                    this.drawText(mousePoint);
-                }, 0);
+            setTimeout(() => {
+                this.drawScene(false);
+                this.drawText(mousePoint);
+            }, 0);
 
-            } else {
-                this.polygonCollision = false;
-            }
+        } else {
+            this.polygonCollision = false;
         }
+
     }
 
 
