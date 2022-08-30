@@ -26,8 +26,9 @@
           </div>
         </div>
 
-        <span>Rotation</span>
+        <label class="form-label" for="rotation">Rotation</label>
         <input
+          name="rotation"
           [(ngModel)]="rotation"
           type="range"
           min="0"
@@ -35,51 +36,61 @@
           class="mb-1"
           (input)="onInputChange()"
         />
-        <span>Size</span>
-        <input [(ngModel)]="starSize" type="range" (input)="onInputChange()" />
-        <span>Number of Spikes</span>
+
+        <label for="size">Size</label>
         <input
+          name="size"
+          [(ngModel)]="starSize"
+          type="range"
+          (input)="onInputChange()"
+        />
+        <label for="spikes">Number of Spikes</label>
+        <input
+          name="spikes"
           class="form-control"
           [(ngModel)]="numSpikes"
           type="number"
           (input)="onInputChange(true)"
+          disabled
         />
       </div>
       <div class="form-group mt-2">
+        <label class="col" style="margin: auto"
+          >Category scores</label
+        >
+
         <div class="row">
-          <span class="col" style="margin: auto">Category scores</span>
           <button
             class="col-4 my-2 btn btn-sm btn-primary"
-            (click)="randomiseCatScores()"
+            (click)="randomise()"
           >
             Random
           </button>
         </div>
-          <div *ngFor="let cat of categories" class="row">
-            <div class="col-2" style="height: 30px; margin: auto">
-              <button
-                [id]="cat.name"
-                disabled
-                class="btn"
-                [ngStyle]="{ 'background-color': cat.colour }"
-              ></button>
-            </div>
-            <input
-              [(ngModel)]="cat.score"
-              type="range"
-              min="0"
-              max="100"
-              class="my-2 col"
-              placeholder="cat.name"
-              (input)="onInputChange()"
-            />
+        <div *ngFor="let cat of setCategories" class="row">
+          <div class="col-2" style="height: 30px; margin: auto">
+            <button
+              [id]="cat.name"
+              disabled
+              class="btn"
+              [ngStyle]="{ 'background-color': cat.colour }"
+            ></button>
           </div>
-
+          <input
+            [(ngModel)]="cat.score"
+            type="range"
+            min="0"
+            max="70"
+            class="my-2 col"
+            placeholder="cat.name"
+            (input)="onInputChange()"
+          />
+        </div>
       </div>
     </div>
     <div class="col-md-8">
       <app-star
-        [categories]="categories"
+        [categories]="setCategories"
         [starSize]="starSize"
         [centerPoint]="centerPoint"
         [rotation]="rotation"
