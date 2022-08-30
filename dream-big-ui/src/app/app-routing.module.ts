@@ -4,11 +4,14 @@ import { RouterModule, Routes } from '@angular/router';
 import { StarControlComponent } from './Components/StarControl/star-control.component';
 import { LandingPageComponent } from './Components/landing-page/landing-page.component';
 
+import { IntroPageComponent } from './Components/intro-page/intro-page.component';
+
 const adminModule = () => import('./admin/admin.module').then(x => x.AdminModule);
 
 
 const routes: Routes = [
   { path: '', component: LandingPageComponent },
+  { path: 'intro', component: IntroPageComponent},
   { path: 'star', component: StarControlComponent },
   { path: 'admin', loadChildren: adminModule },
 ];

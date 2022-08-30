@@ -19,6 +19,7 @@ import { AdminModule } from './admin/admin.module';
 import { TableComponentModule } from './admin/generic/table.component';
 import { StudentService } from './services/student.service';
 import { StudentJourneyService } from './services/student-journey.service';
+import { IntroPageComponent } from './Components/intro-page/intro-page.component';
 
 
 @NgModule({
@@ -28,6 +29,7 @@ import { StudentJourneyService } from './services/student-journey.service';
     NavbarComponent,
     StarControlComponent,
     StarComponent,
+    IntroPageComponent,
   ],
   imports: [
     BrowserModule,
