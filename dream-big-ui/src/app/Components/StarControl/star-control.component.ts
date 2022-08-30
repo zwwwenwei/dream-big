@@ -1,7 +1,9 @@
 import { Component, ViewChild, OnInit } from '@angular/core';
 import words from '../../../assets/words.json';
+
+
 import { StarComponent } from '../Star/star.component';
-import { Point, Category } from '../../model/star-types';
+import { Category } from '../Star/types';
 
 
 @Component({
@@ -11,15 +13,43 @@ import { Point, Category } from '../../model/star-types';
 export class StarControlComponent implements OnInit {
     @ViewChild(StarComponent) star: StarComponent = {} as StarComponent;
     categories: Array<Category> = [];
+
+    setCategories: Array<Category> = [
+        {
+            name: "Experience",
+            score: 10,
+            colour: "green",
+        },
+        {
+            name: "Knowledge",
+            score: 10,
+            colour: "blue",
+        },
+        {
+            name: "Employability",
+            score: 10,
+            colour: "red",
+        },
+        {
+            name: "Readiness",
+            score: 10,
+            colour: "purple",
+        },
+        {
+            name: "Networking",
+            score: 10,
+            colour: "yellow",
+        },
+    ]
     starSize: number = 20;
-    centerPoint: Point = { x: 400, y: 250 };
+    centerPoint: paper.Point = { x: 400, y: 250 } as paper.Point;
     rotation: number = 0;
     numSpikes: number = 5;
     outerRatio: number = 8;
     innerRatio: number = 3;
 
     ngOnInit(): void {
-        this.createCategories();
+        // this.createCategories();
     }
 
     public createCategories() {
@@ -45,11 +75,18 @@ export class StarControlComponent implements OnInit {
         }, 0);
     }
 
-    public randomiseCatScores() {
-        this.createCategories();
-        this.categories.forEach((cat) => {
-            cat.score = this.getRandomNumberBetween(0, 100);
-        })
+    public randomise() {
+        if (this.categories.length) {
+            this.createCategories();
+            this.categories.forEach((cat) => {
+                cat.score = this.getRandomNumberBetween(0, 100);
+            });
+        } else {
+            this.setCategories.forEach((cat) => {
+                cat.score = this.getRandomNumberBetween(0, 100);
+            });
+        }
+
 
         // ensure all values in parent have finished updating before redrawing star
         setTimeout(() => {
