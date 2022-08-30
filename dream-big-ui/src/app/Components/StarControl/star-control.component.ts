@@ -42,7 +42,7 @@ export class StarControlComponent implements OnInit {
         },
     ]
     starSize: number = 20;
-    centerPoint: paper.Point = { x: 400, y: 250 } as paper.Point;
+    centrePoint: paper.Point = { x: 400, y: 250 } as paper.Point;
     rotation: number = 0;
     numSpikes: number = 5;
     outerRatio: number = 8;
@@ -71,7 +71,7 @@ export class StarControlComponent implements OnInit {
 
         // ensure all values in parent have finished updating before redrawing star
         setTimeout(() => {
-            this.star.makeStarGraphic(true);
+            this.star.drawScene(true);
         }, 0);
     }
 
@@ -90,7 +90,7 @@ export class StarControlComponent implements OnInit {
 
         // ensure all values in parent have finished updating before redrawing star
         setTimeout(() => {
-            this.star.makeStarGraphic(true);
+            this.star.drawScene(true);
         }, 0);
     }
 
