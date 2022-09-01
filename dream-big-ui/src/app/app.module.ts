@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -20,9 +21,10 @@ import { TableComponentModule } from './admin/generic/table.component';
 import { StudentService } from './services/student.service';
 import { StudentJourneyService } from './services/student-journey.service';
 import { IntroPageComponent } from './Components/intro-page/intro-page.component';
-import { RgbPickerModule } from './rgb-picker/rgb-picker.module';
-import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
 
+import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
+import { NgMaterialModule } from './ng-material/ng-material.module';
+import { RgbPickerModule } from './rgb-picker/rgb-picker.module';
 
 @NgModule({
   declarations: [
