@@ -21,10 +21,7 @@ import { StudentService } from './services/student.service';
 import { StudentJourneyService } from './services/student-journey.service';
 import { IntroPageComponent } from './Components/intro-page/intro-page.component';
 import { RgbPickerModule } from './rgb-picker/rgb-picker.module';
-import { MatDialogModule } from '@angular/material/dialog';
-import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
-import { MatSliderModule } from '@angular/material/slider';
 
 
 @NgModule({
@@ -45,20 +42,14 @@ import { MatSliderModule } from '@angular/material/slider';
     FormsModule,
     AdminModule,
     TableComponentModule,
-    RgbPickerModule,
-    MatDialogModule,
-    MatButtonModule,
-    MatSliderModule, 
-    HammerModule
+    NgMaterialModule,
+    RgbPickerModule
   ],
   providers: [
     UnitService,
     UserService,
     CategoryService,
     StudentService,
-<<<<<<< HEAD
-    StudentJourneyService
-=======
     StudentJourneyService,
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: true } },
     // {
@@ -69,7 +60,6 @@ import { MatSliderModule } from '@angular/material/slider';
     //AuthService,
     //UserService,
     //AuthGuard,
->>>>>>> d064906... feat: half implemented material ui upgrade for frontend
   ],
   bootstrap: [AppComponent]
 })

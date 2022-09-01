@@ -9,7 +9,8 @@ import { RgbPickerComponent } from 'src/app/rgb-picker/rgb-picker.component';
 
 @Component({
     selector: 'app-star-control',
-    templateUrl: './star-control.component.html'
+    templateUrl: './star-control.component.html',
+    styleUrls: ['./star-control.component.scss']
 })
 export class StarControlComponent implements OnInit {
     constructor(public dialog: MatDialog) { }
@@ -81,7 +82,7 @@ export class StarControlComponent implements OnInit {
     }
 
 
-    public onInputChange(eventVal:any = '') {
+    public onInputChange() {
 
         // ensure all values in parent have finished updating before redrawing star
         setTimeout(() => {
