@@ -4,15 +4,31 @@ import words from '../../../assets/words.json';
 
 import { StarComponent } from '../Star/star.component';
 import { Category } from '../Star/types';
-
+import { MatDialog } from '@angular/material/dialog';
+import { RgbPickerComponent } from 'src/app/rgb-picker/rgb-picker.component';
 
 @Component({
     selector: 'app-star-control',
     templateUrl: './star-control.component.html'
 })
 export class StarControlComponent implements OnInit {
+    constructor(public dialog: MatDialog) { }
+
+    openDialog(): void {
+        const dialogRef = this.dialog.open(RgbPickerComponent, {
+            width: '250px',
+            data: this.polygonFillColour,
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            this.polygonFillColour = result;
+            console.log('The dialog was closed', result);
+        });
+    }
+
     @ViewChild(StarComponent) star: StarComponent = {} as StarComponent;
     categories: Array<Category> = [];
+    polygonFillColour: string = 'gold';
 
     setCategories: Array<Category> = [
         {
@@ -64,10 +80,8 @@ export class StarControlComponent implements OnInit {
         }
     }
 
-    public onInputChange(recreateCategories = false) {
-        if (recreateCategories) {
-            this.createCategories();
-        }
+
+    public onInputChange(eventVal:any = '') {
 
         // ensure all values in parent have finished updating before redrawing star
         setTimeout(() => {

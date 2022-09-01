@@ -50,14 +50,12 @@
           class="form-control"
           [(ngModel)]="numSpikes"
           type="number"
-          (input)="onInputChange(true)"
+          (input)="onInputChange()"
           disabled
         />
       </div>
       <div class="form-group mt-2">
-        <label class="col" style="margin: auto"
-          >Category scores</label
-        >
+        <label class="col" style="margin: auto">Category scores</label>
 
         <div class="row">
           <button
@@ -76,7 +74,16 @@
               [ngStyle]="{ 'background-color': cat.colour }"
             ></button>
           </div>
-          <input
+          <mat-slider
+            [(ngModel)]="cat.score"
+            min="0"
+            max="70"
+            class="my-2 col"
+            placeholder="cat.name"
+            (input)="cat.score = $event.value!; onInputChange($event.value)"
+
+          ></mat-slider>
+          <!-- <input
             [(ngModel)]="cat.score"
             type="range"
             min="0"
@@ -84,10 +91,14 @@
             class="my-2 col"
             placeholder="cat.name"
             (input)="onInputChange()"
-          />
+          /> -->
         </div>
       </div>
+      <li>
+        <button mat-raised-button (click)="openDialog()">Pick one</button>
+      </li>
     </div>
+
     <div class="col-md-8">
       <app-star
         [categories]="setCategories"
@@ -97,6 +108,7 @@
         [outerRatio]="outerRatio"
         [innerRatio]="innerRatio"
         [numSpikes]="numSpikes"
+        [polygonFillColour]="polygonFillColour"
       ></app-star>
     </div>
   </div>

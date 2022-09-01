@@ -20,6 +20,11 @@ import { TableComponentModule } from './admin/generic/table.component';
 import { StudentService } from './services/student.service';
 import { StudentJourneyService } from './services/student-journey.service';
 import { IntroPageComponent } from './Components/intro-page/intro-page.component';
+import { RgbPickerModule } from './rgb-picker/rgb-picker.module';
+import { MatDialogModule } from '@angular/material/dialog';
+import { MatButtonModule } from '@angular/material/button';
+import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
+import { MatSliderModule } from '@angular/material/slider';
 
 
 @NgModule({
@@ -32,20 +37,39 @@ import { IntroPageComponent } from './Components/intro-page/intro-page.component
     IntroPageComponent,
   ],
   imports: [
+    BrowserAnimationsModule,
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     ReactiveFormsModule,
     FormsModule,
     AdminModule,
-    TableComponentModule
+    TableComponentModule,
+    RgbPickerModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatSliderModule, 
+    HammerModule
   ],
   providers: [
     UnitService,
     UserService,
     CategoryService,
     StudentService,
+<<<<<<< HEAD
     StudentJourneyService
+=======
+    StudentJourneyService,
+    { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: true } },
+    // {
+    // provide: HTTP_INTERCEPTORS,
+    //useClass: AuthInterceptor,
+    // multi: true
+    //.},
+    //AuthService,
+    //UserService,
+    //AuthGuard,
+>>>>>>> d064906... feat: half implemented material ui upgrade for frontend
   ],
   bootstrap: [AppComponent]
 })
