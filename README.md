@@ -85,7 +85,7 @@ Docker application requires a Linux system to run, therefore, WSL (Windows Subsy
 
 2. If it is your first-time downloading WSL, you might have to enable some features. You can navigate to  “*Control Panel*” => “*Programs*” => “*Programs and Features*” => “*Turn Windows features on or off*”, and find “*Virtual Machine Platform*” and "*Windows Subsystem for Linux*”. Turn both of them on and restart your machine.
 
-3. Follow the [link](https://aka.ms/wsl2kernel) to download an updated package. Find the suitable one for your machine and run the downloaded file locally to install the update. 
+3. Follow the [link](https://aka.ms/wsl2kernel) to download an update package. Find the suitable one for your machine and run the downloaded file locally to install the update. 
 
 4. Run the application for your just downloaded Linux machine, and follow the prompts  to create a new user. Now you can run your Docker application to verify, if there’s no error message showing then you should have your WSL installed successfully.
 
