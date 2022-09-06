@@ -75,7 +75,8 @@ export class StarComponent implements AfterViewInit {
         return false;
     }
 
-    private getPolygonIdx(polygon: Polygon) {        return this.catPolygons.findIndex(a => a == polygon);
+    private getPolygonIdx(polygon: Polygon) {
+        return this.catPolygons.findIndex(a => a == polygon);
     }
 
     private drawText(xy: paper.Point) {

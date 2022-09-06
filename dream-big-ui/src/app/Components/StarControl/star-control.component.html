@@ -6,7 +6,9 @@
           <mat-expansion-panel-header>
             <mat-panel-title>Category Scores</mat-panel-title>
           </mat-expansion-panel-header>
-          <button mat-raised-button (click)="randomise()">Randomise Scores</button>
+          <button mat-raised-button (click)="randomise()">
+            Randomise Scores
+          </button>
           <mat-action-row *ngFor="let cat of setCategories">
             <button
               [id]="cat.name"
