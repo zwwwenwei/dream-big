@@ -2,7 +2,7 @@
 ![Doubtfire Logo](http://puu.sh/lyClF/fde5bfbbe7.png)
 # Dream Big
 
-Dream big aims to provide students with an overview of their progress from enrolment to graduation. The idea is to create a work ready student who can asimilate into the workplace.
+Dream big aims to provide students with an overview of their progress from enrolment to graduation. The idea is to create a work-ready student who can assimilate into the workplace.
 
 [Windows Installation instructions](#windows-11-installation-instructions)
 
@@ -10,7 +10,7 @@ Dream big aims to provide students with an overview of their progress from enrol
 
 ## **Windows 11 Installation instructions**
 
-1. Install the chocolatey package manager, this is an optional step but is very useful for installing various software packages such as Python, NodeJs(Which we will be Chocolatey to install) on Windows systems. To install Chocolatey, [click here](https://chocolatey.org/install) and follow the instructions. Once you have Chocolatey installed, open up an elevated terminal prompt and type in the following: `choco install nodejs --version=16.16.0` in PowerShell with administrator mode and then hit enter to proceed with NodeJs installation. Be sure to have NodeJs uninstalled beforehand.
+1. Install the chocolatey package manager, this is an optional step but is very useful for installing various software packages such as Python and NodeJs(Which we will be Chocolatey to install) on Windows systems. To install Chocolatey, [click here](https://chocolatey.org/install) and follow the instructions. Once you have Chocolatey installed, open up an elevated terminal prompt and type in the following: `choco install nodejs --version=16.16.0` in PowerShell with administrator mode and then hit enter to proceed with NodeJs installation. Be sure to have NodeJs uninstalled beforehand.
 
 2. We need to have the latest stable version of NodeJs installed as Angular is dependent on it to run. If you wish to install NodeJs separately, click [here](https://nodejs.org/en/) and follow the [instruction](#nodejs-installation-instruction) provided below. 
 
@@ -27,7 +27,7 @@ Dream big aims to provide students with an overview of their progress from enrol
 
 8. Navigate your terminal to dream-big\dream-big-ui and then enter `npx ng serve`, this should start a local development server on your machine which you can use to see how the project is coming along, a few messages will appear and then one like this should show near the bottom: `Angular Live Development Server is listening on localhost:4200, open your browser on http://localhost:4200/`
 
-9. Open your browser to the address referenced by your terminal, this will allow you to see what the project looks like at its current state, if you make changes to the project and then save, the browser should update the contents of the page depending on the changes you have made.
+9. Open your browser to the address referenced by your terminal, this will allow you to see what the project looks like in its current state, if you make changes to the project and then save it, the browser should update the contents of the page depending on the changes you have made.
 
 10. Either use chocolatey to install Docker `choco install docker-desktop` or navigate to the [Docker website](https://www.docker.com/get-started/), download [instructions](#docker-installation-instruction)  provided below.
 
@@ -35,9 +35,9 @@ Dream big aims to provide students with an overview of their progress from enrol
 
 12. Open a terminal window and navigate to the root folder of the DreamBig project, enter and run the following line `docker compose up`, this will create a docker container that simulates the backend of the project, you can now also start this container by going directly to the Docker GUI program and run the dream-big container in the **Containers/Applications** tab on the left.
 
-## **Extra Installation Instruction fro Windows**
+## **Extra Installation Instruction for Windows**
 
-If you wish to download Node.js, WSL, Docker or Git seperately, please follow the instruction below. 
+If you wish to download Node.js, WSL, Docker or Git separately, please follow the instruction below. 
 
 ## Git Installation Instruction
 
@@ -85,9 +85,9 @@ Docker application requires a Linux system to run, therefore, WSL (Windows Subsy
 
 2. If it is your first-time downloading WSL, you might have to enable some features. You can navigate to  “*Control Panel*” => “*Programs*” => “*Programs and Features*” => “*Turn Windows features on or off*”, and find “*Virtual Machine Platform*” and "*Windows Subsystem for Linux*”. Turn both of them on and restart your machine.
 
-3. Follow the [link](https://aka.ms/wsl2kernel) to download an update package . Find the suitable one for your machine and run the downloaded file locally to install the update. 
+3. Follow the [link](https://aka.ms/wsl2kernel) to download an updated package. Find the suitable one for your machine and run the downloaded file locally to install the update. 
 
-4. Run the application for your just downloaded Linux machine, and follow the prompt to create a new user. Now you can run your Docker application to verify, if there’s no error message showing then you should have your WSL installed successfully.
+4. Run the application for your just downloaded Linux machine, and follow the prompts  to create a new user. Now you can run your Docker application to verify, if there’s no error message showing then you should have your WSL installed successfully.
 
 *Note: The WSL feature (‘Virtual Machine Platform’ and ‘Windows Subsystem for Linux’) clashes with some virtual machine programs. If you wish to turn the features on and off, please navigate to “Control Panel” => “Programs” => “Programs and Features” => “Turn Windows features on or off”, find “Virtual Machine Platform” and Windows Subsystem for Linux”.*
 
@@ -97,26 +97,26 @@ You might have to re-install WSL service updates after turning the features back
 
 1. Download and install node.js on the following link: https://nodejs.org/en/download/
 
-2. After installing node.js, type in `node –version` in your terminal to check your node.js version and making sure it is installed properly.
+2. After installing node.js, type in `node –version` in your terminal to check your node.js version and make sure it is installed properly.
 
-3. Open terminal and type in `sudo npm install -g @angular/cli` to install angular.
+3. Open the terminal and type in `sudo npm install -g @angular/cli` to install angular.
 
-4. Wait a few seconds and type in `ng version` to check angular version and making sure it is installed properly.
+4. Wait a few seconds and type in `ng version` to check the angular version and make  sure it is installed properly.
 
 5. Clone the directory from GitHub using the GitHub desktop app.
 
-6. Navigate in your terminal until you reach dream-big-ui.
+6. Navigate to your terminal until you reach dream-big-ui.
 
 7. Type in `ng serve` in your terminal after and you will see some messages show up one of which is `Angular Live Development Server is listening on localhost:4200`, open your browser on http://localhost:4200/ **
 
-8. Go to your prefer browser and type in http://localhost:4200/
+8. Go to your preferred browser and type in http://localhost:4200/
 
 9. You can now see how the project looks in its current state.
 
-10. You can open the code using visual studio code by typing in code . after navigating to dream-big-ui
+10. You can open the code using visual studio code by typing in code. after navigating to dream-big-ui
 
-11. Install docker app for mac depending which mac you are using ( intel mac or mac with apple chip) on this link: https://docs.docker.com/desktop/install/mac-install/
+11. Install the docker app for mac depending on which mac you are using ( intel mac or mac with apple chip) on this link: https://docs.docker.com/desktop/install/mac-install/
 
-12. Open a terminal window and navigate to the DreamBig project, enter and run the following line docker compose up.
+12. Open a terminal window and navigate to the DreamBig project, enter and run the following line `docker compose up`.
 
-13. You can now go to Docker app and run the dream big container.
+13. You can now go to the Docker app and run the dream big container.
