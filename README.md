@@ -8,7 +8,7 @@ Dream big aims to provide students with an overview of their progress from enrol
 
 [Mac Installation instructions](#mac-installation-instruction)
 
-## Windows 11 Installation instructions
+## **Windows 11 Installation instructions**
 
 1. Install the chocolatey package manager, this is an optional step but is very useful for installing various software packages such as Python, NodeJs(Which we will be Chocolatey to install) on Windows systems. To install Chocolatey, [click here](https://chocolatey.org/install) and follow the instructions. Once you have Chocolatey installed, open up an elevated terminal prompt and type in the following: `choco install nodejs --version=16.16.0` in PowerShell with administrator mode and then hit enter to proceed with NodeJs installation. Be sure to have NodeJs uninstalled beforehand.
 
@@ -35,7 +35,7 @@ Dream big aims to provide students with an overview of their progress from enrol
 
 12. Open a terminal window and navigate to the root folder of the DreamBig project, enter and run the following line `docker compose up`, this will create a docker container that simulates the backend of the project, you can now also start this container by going directly to the Docker GUI program and run the dream-big container in the **Containers/Applications** tab on the left.
 
-## Extra Installation Instruction fro Windows
+## **Extra Installation Instruction fro Windows**
 
 If you wish to download Node.js, WSL, Docker or Git seperately, please follow the instruction below. 
 
@@ -93,7 +93,7 @@ Docker application requires a Linux system to run, therefore, WSL (Windows Subsy
 
 You might have to re-install WSL service updates after turning the features back on. Please follow step 3 above or the prompt Docker’s providing to you for download.
 
-## Mac Installation Instruction
+## **Mac Installation Instruction**
 
 1. Download and install node.js on the following link: https://nodejs.org/en/download/
 
