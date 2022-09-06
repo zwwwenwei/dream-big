@@ -54,7 +54,7 @@ class DreamBigApi < Grape::API
   mount PlanetsApi
   mount StarsApi
 
-  add_swagger_documentation \
+  add_swagger_documentation(
     base_path: nil,
     api_version: "v1",
     hide_documentation_path: true,
@@ -65,4 +65,5 @@ class DreamBigApi < Grape::API
       license_url: "https://github.com/doubtfire-lms/dream-big/blob/main/LICENSE",
     },
     mount_path: "swagger_doc"
+  )
 end
