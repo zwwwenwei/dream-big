@@ -8,8 +8,6 @@ import { Category, Polygon, StarCoord } from './types';
 })
 export class StarComponent implements AfterViewInit {
     @ViewChild('canvas') canvas: ElementRef<HTMLCanvasElement> = {} as ElementRef<HTMLCanvasElement>;
-    public context: CanvasRenderingContext2D = {} as CanvasRenderingContext2D;
-
     public project: any;
     public starPath: any;
     @Input() categories: Array<Category> = [];
@@ -21,12 +19,17 @@ export class StarComponent implements AfterViewInit {
     @Input() numSpikes: number = 5;
 
     @Input() minScore: number = 30;
+    @Input() polygonFillColour: string = 'gold';
 
     catPolygons: Array<Polygon> = [];
     collidedPolygon: Polygon = {} as Polygon;
     polygonCollision: boolean = false;
 
     starCoords: Array<StarCoord> = [];
+
+    textColour: string = 'black';
+    textFont: string = 'Courier New'
+    textSize: number = 25;
 
     ngAfterViewInit(): void {
         this.project = new Project(this.canvas.nativeElement);
@@ -83,10 +86,10 @@ export class StarComponent implements AfterViewInit {
             new PointText({
                 point: [30, 30],
                 content: `${polygon.category.name}\nScore: ${polygon.category.score}`,
-                fillColor: 'black',
-                fontFamily: 'Courier New',
+                fillColor: this.textColour,
+                fontFamily: this.textFont,
                 fontWeight: 'bold',
-                fontSize: 25
+                fontSize: this.textSize
             });
         }
     }
@@ -197,7 +200,7 @@ export class StarComponent implements AfterViewInit {
                 polyPath.strokeWidth = 3;
                 polyPath.strokeColor = new Color(poly.category.colour);
             }
-            polyPath.fillColor = new Color('gold');
+            polyPath.fillColor = new Color(this.polygonFillColour);
             this.catPolygons[i].path = polyPath;
         }
     }
@@ -264,7 +267,7 @@ export class StarComponent implements AfterViewInit {
         }
 
         starPath.closePath();
-        starPath.strokeWidth = 3;
+        starPath.strokeWidth = 1;
         starPath.strokeColor = new Color('black');
         this.starPath = starPath;
         return starCoords;
