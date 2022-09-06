@@ -83,7 +83,7 @@ Docker application requires a Linux system to run, therefore, WSL (Windows Subsy
 
 1. Open PowerShell, and use the command `wsl --list --online` to view all the available versions of the Linux system. Select your preferred one and download it with `wsl --install -d <name of the machine>`. For example, if you wish to install Ubuntu, just type `wsl --install -d Ubuntu`. This may take a while.
 
-2. If it is your first-time downloading WSL, you might have to enable some features. You can navigate to  “Control Panel” => “Programs” => “Programs and Features” => “Turn Windows features on or off”, and find “Virtual Machine Platform” and Windows Subsystem for Linux”. Turn both of them on and restart your machine.
+2. If it is your first-time downloading WSL, you might have to enable some features. You can navigate to  “*Control Panel*” => “*Programs*” => “*Programs and Features*” => “*Turn Windows features on or off*”, and find “*Virtual Machine Platform*” and "*Windows Subsystem for Linux*”. Turn both of them on and restart your machine.
 
 3. Follow the [link](https://aka.ms/wsl2kernel) to download an update package . Find the suitable one for your machine and run the downloaded file locally to install the update. 
 
@@ -97,17 +97,17 @@ You might have to re-install WSL service updates after turning the features back
 
 1. Download and install node.js on the following link: https://nodejs.org/en/download/
 
-2. After installing node.js, type in node –version in your terminal to check your node.js version and making sure it is installed properly.
+2. After installing node.js, type in `node –version` in your terminal to check your node.js version and making sure it is installed properly.
 
-3. Open terminal and type in sudo npm install -g @angular/cli to install angular.
+3. Open terminal and type in `sudo npm install -g @angular/cli` to install angular.
 
-4. Wait a few seconds and type in ng version to check angular version and making sure it is installed properly.
+4. Wait a few seconds and type in `ng version` to check angular version and making sure it is installed properly.
 
 5. Clone the directory from GitHub using the GitHub desktop app.
 
 6. Navigate in your terminal until you reach dream-big-ui.
 
-7. Type in ng serve in your terminal after and you will see some messages show up one of which is Angular Live Development Server is listening on localhost:4200, open your browser on http://localhost:4200/ **
+7. Type in `ng serve` in your terminal after and you will see some messages show up one of which is `Angular Live Development Server is listening on localhost:4200`, open your browser on http://localhost:4200/ **
 
 8. Go to your prefer browser and type in http://localhost:4200/
 
