@@ -5,47 +5,41 @@
 <div class="rounded-background">
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="rounded-form">
     <div class="mb-3 form-group">
-      <label for="name" class="form-label">Name</label>
-      <input
-        type="text"
-        formControlName="name"
-        class="form-control"
-        [ngClass]="{ 'is-invalid': submitted && f['name'].errors }"
-        id="name"
-      />
-      <div *ngIf="submitted && f['name'].errors" class="invalid-feedback">
-        <div *ngIf="f['name'].errors['required']">Name is required</div>
-      </div>
+      <mat-form-field appearance="fill" [style.width.px]=1125 hideRequiredMarker="">
+        <mat-label>Name</mat-label>
+        <input formControlName = "name" matInput placeholder="Name">
+        <mat-error>
+          Name is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
     </div>
     <div class="mb-3 form-group">
-      <label for="address" class="form-label">Address</label>
-      <input
-        type="text"
-        formControlName="address"
-        class="form-control"
-        id="address"
-      />
+      <mat-form-field appearance="fill" [style.width.px]=1125 hideRequiredMarker="">
+        <mat-label>Address</mat-label>
+        <input formControlName = "address" matInput placeholder="Address">
+        <mat-error>
+          Address is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
     </div>
     <div class="mb-3 form-group">
-      <label for="phone" class="form-label">Phone</label>
-      <input
-        type="number"
-        formControlName="phone"
-        class="form-control"
-        [ngClass]="{ 'is-invalid': submitted && f['phone'].errors }"
-        id="phone"
-      />
-      <div *ngIf="submitted && f['phone'].errors" class="invalid-feedback">
-        <div *ngIf="f['phone'].errors['required']">Phone must be a number</div>
-      </div>
+      <mat-form-field appearance="fill" [style.width.px]=1125 hideRequiredMarker="">
+        <mat-label>Phone</mat-label>
+        <input formControlName = "phone" matInput placeholder="Phone No.">
+        <mat-error>
+          Phone No. is <strong>required</strong> and be <strong>number</strong>
+        </mat-error>
+      </mat-form-field>
     </div>
     <div class="mb-3 form-group">
-      <label for="user_id">User</label>
-      <select class="form-select" formControlName="user_id">
-        <option *ngFor="let user of users" [ngValue]="user.id">
-          {{ user.name }}
-        </option>
-      </select>
+      <mat-form-field appearance="fill" [style.width.px]=1125>
+        <mat-label>Student</mat-label>
+        <mat-select>
+          <mat-option *ngFor="let user of users" [value]="user.id">
+            {{user.name}}
+          </mat-option>
+        </mat-select>
+      </mat-form-field>
     </div>
     <div class="form-group">
       <button [disabled]="loading" class="btn btn-success">
@@ -55,7 +49,7 @@
         ></span>
         Save
       </button>
-      <a routerLink="/admin/students" class="btn btn-link">Cancel</a>
+      <a routerLink="/admin/students" class="btn btn-link"><button mat-button disabled>Cancel</button></a>
     </div>
   </form>
 </div>

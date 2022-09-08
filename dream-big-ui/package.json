@@ -24,6 +24,7 @@
     "bootstrap": "^5.2.0",
     "jquery": "^3.6.0",
     "ngx-entity-service": "^0.0.32",
+    "package.json": "^2.0.1",
     "paper": "^0.12.15",
     "popper.js": "^1.16.1",
     "rxjs": "~6.6.0",

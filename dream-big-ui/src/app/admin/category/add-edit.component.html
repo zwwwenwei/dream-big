@@ -5,50 +5,31 @@
 <div class="rounded-background">
   <form id="catForm" [formGroup]="form" (ngSubmit)="onSubmit()" class="rounded-form">
     <div class="mb-3 form-group">
-      <label for="name" class="form-label">Name</label>
-      <input
-        type="text"
-        formControlName="name"
-        class="form-control"
-        [ngClass]="{ 'is-invalid': submitted && f['name'].errors }"
-        id="name"
-      />
-      <div *ngIf="submitted && f['name'].errors" class="invalid-feedback">
-        <div *ngIf="f['name'].errors['required']">Name is required</div>
-      </div>
+      <mat-form-field appearance="fill" [style.width.px]=1125 hideRequiredMarker="">
+        <mat-label>Name</mat-label>
+        <input formControlName = "name" matInput placeholder="Name">
+        <mat-error>
+          Name is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
     </div>
     <div class="mb-3 form-group">
-      <label for="description" class="form-label">Description</label>
-      <input
-        type="text"
-        formControlName="description"
-        class="form-control"
-        [ngClass]="{ 'is-invalid': submitted && f['description'].errors }"
-        id="description"
-      />
-      <div
-        *ngIf="submitted && f['description'].errors"
-        class="invalid-feedback"
-      >
-        <div *ngIf="f['description'].errors['required']">
-          Description is required
-        </div>
-      </div>
+      <mat-form-field appearance="fill" [style.width.px]=1125 hideRequiredMarker="">
+        <mat-label>Description</mat-label>
+        <input formControlName = "description" matInput placeholder="Description">
+        <mat-error>
+          Description is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
     </div>
     <div class="mb-3 form-group">
-      <label for="weight" class="form-label">Weight</label>
-      <input
-        type="number"
-        formControlName="weight"
-        class="form-control"
-        [ngClass]="{ 'is-invalid': submitted && f['weight'].errors }"
-        id="weight"
-      />
-      <div *ngIf="submitted && f['weight'].errors" class="invalid-feedback">
-        <div *ngIf="f['weight'].errors['required']">
-          Weight is required and must be a number
-        </div>
-      </div>
+      <mat-form-field appearance="fill" [style.width.px]=1125 hideRequiredMarker=""f>
+        <mat-label>Weight</mat-label>
+        <input formControlName = "weight" matInput placeholder ="Weight">
+        <mat-error>
+          Weight is <strong>required</strong> and be <strong>number</strong>
+        </mat-error>
+      </mat-form-field>
     </div>
     <div class="form-group">
       <button [disabled]="loading" class="btn btn-success">
@@ -58,7 +39,7 @@
         ></span>
         Save
       </button>
-      <a routerLink="/admin/categories" class="btn btn-link">Cancel</a>
+      <a routerLink="/admin/categories" class="btn btn-link"><button mat-button disabled>Cancel</button></a>
     </div>
   </form>
 </div>
