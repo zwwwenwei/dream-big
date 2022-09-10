@@ -29,43 +29,49 @@ export class StarControlComponent implements OnInit {
 
     @ViewChild(StarComponent) star: StarComponent = {} as StarComponent;
     categories: Array<Category> = [];
-    polygonFillColour: string = 'gold';
+    polygonFillColour: string = '#EADA87';
 
     setCategories: Array<Category> = [
         {
             name: "Experience",
             score: 10,
-            colour: "green",
+            colour: "#74DB83",
         },
         {
             name: "Knowledge",
             score: 10,
-            colour: "blue",
+            colour: "#62D6EA",
         },
         {
             name: "Employability",
             score: 10,
-            colour: "red",
+            colour: "#EA7662",
         },
         {
             name: "Readiness",
             score: 10,
-            colour: "purple",
+            colour: "#DB74CD",
         },
         {
             name: "Networking",
             score: 10,
-            colour: "yellow",
+            colour: "#F3EA6D",
         },
     ]
     starSize: number = 20;
-    centrePoint: paper.Point = { x: 400, y: 250 } as paper.Point;
+    centrePoint: paper.Point = { } as paper.Point;
     rotation: number = 0;
     numSpikes: number = 5;
     outerRatio: number = 8;
     innerRatio: number = 3;
+    minScore: number = 20;
 
     ngOnInit(): void {
+        this.centrePoint = {
+            x:  window.document.getElementById('c-div')?.clientWidth!/3,
+            y: window.document.getElementById('c-div')?.clientHeight!/2
+
+        } as paper.Point
         // this.createCategories();
     }
 
