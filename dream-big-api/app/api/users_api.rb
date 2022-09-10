@@ -18,6 +18,7 @@ class UsersApi < Grape::API
   params do
     requires :username, type: String, desc: 'The username used for login'
     requires :name, type: String, desc: 'The user\'s name'
+    requires :email, type: String, desc: 'The email used for login'
     requires :password, type: String, desc: 'The in-no-way secure password'
   end
   post '/users' do
@@ -25,6 +26,7 @@ class UsersApi < Grape::API
       .permit(
         :username,
         :name,
+        :email,
         :password
       )
 
@@ -35,6 +37,7 @@ class UsersApi < Grape::API
   params do
     optional :username, type: String, desc: 'The username used for login'
     optional :name, type: String, desc: 'The user\'s name'
+    requires :email, type: String, desc: 'The email used for login'
     optional :password, type: String, desc: 'The in-no-way secure password'
   end
   put '/users/:id' do
@@ -42,6 +45,7 @@ class UsersApi < Grape::API
       .permit(
         :username,
         :name,
+        :email,
         :password
       )
 

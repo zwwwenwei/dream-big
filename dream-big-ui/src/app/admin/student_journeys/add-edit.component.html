@@ -5,37 +5,37 @@
 <div class="rounded-background">
   <form [formGroup]="form" (ngSubmit)="onSubmit()" class="rounded-form">
     <div class="mb-3 form-group">
-      <label for="timeline" class="form-label">Timeline</label>
-      <input
-        type="text"
-        formControlName="timeline"
-        class="form-control"
-        [ngClass]="{ 'is-invalid': submitted && f['timeline'].errors }"
-        id="timeline"
-      />
-      <div *ngIf="submitted && f['timeline'].errors" class="invalid-feedback">
-        <div *ngIf="f['timeline'].errors['required']">Timeline is required</div>
-      </div>
+      <mat-form-field appearance="fill" [style.width.px]=1125 hideRequiredMarker="">
+        <mat-label>Timeline</mat-label>
+        <input formControlName = "timeline" matInput placeholder="Timeline">
+        <mat-error>
+          Timeline is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
     </div>
    
     <div class="mb-3 form-group">
-      <label for="student_id" class="form-label">Student</label>
-
-      <select class="form-select" formControlName="student_id">
-        <option *ngFor="let student of students" [ngValue]="student.id">
-          {{ student.name }}
-        </option>
-      </select>
+        <mat-form-field appearance="fill" [style.width.px]=1125>
+          <mat-label>Student</mat-label>
+          <mat-select>
+            <mat-option *ngFor="let student of students" [value]="student.id">
+              {{student.id}}
+            </mat-option>
+          </mat-select>
+        </mat-form-field>
+      
     </div>
     <div class="form-group">
-      <button [disabled]="loading" class="btn btn-success">
-        <span
-          *ngIf="loading"
-          class="spinner-border spinner-border-sm mr-1"
-        ></span>
-        Save
-      </button>
-      <a routerLink="/admin/journeys" class="btn btn-link">Cancel</a>
+      <div class="form-group">
+        <button [disabled]="loading" class="btn btn-success">
+          <span
+            *ngIf="loading"
+            class="spinner-border spinner-border-sm mr-1"
+          ></span>
+          Save
+        </button>
+        <a routerLink="/admin/journeys" class="btn btn-link"><button mat-button disabled>Cancel</button></a>
+      </div>
     </div>
   </form>
 </div>

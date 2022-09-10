@@ -3,6 +3,7 @@ module Entities
       expose :id
       expose :username
       expose :name
+      expose :email
       expose :password
     end
   end
