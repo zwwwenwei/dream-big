@@ -8,18 +8,20 @@ import { Category, Polygon, StarCoord } from './types';
 })
 export class StarComponent implements AfterViewInit {
     @ViewChild('canvas') canvas: ElementRef<HTMLCanvasElement> = {} as ElementRef<HTMLCanvasElement>;
-    public project: any;
-    public starPath: any;
-    @Input() categories: Array<Category> = [];
-    @Input() starSize: number = 20;
-    @Input() centrePoint: any = { x: 400, y: 250 };
-    @Input() rotation: number = 0;
-    @Input() outerRatio: number = 8;
-    @Input() innerRatio: number = 3;
-    @Input() numSpikes: number = 5;
 
-    @Input() minScore: number = 30;
-    @Input() polygonFillColour: string = 'gold';
+    context: any;
+    public project: any; // paper.js root project
+    public starPath: any;
+    @Input() categories!: Array<Category>;
+    @Input() starSize!: number;
+    @Input() centrePoint!: paper.Point;
+    @Input() rotation!: number;
+    @Input() outerRatio!: number;
+    @Input() innerRatio!: number;
+    @Input() numSpikes!: number;
+
+    @Input() minScore!: number;
+    @Input() polygonFillColour!: string;
 
     catPolygons: Array<Polygon> = [];
     collidedPolygon: Polygon = {} as Polygon;
@@ -27,12 +29,15 @@ export class StarComponent implements AfterViewInit {
 
     starCoords: Array<StarCoord> = [];
 
+    starColour: string = "#EAEEF0"
     textColour: string = 'black';
     textFont: string = 'Courier New'
     textSize: number = 25;
 
     ngAfterViewInit(): void {
+        this.fillWindow();
         this.project = new Project(this.canvas.nativeElement);
+        this.context = this.canvas.nativeElement.getContext('2d');
         setTimeout(() => {
             this.drawScene(true);
         }, 0);
@@ -94,6 +99,17 @@ export class StarComponent implements AfterViewInit {
         }
     }
 
+
+
+    private fillWindow() {
+        this.canvas.nativeElement.width = window.document.getElementById('c-div')?.clientWidth!
+        this.canvas.nativeElement.height = window.document.getElementById('c-div')?.clientHeight!
+
+        // window.document.getElementById('c-div')?.clientWidth
+        // window.document.getElementById('c-div')?.clientHeight
+
+    }
+
     public drawScene(hasChanged: boolean) {
         // clear the canvas so the star can be redrawn
         this.project.clear();
@@ -117,17 +133,24 @@ export class StarComponent implements AfterViewInit {
         this.drawCatPolygons();
         this.drawStarPointCategories();
     }
+
+
+    getScore(score:number) {
+        
+        return ((score+this.minScore)/100) * (100-this.minScore);
+    }
+    
     private getCatPolygons() {
         let catPolygons: Polygon[] = [];
         var prevCategory = this.categories[this.categories.length - 1];
 
         for (var i = 0; i < this.categories.length; i++) {
             /**
-             * need to calculate where to place the inner spikes of the inner star.
-             * to do this, will draw a line from the centre of the star to an inner spike of the outer star
+             * it needs to calculate where to place the inner spikes of the inner star.
+             * to do this, it will draw a line from the centre of the star to an inner spike of the outer star
              * the inner star's inner spike point will be a point along this line.
-             * scale category score to ensure it can never be larger than the outer star's spike length
-             * it can then be used to find the point along the line which is the scaled score distance away from the centre point of the star
+             * it then scales category score to ensure it can never be larger than the outer star's spike length
+             * the scaled score can then be used to find the point along a line which is scaled score distance away from the centre point of the star
              * 
              * also need to inspect the previous and next categories, as this polygon will share an inner spike with each of them.
              * choose the inner spike locations by calculating the scores of the previous, current and future categories.
@@ -138,16 +161,21 @@ export class StarComponent implements AfterViewInit {
             const nextCategory = i == this.categories.length - 1 ? this.categories[0] : this.categories[i + 1];
             const starCoord = this.starCoords[i];
 
-            var score = this.categories[i].score + this.minScore;
+            // use this.getScore to scale the score to give the inner star a minimum size
+            var score = this.getScore(this.categories[i].score)
             // the previous and next scores are retrieved to allow for the resizing of polygon edges
-            var prevScore = prevCategory.score + this.minScore;
-            var nextScore = nextCategory.score + this.minScore;
+            var prevScore = this.getScore(prevCategory.score);
+            var nextScore = this.getScore(nextCategory.score);
 
             // all scores must be scaled to fit within the star
-            const scaledOuterScore = (this.starSize * this.outerRatio / 100) * score;
+            const scaledOuterScore = ((this.starSize * this.outerRatio) / 100) * score;
             const scaledInnerScore = (this.starSize * this.innerRatio / 100) * score;
             const scaledPrevInnerScore = (this.starSize * this.innerRatio / 100) * prevScore;
             const scaledNextInnerScore = (this.starSize * this.innerRatio / 100) * nextScore;
+            // const scaledOuterScore = (this.starSize * this.outerRatio / 100) * score;
+            // const scaledInnerScore = (this.starSize * this.innerRatio / 100) * score;
+            // const scaledPrevInnerScore = (this.starSize * this.innerRatio / 100) * prevScore;
+            // const scaledNextInnerScore = (this.starSize * this.innerRatio / 100) * nextScore;
 
             var outerSpikeLength = Math.min(scaledOuterScore, this.starSize * this.outerRatio);
 
@@ -269,13 +297,14 @@ export class StarComponent implements AfterViewInit {
         starPath.closePath();
         starPath.strokeWidth = 1;
         starPath.strokeColor = new Color('black');
+        starPath.fillColor = new Color(this.starColour);
         this.starPath = starPath;
         return starCoords;
     }
     private drawCircle(radius: number) {
         var path = new Path.Circle(this.centrePoint, radius);
-        path.strokeColor = new Color('midnightblue');
-        path.fillColor = new Color('aliceblue');
+        path.strokeColor = new Color('black');
+        // path.fillColor = new Color('aliceblue');
         path.strokeWidth = 2
     }
     /**
