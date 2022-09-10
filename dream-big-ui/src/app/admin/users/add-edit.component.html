@@ -10,43 +10,31 @@
     class="rounded-form"
   >
     <div class="mb-3 form-group">
-      <label for="name" class="form-label">Username</label>
-      <input
-        type="text"
-        formControlName="username"
-        class="form-control"
-        [ngClass]="{ 'is-invalid': submitted && f['username'].errors }"
-        id="username"
-      />
-      <div *ngIf="submitted && f['username'].errors" class="invalid-feedback">
-        <div *ngIf="f['username'].errors['required']">Username is required</div>
-      </div>
+      <mat-form-field appearance="fill" [style.width.px]=1125 hideRequiredMarker="">
+        <mat-label>Username</mat-label>
+        <input formControlName = "username" matInput placeholder="Username">
+        <mat-error>
+          Username is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
     </div>
     <div class="mb-3 form-group">
-      <label for="name" class="form-label">Name</label>
-      <input
-        type="text"
-        formControlName="name"
-        class="form-control"
-        [ngClass]="{ 'is-invalid': submitted && f['name'].errors }"
-        id="name"
-      />
-      <div *ngIf="submitted && f['name'].errors" class="invalid-feedback">
-        <div *ngIf="f['name'].errors['required']">Name is required</div>
-      </div>
+      <mat-form-field appearance="fill" [style.width.px]=1125 hideRequiredMarker="">
+        <mat-label>Name</mat-label>
+        <input formControlName = "name" matInput placeholder="Name">
+        <mat-error>
+          Name is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
     </div>
     <div class="mb-3 form-group">
-      <label for="password" class="form-label">Password</label>
-      <input
-        type="text"
-        formControlName="password"
-        class="form-control"
-        [ngClass]="{ 'is-invalid': submitted && f['password'].errors }"
-        id="password"
-      />
-      <div *ngIf="submitted && f['password'].errors" class="invalid-feedback">
-        <div *ngIf="f['password'].errors['required']">Password is required</div>
-      </div>
+      <mat-form-field appearance="fill" [style.width.px]=1125 hideRequiredMarker="">
+        <mat-label>Password</mat-label>
+        <input formControlName = "password" matInput placeholder="Password">
+        <mat-error>
+          Password is <strong>required</strong>
+        </mat-error>
+      </mat-form-field>
     </div>
     <div class="form-group">
       <button [disabled]="loading" class="btn btn-success">
@@ -56,7 +44,7 @@
         ></span>
         Save
       </button>
-      <a routerLink="/admin/users" class="btn btn-link">Cancel</a>
+      <a routerLink="/users" class="btn btn-link"><button mat-button disabled>Cancel</button></a>
     </div>
   </form>
 </div>

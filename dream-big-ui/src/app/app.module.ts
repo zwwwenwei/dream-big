@@ -1,4 +1,5 @@
 import { NgModule } from '@angular/core';
+import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
@@ -21,6 +22,9 @@ import { StudentService } from './services/student.service';
 import { StudentJourneyService } from './services/student-journey.service';
 import { IntroPageComponent } from './Components/intro-page/intro-page.component';
 
+import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
+import { NgMaterialModule } from './ng-material/ng-material.module';
+import { RgbPickerModule } from './rgb-picker/rgb-picker.module';
 
 @NgModule({
   declarations: [
@@ -32,20 +36,32 @@ import { IntroPageComponent } from './Components/intro-page/intro-page.component
     IntroPageComponent,
   ],
   imports: [
+    BrowserAnimationsModule,
     BrowserModule,
     AppRoutingModule,
     HttpClientModule,
     ReactiveFormsModule,
     FormsModule,
     AdminModule,
-    TableComponentModule
+    TableComponentModule,
+    NgMaterialModule,
+    RgbPickerModule
   ],
   providers: [
     UnitService,
     UserService,
     CategoryService,
     StudentService,
-    StudentJourneyService
+    StudentJourneyService,
+    { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: true } },
+    // {
+    // provide: HTTP_INTERCEPTORS,
+    //useClass: AuthInterceptor,
+    // multi: true
+    //.},
+    //AuthService,
+    //UserService,
+    //AuthGuard,
   ],
   bootstrap: [AppComponent]
 })

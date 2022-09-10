@@ -4,51 +4,74 @@ import words from '../../../assets/words.json';
 
 import { StarComponent } from '../Star/star.component';
 import { Category } from '../Star/types';
-
+import { MatDialog } from '@angular/material/dialog';
+import { RgbPickerComponent } from 'src/app/rgb-picker/rgb-picker.component';
 
 @Component({
     selector: 'app-star-control',
-    templateUrl: './star-control.component.html'
+    templateUrl: './star-control.component.html',
+    styleUrls: ['./star-control.component.scss']
 })
 export class StarControlComponent implements OnInit {
+    constructor(public dialog: MatDialog) { }
+
+    openDialog(): void {
+        const dialogRef = this.dialog.open(RgbPickerComponent, {
+            width: '250px',
+            data: this.polygonFillColour,
+        });
+
+        dialogRef.afterClosed().subscribe(result => {
+            this.polygonFillColour = result;
+            console.log('The dialog was closed', result);
+        });
+    }
+
     @ViewChild(StarComponent) star: StarComponent = {} as StarComponent;
     categories: Array<Category> = [];
+    polygonFillColour: string = '#EADA87';
 
     setCategories: Array<Category> = [
         {
             name: "Experience",
             score: 10,
-            colour: "green",
+            colour: "#74DB83",
         },
         {
             name: "Knowledge",
             score: 10,
-            colour: "blue",
+            colour: "#62D6EA",
         },
         {
             name: "Employability",
             score: 10,
-            colour: "red",
+            colour: "#EA7662",
         },
         {
             name: "Readiness",
             score: 10,
-            colour: "purple",
+            colour: "#DB74CD",
         },
         {
             name: "Networking",
             score: 10,
-            colour: "yellow",
+            colour: "#F3EA6D",
         },
     ]
     starSize: number = 20;
-    centrePoint: paper.Point = { x: 400, y: 250 } as paper.Point;
+    centrePoint: paper.Point = { } as paper.Point;
     rotation: number = 0;
     numSpikes: number = 5;
     outerRatio: number = 8;
     innerRatio: number = 3;
+    minScore: number = 20;
 
     ngOnInit(): void {
+        this.centrePoint = {
+            x:  window.document.getElementById('c-div')?.clientWidth!/3,
+            y: window.document.getElementById('c-div')?.clientHeight!/2
+
+        } as paper.Point
         // this.createCategories();
     }
 
@@ -64,10 +87,8 @@ export class StarControlComponent implements OnInit {
         }
     }
 
-    public onInputChange(recreateCategories = false) {
-        if (recreateCategories) {
-            this.createCategories();
-        }
+
+    public onInputChange() {
 
         // ensure all values in parent have finished updating before redrawing star
         setTimeout(() => {

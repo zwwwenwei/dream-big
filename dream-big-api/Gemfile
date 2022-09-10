@@ -54,7 +54,7 @@ end
 group :development do
   # Speed up commands on slow machines / big apps [https://github.com/rails/spring]
   gem "spring" #Spring is a Rails application preloader
-  #gem "sprockets-rails"#Ruby library for compiling and serving web assets
+  gem "sprockets-rails"#Ruby library for compiling and serving web assets
   gem 'better_errors'
   gem 'byebug'
   gem 'database_cleaner'
