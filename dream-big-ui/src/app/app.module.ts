@@ -21,6 +21,7 @@ import { TableComponentModule } from './admin/generic/table.component';
 import { StudentService } from './services/student.service';
 import { StudentJourneyService } from './services/student-journey.service';
 import { IntroPageComponent } from './Components/intro-page/intro-page.component';
+import { AvatarBuilderComponent } from './Components/avatar-builder/avatar-builder.component';
 
 import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
 import { NgMaterialModule } from './ng-material/ng-material.module';
@@ -34,6 +35,7 @@ import { RgbPickerModule } from './rgb-picker/rgb-picker.module';
     StarControlComponent,
     StarComponent,
     IntroPageComponent,
+    AvatarBuilderComponent,
   ],
   imports: [
     BrowserAnimationsModule,

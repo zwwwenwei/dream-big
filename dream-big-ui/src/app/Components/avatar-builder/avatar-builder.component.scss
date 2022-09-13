@@ -1,0 +1,53 @@
+canvas
+{
+    border: 2px black dashed;
+}
+
+canvas[main] {
+    width: 360px;
+    height: 240px;
+}
+
+canvas[option] {
+    height: 48px;
+    flex: 1;
+    margin-left: 8px;
+    margin-right: 8px;
+}
+
+.option-toggle {
+    width: 240px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 12px auto;
+}
+
+button {
+    margin: 4px;
+
+}
+
+[color] {
+    position: relative;
+    border: 1px solid #0008;
+    border-radius: 9999px;
+    height: 36px;
+    width: 36px;
+    margin: 6px;
+}
+
+input {
+    position: absolute;
+    opacity: 0;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+}
+
+:host {
+    padding: 16px;
+    display: flex;
+    justify-content: center;
+}
