@@ -13,7 +13,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule } from '@angular/material/dialog';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatGridListModule } from '@angular/material/grid-list';
-import { MatExpansionModule } from '@angular/material/expansion'
+import { MatExpansionModule } from '@angular/material/expansion';
 
 @NgModule({
     declarations: [],

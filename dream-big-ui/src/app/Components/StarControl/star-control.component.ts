@@ -28,38 +28,39 @@ export class StarControlComponent implements OnInit {
     }
 
     @ViewChild(StarComponent) star: StarComponent = {} as StarComponent;
-    categories: Array<Category> = [];
+
     polygonFillColour: string = '#EADA87';
 
+    categories: Array<Category> = [];
     setCategories: Array<Category> = [
         {
             name: "Experience",
-            score: 10,
+            score: 0,
             colour: "#74DB83",
         },
         {
             name: "Knowledge",
-            score: 10,
+            score: 0,
             colour: "#62D6EA",
         },
         {
             name: "Employability",
-            score: 10,
+            score: 0,
             colour: "#EA7662",
         },
         {
             name: "Readiness",
-            score: 10,
+            score: 0,
             colour: "#DB74CD",
         },
         {
             name: "Networking",
-            score: 10,
+            score: 0,
             colour: "#F3EA6D",
         },
     ]
     starSize: number = 20;
-    centrePoint: paper.Point = { } as paper.Point;
+    centrePoint: paper.Point = {} as paper.Point;
     rotation: number = 0;
     numSpikes: number = 5;
     outerRatio: number = 8;
@@ -68,28 +69,50 @@ export class StarControlComponent implements OnInit {
 
     ngOnInit(): void {
         this.centrePoint = {
-            x:  window.document.getElementById('c-div')?.clientWidth!/3,
-            y: window.document.getElementById('c-div')?.clientHeight!/2
+            x: window.document.getElementById('c-div')?.clientWidth! / 3,
+            y: window.document.getElementById('c-div')?.clientHeight! / 2
 
-        } as paper.Point
-        // this.createCategories();
+        } as paper.Point;
+        this.resetCategories();
     }
 
-    public createCategories() {
-        this.categories = [];
-        for (var i = 0; i < this.numSpikes; i++) {
-            const cat = {
-                name: words[this.getRandomNumberBetween(0, words.length - 1)],
-                score: 10,
-                colour: this.getRandomColourCode()
-            }
-            this.categories.push(cat);
+    public resetCategories() {
+        this.categories = [...this.setCategories];
+        this.categories.forEach((cat) => {
+            cat.score = 0;
+        })
+        this.numSpikes = this.categories.length;
+        this.rotation = 0;
+        this.starSize = 20;
+        this.innerRatio = 3;
+        this.outerRatio = 8;
+        this.minScore = 20;
+        this.onInputChange();
+    }
+
+    public addCategory() {
+        let category = {
+            name: words[this.getRandomNumberBetween(0, words.length - 1)],
+            score: 0,
+            colour: this.getRandomColourCode()
         }
+        this.categories.push(category);
     }
 
+    public changeSpikes(e: any) {
+        if (e.data < this.categories.length) {
+            this.removeCategory();
+        } else {
+            this.addCategory();
+        }
+        this.onInputChange();
+    }
+
+    public removeCategory() {
+        this.categories.pop();
+    }
 
     public onInputChange() {
-
         // ensure all values in parent have finished updating before redrawing star
         setTimeout(() => {
             this.star.drawScene(true);
@@ -97,17 +120,10 @@ export class StarControlComponent implements OnInit {
     }
 
     public randomise() {
-        if (this.categories.length) {
-            this.createCategories();
-            this.categories.forEach((cat) => {
-                cat.score = this.getRandomNumberBetween(0, 100);
-            });
-        } else {
-            this.setCategories.forEach((cat) => {
-                cat.score = this.getRandomNumberBetween(0, 100);
-            });
-        }
 
+        this.categories.forEach((cat) => {
+            cat.score = this.getRandomNumberBetween(0, 100);
+        });
 
         // ensure all values in parent have finished updating before redrawing star
         setTimeout(() => {
