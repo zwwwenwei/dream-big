@@ -1,4 +1,6 @@
 import { Component } from '@angular/core';
+import { LoginComponent } from './Components/login/login.component';
+import { AuthService } from './services/auth.service';
 
 @Component({
   selector: 'app-root',
@@ -7,4 +9,7 @@ import { Component } from '@angular/core';
 })
 export class AppComponent {
   title = 'dream-big-ui';
+  authService = false;
+  login = false;
+  logout = true;
 }

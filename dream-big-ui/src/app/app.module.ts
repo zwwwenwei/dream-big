@@ -26,6 +26,9 @@ import { AvatarBuilderComponent } from './Components/avatar-builder/avatar-build
 import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
 import { NgMaterialModule } from './ng-material/ng-material.module';
 import { RgbPickerModule } from './rgb-picker/rgb-picker.module';
+import { LoginComponent } from './Components/login/login.component';
+import { ProfileComponent } from './Components/profile/profile.component';
+import { RouterModule } from '@angular/router';
 
 @NgModule({
   declarations: [
@@ -36,6 +39,8 @@ import { RgbPickerModule } from './rgb-picker/rgb-picker.module';
     StarComponent,
     IntroPageComponent,
     AvatarBuilderComponent,
+    LoginComponent,
+    ProfileComponent,
   ],
   imports: [
     BrowserAnimationsModule,
@@ -47,7 +52,12 @@ import { RgbPickerModule } from './rgb-picker/rgb-picker.module';
     AdminModule,
     TableComponentModule,
     NgMaterialModule,
-    RgbPickerModule
+    RgbPickerModule,
+    RouterModule.forRoot([
+      { path: '', redirectTo: '/', pathMatch: 'full' },
+      { path: 'login', component: LoginComponent },
+      { path: 'profile', component: ProfileComponent }
+    ]),
   ],
   providers: [
     UnitService,

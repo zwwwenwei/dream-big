@@ -1,4 +1,16 @@
 <app-navbar></app-navbar>
+<div style="text-align:center">
+    <ul>
+        <li><a class="nav-link" routerLink="/" routerLinkActive="active">Home</a>  </li>
+        <li><a class="nav-link" routerLink="profile" routerLinkActive="active" *ngIf="authService.logIn">Profile</a>  </li>
+        <li style="float:right" > <a class="nav-link"  style="float:right" routerLink="login" routerLinkActive="active" *ngIf="!authService.logIn">Login</a> </li>
+        <li style="float:right" > <a class ="nav-link" (click)="logout()" href="#" *ngIf="authService.logIn">Logout</a>  </li>
+      </ul>
+    <div class="text-center">
+      <p>
+        Dream Big Test Login
+      </p>
+    </div>
 <router-outlet></router-outlet>
 
 
