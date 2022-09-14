@@ -47,10 +47,10 @@ export class StarComponent implements AfterViewInit {
         // ensure the objects on the page have fully loaded before trying to perform logic
         if (this.starPath) {
             const mousePoint = new Point(e.offsetX, e.offsetY);
+            this.getCollidedPolygon(mousePoint);
             this.catPolygons.forEach((poly) => {
                 poly.highlight = poly == this.collidedPolygon;
             });
-            this.getCollidedPolygon(mousePoint);
 
             setTimeout(() => {
                 this.drawScene(false);
