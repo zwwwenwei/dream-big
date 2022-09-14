@@ -22,11 +22,11 @@ export class AuthService {
       });
        
     }
-    logout() {
+  logout() {
       localStorage.removeItem('token');
     }
    
-    public get logIn(): boolean {
+  public get logIn(): boolean {
       return (localStorage.getItem('token') !== null);
     }
  

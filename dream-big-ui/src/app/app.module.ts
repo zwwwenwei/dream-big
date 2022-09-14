@@ -29,6 +29,7 @@ import { RgbPickerModule } from './rgb-picker/rgb-picker.module';
 import { LoginComponent } from './Components/login/login.component';
 import { ProfileComponent } from './Components/profile/profile.component';
 import { RouterModule } from '@angular/router';
+import { AuthService } from './services/auth.service';
 
 @NgModule({
   declarations: [
@@ -53,6 +54,7 @@ import { RouterModule } from '@angular/router';
     TableComponentModule,
     NgMaterialModule,
     RgbPickerModule,
+   
     RouterModule.forRoot([
       { path: '', redirectTo: '/', pathMatch: 'full' },
       { path: 'login', component: LoginComponent },
@@ -63,6 +65,7 @@ import { RouterModule } from '@angular/router';
     UnitService,
     UserService,
     CategoryService,
+    AuthService,
     StudentService,
     StudentJourneyService,
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: true } },

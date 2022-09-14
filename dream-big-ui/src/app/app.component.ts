@@ -9,7 +9,16 @@ import { AuthService } from './services/auth.service';
 })
 export class AppComponent {
   title = 'dream-big-ui';
-  authService = false;
-  login = false;
-  logout = true;
+
+  constructor(
+    public authService : AuthService
+) { }
+  
+logout()
+{
+  this.authService.logout();
+}
+  // authService = false;
+  // login = false;
+  // logout = true;
 }
