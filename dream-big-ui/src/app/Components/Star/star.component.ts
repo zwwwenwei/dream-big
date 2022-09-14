@@ -31,7 +31,7 @@ export class StarComponent implements AfterViewInit {
 
     starColour: string = "#EAEEF0"
     textColour: string = 'black';
-    textFont: string = 'Courier New'
+    textFont: string = 'Arial'
     textSize: number = 25;
 
     ngAfterViewInit(): void {
@@ -47,10 +47,10 @@ export class StarComponent implements AfterViewInit {
         // ensure the objects on the page have fully loaded before trying to perform logic
         if (this.starPath) {
             const mousePoint = new Point(e.offsetX, e.offsetY);
+            this.getCollidedPolygon(mousePoint);
             this.catPolygons.forEach((poly) => {
                 poly.highlight = poly == this.collidedPolygon;
             });
-            this.getCollidedPolygon(mousePoint);
 
             setTimeout(() => {
                 this.drawScene(false);
@@ -87,13 +87,13 @@ export class StarComponent implements AfterViewInit {
     private drawText(xy: paper.Point) {
         var polygon = this.collidedPolygon;
 
-        if (Object.entries(polygon).length) {
+        if (!!Object.entries(polygon).length) {
             new PointText({
                 point: [30, 30],
                 content: `${polygon.category.name}\nScore: ${polygon.category.score}`,
                 fillColor: this.textColour,
                 fontFamily: this.textFont,
-                fontWeight: 'bold',
+                fontWeight: '',
                 fontSize: this.textSize
             });
         }
@@ -101,7 +101,7 @@ export class StarComponent implements AfterViewInit {
 
 
 
-    private fillWindow() {
+    public fillWindow() {
         this.canvas.nativeElement.width = window.document.getElementById('c-div')?.clientWidth!
         this.canvas.nativeElement.height = window.document.getElementById('c-div')?.clientHeight!
 
@@ -113,7 +113,7 @@ export class StarComponent implements AfterViewInit {
     public drawScene(hasChanged: boolean) {
         // clear the canvas so the star can be redrawn
         this.project.clear();
-        this.drawCircle(this.starSize * this.outerRatio + 20);
+        // this.drawCircle(this.starSize * this.outerRatio + 20);
 
         // draw the star to the canvas and retrieve the points for all inner and outer spikes points
         this.starCoords = this.drawStar(this.numSpikes);
@@ -135,11 +135,12 @@ export class StarComponent implements AfterViewInit {
     }
 
 
-    getScore(score:number) {
-        
-        return ((score+this.minScore)/100) * (100-this.minScore);
+    getScore(score: number) {
+        let newScore = this.minScore - ((score/100)*this.minScore)
+
+        return score+newScore;
     }
-    
+
     private getCatPolygons() {
         let catPolygons: Polygon[] = [];
         var prevCategory = this.categories[this.categories.length - 1];
@@ -153,8 +154,8 @@ export class StarComponent implements AfterViewInit {
              * the scaled score can then be used to find the point along a line which is scaled score distance away from the centre point of the star
              * 
              * also need to inspect the previous and next categories, as this polygon will share an inner spike with each of them.
-             * choose the inner spike locations by calculating the scores of the previous, current and future categories.
-             * determine whether to use this polygon's inner spike length or the previous one by using the maximum value (do it for the future polygon as well)
+             * choose the inner spike locations by calculating the scores of the previous, current and next category.
+             * determine whether to use this polygon, the previous, or the next one's inner spike length by using the maximum value
              * 
              * then find the points along the lines towards the outer star's inner spikes. do this for the left and right inner spikes.
              */
@@ -172,10 +173,6 @@ export class StarComponent implements AfterViewInit {
             const scaledInnerScore = (this.starSize * this.innerRatio / 100) * score;
             const scaledPrevInnerScore = (this.starSize * this.innerRatio / 100) * prevScore;
             const scaledNextInnerScore = (this.starSize * this.innerRatio / 100) * nextScore;
-            // const scaledOuterScore = (this.starSize * this.outerRatio / 100) * score;
-            // const scaledInnerScore = (this.starSize * this.innerRatio / 100) * score;
-            // const scaledPrevInnerScore = (this.starSize * this.innerRatio / 100) * prevScore;
-            // const scaledNextInnerScore = (this.starSize * this.innerRatio / 100) * nextScore;
 
             var outerSpikeLength = Math.min(scaledOuterScore, this.starSize * this.outerRatio);
 
@@ -183,10 +180,11 @@ export class StarComponent implements AfterViewInit {
             var innerSpikeLength = Math.min(scaledInnerScore, this.starSize * this.innerRatio);
             var prevInnerSpikeLength = Math.min(scaledPrevInnerScore, this.starSize * this.innerRatio);
             var nextInnerSpikeLength = Math.min(scaledNextInnerScore, this.starSize * this.innerRatio);
-
+            
+            let maxEdgeLengthL, maxEdgeLengthR;
             // determine the max length between this polygon and its neighbours
-            const maxEdgeLengthL = Math.max(prevInnerSpikeLength, innerSpikeLength);
-            const maxEdgeLengthR = Math.max(nextInnerSpikeLength, innerSpikeLength)
+            maxEdgeLengthL = Math.max(prevInnerSpikeLength, innerSpikeLength);
+            maxEdgeLengthR = Math.max(nextInnerSpikeLength, innerSpikeLength)
 
             // calculate the points on the corresponding inner spike lines, using the maximum edge length for each inner spike
             const edgeL = this.calculateLinePoint(this.centrePoint.x, this.centrePoint.y, starCoord.edgeL.x, starCoord.edgeL.y, maxEdgeLengthL);
