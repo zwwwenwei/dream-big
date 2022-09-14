@@ -6,7 +6,8 @@ const KEYS =
     'id',
     'username',
     'name',
-    'password'
+    'password',
+    'token'
   ];
 
 export class User extends Entity {

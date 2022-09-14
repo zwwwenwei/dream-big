@@ -3,10 +3,9 @@ Rails.application.routes.draw do
 
   # Defines the root path route ("/")
 # root "articles#index"
-mount DreamBigApi => '/'
-resources :users, param: :_username
-post '/auth/login', to: 'authentication#login' 
-get '/*a', to: 'application#not_found'
 
+resources :users
+post '/auth/login', to: 'authentication#login' 
+mount DreamBigApi => '/'
 mount GrapeSwaggerRails::Engine => '/api/docs'
 end

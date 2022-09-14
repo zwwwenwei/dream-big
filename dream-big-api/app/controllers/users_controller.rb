@@ -1,6 +1,6 @@
 class UsersController < ApplicationController
-    before_action :authorize_request, except: :create
-    before_action :find_user, except: %i[create index]
+    skip_before_action :authenticate_request, only: [:create]
+    before_action :set_user, only: [:show, :destroy]
   
     # GET /users
     def index
@@ -31,23 +31,26 @@ class UsersController < ApplicationController
                status: :unprocessable_entity
       end
     end
-  
+
+    def find_user
+      @user = User.find_by_username!(params[:_username])
+      rescue ActiveRecord::RecordNotFound
+        render json: { errors: 'User not found' }, status: :not_found
+    end
     # DELETE /users/{username}
     def destroy
       @user.destroy
     end
   
     private
-  
-    def find_user
-      @user = User.find_by_username!(params[:_username])
-      rescue ActiveRecord::RecordNotFound
-        render json: { errors: 'User not found' }, status: :not_found
+      def user_params
+        params.permit(:username, :email, :password)
+      end
+
+    def set_user
+      @user = User.find(params[:id])
     end
-  
-    def user_params
-      params.permit(
-        :avatar, :name, :username, :email, :password, :password_confirmation
-      )
-    end
+
+
+
   end
