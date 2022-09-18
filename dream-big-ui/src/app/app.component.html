@@ -1,11 +1,11 @@
 <app-navbar></app-navbar>
-<div style="text-align:center">
-  <div class = "test">
+<div class = "outercontainer">
+  <div class = "innercontainer">
     <ul>
-        <li><a class="nav-link" routerLink="/" routerLinkActive="active">Home</a>  </li>
-        <li><a class="nav-link" routerLink="profile" routerLinkActive="active" *ngIf="authService.logIn">Profile</a>  </li>
-        <li style="display:flex" > <a class="nav-link"  style="display: flex;" routerLink="login" routerLinkActive="active" *ngIf="!authService.logIn">Login</a> </li>
-        <li style="display: flex" > <a class ="nav-link" (click)="logout()" href="#" *ngIf="authService.logIn">Logout</a>  </li>
+        <li class="listbutton"><a href="#" class="buttonClass" routerLink="/" routerLinkActive="active">Home</a>  </li>
+        <li class="listbutton" ><a href="#" class="buttonClass"  routerLink="profile" routerLinkActive="active" *ngIf="authService.logIn">Profile</a>  </li>
+        <li class="listbutton"><a href="#" class="buttonClass"  routerLink="login" routerLinkActive="active" *ngIf="!authService.logIn">Login</a> </li>
+        <li class="listbutton"><a href="#" class="buttonClass"  (click)="logout()" href="#" *ngIf="authService.logIn">Logout</a> </li>
       </ul>
     </div>
     <div class="text-center">
