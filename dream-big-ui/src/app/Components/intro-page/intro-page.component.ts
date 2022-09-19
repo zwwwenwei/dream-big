@@ -34,7 +34,10 @@ ngOnInit() {
     // Append our new star
     this.document.getElementById("space").append(star);
   }
-  //this.router.navigate(['/profile'])
+  setTimeout(() => {
+    this.router.navigate(['/profile'])
+  }, 100000);
+  
 }
 
 // Gets random x, y values based on the size of the container

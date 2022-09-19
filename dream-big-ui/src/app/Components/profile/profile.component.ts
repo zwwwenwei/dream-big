@@ -20,14 +20,14 @@ export class ProfileComponent implements OnInit {
         
     }
     ngOnInit() {
-
+      try{
+        this.user = JSON.parse(this.userService.get.name);
+     }catch(error){}
          
     }
 
     getUser() {
-      try{
-        this.user = JSON.parse(this.userService.get.name);
-     }catch(error){}  
+       
     }
     onLogOut() {
       this.isLoading = true;
