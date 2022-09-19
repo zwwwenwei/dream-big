@@ -1,18 +1,6 @@
+
 <app-navbar></app-navbar>
-<div class = "outercontainer">
-  <div class = "innercontainer">
-    <ul>
-        <li class="listbutton"><a href="#" class="buttonClass" routerLink="/" routerLinkActive="active">Home</a>  </li>
-        <li class="listbutton" ><a href="#" class="buttonClass"  routerLink="profile" routerLinkActive="active" *ngIf="authService.logIn">Profile</a>  </li>
-        <li class="listbutton"><a href="#" class="buttonClass"  routerLink="login" routerLinkActive="active" *ngIf="!authService.logIn">Login</a> </li>
-        <li class="listbutton"><a href="#" class="buttonClass"  (click)="logout()" href="#" *ngIf="authService.logIn">Logout</a> </li>
-      </ul>
-    </div>
-    <div class="text-center">
-      <p>
-        Dream Big Test Login
-      </p>
-    </div>
+
 <router-outlet></router-outlet>
 
 
