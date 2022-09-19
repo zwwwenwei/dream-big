@@ -1,6 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
- 
+import { FormBuilder, Validators } from '@angular/forms';
 import { AuthService } from 'src/app/services/auth.service';
  
 @Component({
@@ -11,15 +11,29 @@ import { AuthService } from 'src/app/services/auth.service';
 export class LoginComponent implements OnInit {
   email = '';
   password = '';
-   
-  constructor(private authService: AuthService) {
+  isLoading = false;
+
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {
      
   }
   Login() {
   console.log("you are logging in")
   this.authService.login(this.email, this.password)
+  
    
   }
  
   ngOnInit() { }
+
+  onSubmit() {
+    this.isLoading = true;
+    this.authService.login(this.email, this.password)
+    this.isLoading = false;
+    this.authService.setLoginStatus(true);
+    this.router.navigate(['/intro'])
+    }
+      
 }
+
+
+

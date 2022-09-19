@@ -8,19 +8,20 @@ import { AvatarBuilderComponent } from './Components/avatar-builder/avatar-build
 import { IntroPageComponent } from './Components/intro-page/intro-page.component';
 import { LoginComponent } from './Components/login/login.component';
 import { ProfileComponent } from './Components/profile/profile.component';
+import { AuthGuard } from './services/authguard.service';
 
 const adminModule = () => import('./admin/admin.module').then(x => x.AdminModule);
 
 
 const routes: Routes = [
-  { path: '', redirectTo: '/', pathMatch: 'full'},
+  { path: '', redirectTo: '/login', pathMatch: 'full'},
   { path: 'login', component: LoginComponent },
-  { path: 'profile', component: ProfileComponent },
-  { path: 'home', component: LandingPageComponent },
-  { path: 'intro', component: IntroPageComponent},
-  { path: 'star', component: StarControlComponent },
-  { path: 'avatar-builder', component: AvatarBuilderComponent },
-  { path: 'admin', loadChildren: adminModule },
+  { path: 'intro', canActivate: [AuthGuard], component: IntroPageComponent},
+  { path: 'profile', canActivate: [AuthGuard], component: ProfileComponent },
+  { path: 'home', canActivate: [AuthGuard], component: LandingPageComponent }, 
+  { path: 'star', canActivate: [AuthGuard], component: StarControlComponent },
+  { path: 'avatar-builder', canActivate: [AuthGuard], component: AvatarBuilderComponent },
+  { path: 'admin', canActivate: [AuthGuard], loadChildren: adminModule },
 
 ];
 

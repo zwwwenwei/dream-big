@@ -2,6 +2,7 @@
 import { Component, OnInit } from '@angular/core';
 import { Inject } from '@angular/core';
 import { DOCUMENT } from '@angular/common';
+import { Router, ActivatedRoute } from '@angular/router';
 
 @Component({
   selector: 'app-intro-page',
@@ -14,7 +15,7 @@ export class IntroPageComponent implements OnInit {
 readonly numStars = 100;
 
 // Inject what we need to access the native document variable
-constructor(@Inject(DOCUMENT) private document: any) { }
+constructor(@Inject(DOCUMENT) private document: any,  private router: Router) { }
 
 ngOnInit() {
   // For every star we want to display
@@ -33,6 +34,7 @@ ngOnInit() {
     // Append our new star
     this.document.getElementById("space").append(star);
   }
+  //this.router.navigate(['/profile'])
 }
 
 // Gets random x, y values based on the size of the container
