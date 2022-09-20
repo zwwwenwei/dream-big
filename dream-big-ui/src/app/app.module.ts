@@ -58,8 +58,9 @@ import { StarMapComponent } from './Components/StarMap/star-map.component';
     RgbPickerModule,
    
     RouterModule.forRoot([
-      { path: '', redirectTo: '/', pathMatch: 'full' },
+      { path: '', redirectTo: '/login', pathMatch: 'full' },
       { path: 'login', component: LoginComponent },
+      { path: 'intro', component: IntroPageComponent },
       { path: 'profile', component: ProfileComponent }
     ]),
   ],
