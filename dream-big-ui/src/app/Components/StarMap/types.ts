@@ -1,14 +1,13 @@
 
-
 export interface Star {
     id: number,
     size: number;
-
-    circle: StarCircle;
-    circlePath : paper.Path;
+    planets: Planet[];
+    circle: CircleData;
+    circlePath: paper.Path;
 }
 
-export interface StarCircle {
+export interface CircleData {
 
     center: paper.Point,
     radius: number,
@@ -16,4 +15,12 @@ export interface StarCircle {
     strokeColour: string,
     strokeWidth: number,
 
+}
+
+export interface Planet {
+    id: number,
+    size: number,
+    circle: CircleData;
+    circlePath: paper.Path;
+    offset: paper.Point;
 }
