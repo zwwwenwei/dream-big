@@ -30,6 +30,7 @@ import { LoginComponent } from './Components/login/login.component';
 import { ProfileComponent } from './Components/profile/profile.component';
 import { RouterModule } from '@angular/router';
 import { AuthService } from './services/auth.service';
+import { StarMapComponent } from './Components/StarMap/star-map.component';
 
 @NgModule({
   declarations: [
@@ -42,6 +43,7 @@ import { AuthService } from './services/auth.service';
     AvatarBuilderComponent,
     LoginComponent,
     ProfileComponent,
+    StarMapComponent
   ],
   imports: [
     BrowserAnimationsModule,

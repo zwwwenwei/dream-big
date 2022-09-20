@@ -8,6 +8,7 @@ import { AvatarBuilderComponent } from './Components/avatar-builder/avatar-build
 import { IntroPageComponent } from './Components/intro-page/intro-page.component';
 import { LoginComponent } from './Components/login/login.component';
 import { ProfileComponent } from './Components/profile/profile.component';
+import { StarMapComponent } from './Components/StarMap/star-map.component';
 
 const adminModule = () => import('./admin/admin.module').then(x => x.AdminModule);
 
@@ -20,6 +21,7 @@ const routes: Routes = [
   { path: 'intro', component: IntroPageComponent},
   { path: 'star', component: StarControlComponent },
   { path: 'avatar-builder', component: AvatarBuilderComponent },
+  { path: 'star-map', component: StarMapComponent },
   { path: 'admin', loadChildren: adminModule },
 
 ];

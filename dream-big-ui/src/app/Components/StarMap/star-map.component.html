@@ -1,0 +1,15 @@
+<div id="aa" class="container">
+  <button mat-raised-button color="primary" (click)="addStar()">Add</button>
+  <button mat-raised-button color="warn" (click)="removeStar()">Remove</button>
+
+  <canvas
+    #canvas
+    (mousemove)="onMouseMove($event)"
+    (click)="onMouseClick($event)"
+    (mouseup)="onMouseUp($event)"
+    (mousedown)="onMouseDown($event)"
+    width="1000"
+    height="500"
+  >
+  </canvas>
+</div>
