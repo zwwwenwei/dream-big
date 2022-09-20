@@ -13,20 +13,23 @@ section
     top: 45%;
     left: 50%;
     z-index: 1;
+    white-space: normal;
+    overflow: hidden;
 }
     
 
 // Set the animation, color, size and hide the text
 .intro
 {
+    position: absolute;
+    top: 30%;
+    left: 35%;
+    z-index: 1;
     animation: intro 6s ease-out 1s;
-    margin: 0 0 0 (- 15em / 2);
     color: rgb(75, 213, 238);
     font-weight: 400;
     font-size: 300%;
-    width: 15em;
     opacity: 0;
-    text-align: center;
 }
 
 @keyframes intro {
@@ -93,8 +96,9 @@ p
     position: absolute;
     margin-left: -9em;
     font-weight: bold;
-    font-size: 300%;
-    height: 60em;
+    overflow: hidden;
+    font-size: 350%;
+    height: 50em;
     width: 18em;
     bottom: 0;
     left: 50%;
@@ -102,15 +106,12 @@ p
 }
 #board :after
 {
-    //background-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, transparent 100%);
-    pointer-events: none;
-    position: absolute;
-    content: ' ';
-    bottom: 60%;
-    left: 0;
-    right: 0;
-    top: 0;
-    overflow: hidden;
+  position: absolute;
+  content: ' ';
+  bottom: 60%;
+  left: 0;
+  right: 0;
+  top: 0;
 }
 
 /* Set the scrolling animation and position it */
@@ -118,7 +119,6 @@ p
     animation: scroll 100s linear 16s;
     position: absolute;
     top: 100%;
-    color: #FFFF82;
   }
   
 
