@@ -255,17 +255,15 @@ export class StarMapComponent implements AfterViewInit {
         var orbitSpeed = this.orbitTracker++;
 
         for (var i = 0; i < this.followStar.planets.length; i++) {
-            // this.followStar.circle.center(this.followStar.planets[i].offset);
-
             var angle = this.getAngle(this.followStar.circle.center, this.followStar.planets[i].circle.center);
-            angle = angle + orbitSpeed % 360;
+            angle = angle + orbitSpeed/this.followStar.planets[i].size % 360;
             angle = (Math.PI * angle) / 180;
-            // console.log(angle);
 
-            // this.followStar.planets[i].circlePath.tweenTo(newCenter, 1)
-            this.followStar.planets[i].circle.center = this.getCirclePoint(this.followStar.circle.center, this.getDistance(this.followStar.circle.center, this.followStar.planets[i].circle.center), angle);
-            // this.followStar.planets[i].circlePath = this.drawCirclePath(this.followStar.planets[i].circle);
-
+            this.followStar.planets[i].circle.center = this.getCirclePoint(
+                this.followStar.circle.center, 
+                this.getDistance(this.followStar.circle.center, this.followStar.planets[i].circle.center), 
+                angle
+            );
         }
     }
 
@@ -301,6 +299,9 @@ export class StarMapComponent implements AfterViewInit {
             x: 10,
             y: 200
         } as paper.Point;
+        if(this.starList.length) {
+            prevPoint = this.starList[this.starList.length-1].circle.center;
+        }
 
         for (var i = 0; i < num_stars; i++) {
             var point = {
@@ -318,7 +319,6 @@ export class StarMapComponent implements AfterViewInit {
                 var angle = this.getRandomNumberBetween(0, 360);
                 var planetPoint = this.getCirclePoint(starCircle.center, orbitDist, angle);
                 var planetCircle = this.getRandomCircle(planetPoint, 2, 5);
-
 
                 const planet: Planet = {
                     id: i + j,
@@ -398,6 +398,7 @@ export class StarMapComponent implements AfterViewInit {
         path.strokeColor = new Color('black');
         path.strokeWidth = 3;
     }
+
     public drawStars() {
         if (!!this.starList.length) {
             var prevStar = this.starList[0];
@@ -412,12 +413,8 @@ export class StarMapComponent implements AfterViewInit {
                 const star = this.starList[i];
                 star.circlePath = this.drawCirclePath(star.circle);
             }
-            for (var i = 0; i < this.starList.length; i++) {
-                const star = this.starList[i];
-                if (star == this.followStar) {
-                    star.circlePath.bringToFront();
-
-                }
+            if (this.isFollowing) {
+                this.followStar.circlePath.bringToFront()
             }
         }
     }
@@ -442,16 +439,13 @@ export class StarMapComponent implements AfterViewInit {
                     this.animationId = -1;
                 }
                 if (this.hasClicked) {
-
-
-                    this.drawPlanets();
-
                     this.animationId = window.requestAnimationFrame(() => {
                         // console.log(this.orbitTracker);
                         this.updatePlanets();
                         this.planetsFollowStar();
                         this.drawScene(true);
                     });
+                    this.drawPlanets();
 
                 } else {
                     window.cancelAnimationFrame(this.animationId);
