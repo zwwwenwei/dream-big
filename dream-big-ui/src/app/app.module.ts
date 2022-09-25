@@ -31,6 +31,10 @@ import { ProfileComponent } from './Components/profile/profile.component';
 import { RouterModule } from '@angular/router';
 import { AuthService } from './services/auth.service';
 import { StarMapComponent } from './Components/StarMap/star-map.component';
+import { StepsComponent } from './Components/Wizard/steps/steps.component';
+import { StepTemplateComponent } from './Components/Wizard/steps-template/steps-template.component';
+import { StarWizardComponent } from './Components/Wizard/star-wizard/star-wizard.component';
+import { CompleteWizardComponent } from './Components/Wizard/complete-wizard/complete-wizard.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +47,11 @@ import { StarMapComponent } from './Components/StarMap/star-map.component';
     AvatarBuilderComponent,
     LoginComponent,
     ProfileComponent,
-    StarMapComponent
+    StarMapComponent,
+    StepsComponent,
+    StepTemplateComponent,
+    StarWizardComponent,
+    CompleteWizardComponent
   ],
   imports: [
     BrowserAnimationsModule,
@@ -61,7 +69,9 @@ import { StarMapComponent } from './Components/StarMap/star-map.component';
       { path: '', redirectTo: '/login', pathMatch: 'full' },
       { path: 'login', component: LoginComponent },
       { path: 'intro', component: IntroPageComponent },
-      { path: 'profile', component: ProfileComponent }
+      { path: 'profile', component: ProfileComponent },
+      { path: 'star-wizard', component: StarWizardComponent },
+      { path: 'complete', component: CompleteWizardComponent }
     ]),
   ],
   providers: [
