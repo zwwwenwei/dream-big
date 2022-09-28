@@ -28,6 +28,7 @@ section
     font-weight: 400;
     font-size: 300%;
     opacity: 0;
+    line-height: 50px;
 }
 
 @keyframes intro {
@@ -53,7 +54,7 @@ section
     left: 45%;
     z-index: 1;
     margin: auto;
-    animation: logo 5s ease-out 5s;
+    animation: logo 9s ease-out 9s;
     opacity: 0;
 }
 
@@ -95,10 +96,11 @@ p
     font-weight: bold;
     overflow: hidden;
     font-size: 350%;
-    height: 50em;
+    height: 60em;
     width: 18em;
     bottom: 0;
     left: 50%;
+    line-height: 50px;
 }
 
 #board:after {
@@ -119,6 +121,7 @@ p
 
 #title, #subtitle {
     text-align: center;
+    line-height: 50px;
 }
 
 @keyframes scroll {
