@@ -25,12 +25,10 @@ export class LoginComponent implements OnInit {
  
   ngOnInit() { }
 
+//This is a temp solution and does not actually auth the user
   onSubmit() {
     this.isLoading = true;
     this.authService.login(this.email, this.password)
-    this.isLoading = false;
-    this.authService.setLoginStatus(true);
-    this.router.navigate(['/intro'])
     }
       
 }
