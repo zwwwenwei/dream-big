@@ -123,8 +123,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_18_224456) do
     t.string "name"
     t.boolean "status"
     t.bigint "student_journey_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.index ["student_journey_id"], name: "fk_rails_b3ad9a271c"
   end
 
@@ -155,12 +153,11 @@ ActiveRecord::Schema[7.0].define(version: 2022_08_18_224456) do
   end
 
   create_table "students", charset: "utf8mb4", force: :cascade do |t|
-    t.string "name"
+    t.string "firstName"
+    t.string "lastName"
     t.integer "phone"
     t.string "address"
     t.string "student_type"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
     t.bigint "user_id"
     t.index ["user_id"], name: "fk_rails_148c9e88f4"
   end
