@@ -20,6 +20,7 @@ class UsersApi < Grape::API
     requires :name, type: String, desc: 'The user\'s name'
     requires :email, type: String, desc: 'The email used for login'
     requires :password, type: String, desc: 'The in-no-way secure password'
+    optional :role_id, type: Integer, desc: 'Role for the user'
   end
   post '/users' do
     user_parameters = ActionController::Parameters.new(params)
@@ -27,7 +28,8 @@ class UsersApi < Grape::API
         :username,
         :name,
         :email,
-        :password
+        :password,
+        :role_id
       )
 
     User.create!(user_parameters)
@@ -39,6 +41,7 @@ class UsersApi < Grape::API
     optional :name, type: String, desc: 'The user\'s name'
     requires :email, type: String, desc: 'The email used for login'
     optional :password, type: String, desc: 'The in-no-way secure password'
+    optional :role_id, type: Integer, desc: 'Role for the user'
   end
   put '/users/:id' do
     user_parameters = ActionController::Parameters.new(params)
@@ -46,7 +49,8 @@ class UsersApi < Grape::API
         :username,
         :name,
         :email,
-        :password
+        :password,
+        :role_id
       )
 
     result = User.find(params[:id])

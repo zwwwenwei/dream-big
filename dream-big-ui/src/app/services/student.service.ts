@@ -24,11 +24,12 @@ export class StudentService extends CachedEntityService<Student> {
   
   this.mapping.addKeys(
     'id',
-    'name',
+    'firstName',
+    'lastName',
     'phone',
     'address',
     'user',
-    'user_id'
+    'avatar',
   );
   }
   public override createInstanceFrom(json: any, other?: any): Student {

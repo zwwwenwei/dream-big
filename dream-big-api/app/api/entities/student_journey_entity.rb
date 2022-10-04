@@ -3,6 +3,6 @@ module Entities
       expose :id
       expose :timeline
       expose :student_id
-      expose :student
+      expose :journey_star_id
     end
   end

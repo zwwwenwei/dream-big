@@ -15,7 +15,12 @@ export class UnitService extends CachedEntityService<Stars> {
     super(httpClient, API_URL);
     this.mapping.addKeys(
       'id',
-      'status',
+      'name',
+      'goals',
+      'reflection',
+      'skin_id',
+      'star_system_id',
+      'status'
     );
 
 

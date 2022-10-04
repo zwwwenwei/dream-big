@@ -4,14 +4,18 @@ class StarsApi < Grape::API
 
   desc 'Allow creation of a star'
   params do
-    requires :star_system_id, type: Integer, desc: 'the id for the star system this planet belongs to'
-    requires :status, type: String, desc: 'starstatus'
+    requires :name, type: String, desc: 'Name of the Star Object'
+    requires :status, type: String, desc: 'star status'
+    requires :star_system_id, type: Integer, desc: 'the id for the star system this star belongs to'
+    requires :skin_id, type: Integer, desc: 'ID of the star Skin'
   end
   post '/star' do
     star_parameters = ActionController::Parameters.new(params)
       .permit(
+        :name, 
         :status,
-        :star_system_id
+        :star_system_id,
+        :skin_id
 
       )
 
@@ -24,16 +28,18 @@ class StarsApi < Grape::API
 
   desc 'Allow updating of a star'
   params do
-    requires :star_system_id, type: Integer, desc: 'the id for the star system this planet belongs to'
-    optional :status, type: String, desc: 'star Status'
+    optional :name, type: String, desc: 'Name of the Star Object'
+    optional :status, type: String, desc: 'star status'
+    requires :star_system_id, type: Integer, desc: 'the id for the star system this star belongs to'
+    optional :skin_id, type: Integer, desc: 'ID of the star Skin'
   end
   put '/star/:id' do
     star_parameters = ActionController::Parameters.new(params)
       .permit(
+        :name, 
         :status,
-        :star_system_id
-
-        #Ex:- :default =>''
+        :star_system_id,
+        :skin_id
       )
 
     # Auth

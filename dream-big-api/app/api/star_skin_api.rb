@@ -5,12 +5,14 @@ class StarSkinApi < Grape::API
   desc 'Allow creation of a planet skin'
   params do
   
-    requires :asset, type: String, desc: 'Image url'
-    requires :color type: String, desc: 'stars color'
+    requires :name, type: String, desc: 'Name of the skin'
+    requires :asset, type: String, desc: 'Image URL'
+    requires :color, type: String, desc: 'Color of Star'
   end
   post '/starskin' do
     star_skin_parameters = ActionController::Parameters.new(params)
       .permit(
+        :name,
         :asset,
         :color
       )
@@ -25,15 +27,16 @@ class StarSkinApi < Grape::API
   desc 'Allow updating of a Star Skins'
   params do
     
+    optional :name, type: String, desc: 'Name of the skin'
     optional :asset, type: String, desc: 'Image URL'
-    optional :color, type: String, desc: 'Color of star'
+    optional :color, type: String, desc: 'Color of Star'
   end
   put '/starskin/:id' do
     star_skin_parameters = ActionController::Parameters.new(params)
       .permit(
+        :name,
         :asset,
         :color
-        #Ex:- :default =>''
       )
 
     # Auth

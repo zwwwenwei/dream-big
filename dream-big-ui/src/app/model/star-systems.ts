@@ -3,12 +3,14 @@ import { Entity } from 'ngx-entity-service';
 const KEYS = 
 [
   'id',
-  'status'
+  'status',
+  'student_journey_id'
 ]
 
 export class StarSystem extends Entity {
   id: number = -1;
   status: string = "";
+  student_journey_id: number = -1;
 
   /**
    * Indicates that the star has yet to be stored in the database

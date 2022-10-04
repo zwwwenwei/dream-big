@@ -17,6 +17,7 @@ export class UserService extends CachedEntityService<User> {
       'username',
       'name',
       'password',
+      'role',
     );
 
 

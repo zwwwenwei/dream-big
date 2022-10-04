@@ -4,7 +4,6 @@ class CreateAvatarHairs < ActiveRecord::Migration[7.0]
       t.string :color
       t.string :shape
       t.string :texture
-      t.timestamps
     end
   end
 end

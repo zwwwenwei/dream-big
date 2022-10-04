@@ -16,6 +16,7 @@ export class UnitService extends CachedEntityService<StarSystem> {
     this.mapping.addKeys(
       'id',
       'status',
+      'student_journey_id',
     );
 
 

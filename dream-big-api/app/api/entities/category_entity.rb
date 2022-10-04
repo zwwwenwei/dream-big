@@ -3,7 +3,6 @@ module Entities
       expose :id
       expose :name
       expose :description
-      expose :weight
-     
+      expose :weight_value_id
     end
   end
