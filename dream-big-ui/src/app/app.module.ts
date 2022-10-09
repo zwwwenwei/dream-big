@@ -31,6 +31,7 @@ import { ProfileComponent } from './Components/profile/profile.component';
 import { RouterModule } from '@angular/router';
 import { AuthService } from './services/auth.service';
 import { StarMapComponent } from './Components/StarMap/star-map.component';
+import { StarSystemComponent } from './Components/StarSystem/star-system.component';
 
 @NgModule({
   declarations: [
@@ -43,7 +44,8 @@ import { StarMapComponent } from './Components/StarMap/star-map.component';
     AvatarBuilderComponent,
     LoginComponent,
     ProfileComponent,
-    StarMapComponent
+    StarMapComponent,
+    StarSystemComponent,
   ],
   imports: [
     BrowserAnimationsModule,
