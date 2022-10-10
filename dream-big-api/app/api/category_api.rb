@@ -19,14 +19,14 @@ class CategoryApi < Grape::API
   
     requires :name, type: String, desc: 'Category name'
     requires :description, type: String, desc: 'The description of the category'
-    requires :weight_value_id, type: Integer, desc: 'default weight for category'
+    requires :weight_values_id, type: Integer, desc: 'default weight for category'
   end
   post '/category' do
     category_parameters = ActionController::Parameters.new(params)
       .permit(
         :name,
         :description,
-        :weight_value_id
+        :weight_values_id
       )
 
     # Auth...
@@ -41,7 +41,7 @@ class CategoryApi < Grape::API
     
     optional :name, type: String, desc: 'The categoryr name'
     optional :description, type: String, desc: 'The description of the category'
-    optional :weight_value_id, type: Integer, desc: 'default weight for category'
+    optional :weight_values_id, type: Integer, desc: 'default weight for category'
   end
   put '/category/:id' do
     category_parameters = ActionController::Parameters.new(params)

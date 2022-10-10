@@ -67,4 +67,24 @@ class StarSystemApi < Grape::API
 
     present result, with: Entities::StarSystemEntity
   end
+
+  desc 'Get all stars with the indicated star_system_id'
+  params do
+    requires :id, type: Integer, desc: 'The id of the star_system'
+  end
+  get '/starsystem/stars/:id' do
+    result = Star.where(star_system_id: params[:id])
+
+    present result, with: Entities::StarsEntity
+  end
+
+  desc 'Get all planets with the indicated star_system_id'
+  params do
+    requires :id, type: Integer, desc: 'The id of the star_system'
+  end
+  get '/starsystem/planets/:id' do
+    result = Planet.where(star_system_id: params[:id])
+
+    present result, with: Entities::PlanetsEntity
+  end
 end

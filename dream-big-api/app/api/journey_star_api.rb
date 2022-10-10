@@ -30,7 +30,6 @@ class JourneyStarApi < Grape::API
       )
 
     # Auth...
-
     result = JourneyStar.create!(parameters) 
 
     present result, with: Entities::JourneyStarEntity

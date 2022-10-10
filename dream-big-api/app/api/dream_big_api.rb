@@ -53,6 +53,7 @@ class DreamBigApi < Grape::API
   mount StarSystemApi
   mount PlanetsApi
   mount StarsApi
+  mount WeightValuesApi
 
   add_swagger_documentation(
     base_path: nil,
