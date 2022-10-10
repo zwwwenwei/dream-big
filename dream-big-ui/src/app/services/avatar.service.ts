@@ -24,9 +24,11 @@ export class AvatarService extends CachedEntityService<Avatar> {
   
   this.mapping.addKeys(
     'id',
-    'name',
-    'description',
-    'weight_value_id'
+    'avatar_heads_id',
+    'avatar_torsos_id',
+    'avatar_hairs_id',
+    'avatar_accessories_id',
+
   );
   }
   public override createInstanceFrom(json: any, other?: any): Avatar{
