@@ -17,11 +17,6 @@
     <img id='star7' src="assets/Planets/star-7.png" hidden/>
     <img id='star8' src="assets/Planets/star-8.png" hidden/>
 
-  <button mat-raised-button color="primary" (click)="createStars(1)">
-    Add
-  </button>
-  <button mat-raised-button color="warn" (click)="removeStar()">Remove</button>
-
   <canvas
     #canvas
     (mousemove)="onMouseMove($event)"
