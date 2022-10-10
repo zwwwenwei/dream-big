@@ -35,6 +35,8 @@ import { StepsComponent } from './Components/Wizard/steps/steps.component';
 import { StepTemplateComponent } from './Components/Wizard/steps-template/steps-template.component';
 import { StarWizardComponent } from './Components/Wizard/star-wizard/star-wizard.component';
 import { CompleteWizardComponent } from './Components/Wizard/complete-wizard/complete-wizard.component';
+import { HomeComponent } from './Components/home/home.component';
+import { WizardDialogComponent } from './wizard-dialog/wizard-dialog.component';
 
 @NgModule({
   declarations: [
@@ -51,7 +53,9 @@ import { CompleteWizardComponent } from './Components/Wizard/complete-wizard/com
     StepsComponent,
     StepTemplateComponent,
     StarWizardComponent,
-    CompleteWizardComponent
+    CompleteWizardComponent,
+    HomeComponent,
+    WizardDialogComponent
   ],
   imports: [
     BrowserAnimationsModule,
@@ -71,7 +75,7 @@ import { CompleteWizardComponent } from './Components/Wizard/complete-wizard/com
       { path: 'intro', component: IntroPageComponent },
       { path: 'profile', component: ProfileComponent },
       { path: 'star-wizard', component: StarWizardComponent },
-      { path: 'complete', component: CompleteWizardComponent }
+      { path: 'complete', component: CompleteWizardComponent },
     ]),
   ],
   providers: [

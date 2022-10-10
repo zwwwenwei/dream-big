@@ -14,6 +14,9 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { MatSliderModule } from '@angular/material/slider';
 import { MatGridListModule } from '@angular/material/grid-list';
 import { MatExpansionModule } from '@angular/material/expansion';
+import { MatCardModule } from '@angular/material/card';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatProgressBarModule } from '@angular/material/progress-bar';
 
 @NgModule({
     declarations: [],
@@ -32,7 +35,10 @@ import { MatExpansionModule } from '@angular/material/expansion';
         MatDialogModule,
         MatSliderModule,
         MatGridListModule,
-        MatExpansionModule
+        MatExpansionModule,
+        MatCardModule,
+        MatDividerModule,
+        MatProgressBarModule
     ],
     exports: [
         CommonModule,
@@ -48,8 +54,11 @@ import { MatExpansionModule } from '@angular/material/expansion';
         MatButtonModule,
         MatDialogModule,
         MatSliderModule,
-        MatGridListModule, 
-        MatExpansionModule
+        MatGridListModule,
+        MatExpansionModule,
+        MatCardModule,
+        MatDividerModule,
+        MatProgressBarModule
     ]
 })
 export class NgMaterialModule { }
