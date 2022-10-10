@@ -10,6 +10,7 @@ import { LoginComponent } from './Components/login/login.component';
 import { ProfileComponent } from './Components/profile/profile.component';
 import { StarMapComponent } from './Components/StarMap/star-map.component';
 import { AuthGuard } from './services/authguard.service';
+import { StarSystemComponent } from './Components/StarSystem/star-system.component';
 
 const adminModule = () => import('./admin/admin.module').then(x => x.AdminModule);
 
@@ -23,7 +24,8 @@ const routes: Routes = [
   { path: 'star', canActivate: [AuthGuard], component: StarControlComponent },
   { path: 'avatar-builder', canActivate: [AuthGuard], component: AvatarBuilderComponent },
   { path: 'admin', canActivate: [AuthGuard], loadChildren: adminModule },
-  { path: 'star-map', component: StarMapComponent }
+  { path: 'star-map', component: StarMapComponent },
+  { path: 'star-system', component: StarSystemComponent }
 
 ];
 

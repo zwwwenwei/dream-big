@@ -1,5 +1,5 @@
 import { Component, ViewChild, ElementRef, AfterViewInit, Renderer2 } from '@angular/core';
-import { Color, Path, Point, Project, PointText } from 'paper/dist/paper-core';
+import { Color, Path, Point, Project, PointText, Raster, Group } from 'paper/dist/paper-core';
 import { Star, CircleData, Planet } from './types';
 
 @Component({
@@ -10,39 +10,54 @@ import { Star, CircleData, Planet } from './types';
 })
 export class StarMapComponent implements AfterViewInit {
     @ViewChild('canvas') canvas: ElementRef<HTMLCanvasElement> = {} as ElementRef<HTMLCanvasElement>;
+    @ViewChild('planet') planet: ElementRef<HTMLImageElement> = {} as ElementRef<HTMLImageElement>;
 
-    context: any;
+
     public project: any; // paper.js root project
     public starList: Array<Star> = [];
 
-    startPoint: paper.Point = {} as paper.Point;
-
-    starColour: string = "#EAEEF0"
-
     followStar: Star = {} as Star;
-    followPoint: paper.Point = {} as paper.Point;
+
     isFollowing: boolean = false;
     hasClicked: boolean = false;
     factor = 1.25;
     private _minZoom!: number;
     private _maxZoom!: number;
-    private zoomOffset!: paper.Point;
     private orbitTracker = 1;
     private animationId = -1;
     private newFollowStar: boolean = false;
 
-    constructor(private renderer: Renderer2) { }
+
+    private isSolarView: boolean = false;
+    private _starStrokeColour = 'black';
+    private _starStrokeWidth = 0;
+    private _selectStarStrokeWidth = 0;
+    private _selectStarStrokeColour = 'red';
+    private _zoomedStarSize = 100;
+
+    constructor(private renderer: Renderer2) {
+
+    }
 
     ngAfterViewInit(): void {
+
         this.project = new Project(this.canvas.nativeElement);
-        this.context = this.canvas.nativeElement.getContext('2d');
         this.renderer.listen(this.canvas.nativeElement, 'wheel', (event) => {
             this.onMouseScroll(event);
         });
+
         setTimeout(() => {
             this.createStars();
             this.drawScene();
         }, 0);
+    }
+
+    private getImagePaths(num_images: number) {
+        const images = [];
+        for (let i = 1; i > num_images; i++) {
+            images.push(i);
+        }
+        return images;
     }
 
     public onMouseScroll(e: any) {
@@ -82,12 +97,13 @@ export class StarMapComponent implements AfterViewInit {
         // console.log('after', mousePoint);
 
         for (var i = 0; i < this.starList.length; i++) {
-            this.starList[i].circle.strokeColour = "black";
-            this.starList[i].circle.strokeWidth = 3;
+            this.starList[i].circle.strokeColour = this._starStrokeColour;
+            this.starList[i].circle.strokeWidth = this._starStrokeWidth;
             if (this.starList[i].circlePath.contains(mousePoint)) {
+                this.isSolarView = true;
                 // console.log(this.starList[i])
-                this.starList[i].circle.strokeColour = "red";
-                this.starList[i].circle.strokeWidth = 5;
+                this.starList[i].circle.strokeColour = this._selectStarStrokeColour;
+                this.starList[i].circle.strokeWidth = this._selectStarStrokeWidth;
                 // this.followStar = collidingStar;
             }
         }
@@ -95,7 +111,7 @@ export class StarMapComponent implements AfterViewInit {
     }
 
     public onMouseDown(e: any) {
-        console.log('mousedown');
+        // console.log('mousedown');
         var mousePoint = new Point(e.offsetX, e.offsetY);
 
         let collidingStar = {} as Star;
@@ -103,8 +119,8 @@ export class StarMapComponent implements AfterViewInit {
         this.hasClicked = false;
 
         for (var i = 0; i < this.starList.length; i++) {
-            this.starList[i].circle.strokeColour = "black";
-            this.starList[i].circle.strokeWidth = 3;
+            this.starList[i].circle.strokeColour = this._starStrokeColour;
+            this.starList[i].circle.strokeWidth = this._starStrokeWidth;
             if (this.starList[i].circlePath.contains(mousePoint) && !foundCollision) {
                 collidingStar = this.starList[i];
                 foundCollision = true;
@@ -112,14 +128,14 @@ export class StarMapComponent implements AfterViewInit {
             }
         }
         if (foundCollision && !this.isFollowing) {
-            collidingStar.circle.strokeColour = "red";
-            collidingStar.circle.strokeWidth = 5;
+            collidingStar.circle.strokeColour = this._selectStarStrokeColour;
+            collidingStar.circle.strokeWidth = this._selectStarStrokeWidth;
             this.newFollowStar = !Object.entries(this.followStar).length || this.followStar != collidingStar;
             // console.log(this.followStar);
             // console.log(this.newFollowStar);
 
             this.followStar = collidingStar;
-            this.followPoint = mousePoint;
+
             this.isFollowing = true;
 
             this.setCursor('grab');
@@ -129,7 +145,6 @@ export class StarMapComponent implements AfterViewInit {
     }
     public onMouseUp(e: any) {
         this.isFollowing = false;
-        // this.followPoint = {} as paper.Point;
         // this.followStar = {} as Star;
 
         this.setCursor('pointer');
@@ -209,7 +224,6 @@ export class StarMapComponent implements AfterViewInit {
             .subtract(oldCenter);
 
         view.center = view.center.add(offset);
-        this.zoomOffset = centerAdjust.multiply(zoomScale);
     };
 
 
@@ -253,15 +267,15 @@ export class StarMapComponent implements AfterViewInit {
 
     private planetsFollowStar() {
         var orbitSpeed = this.orbitTracker++;
-
+        
         for (var i = 0; i < this.followStar.planets.length; i++) {
             var angle = this.getAngle(this.followStar.circle.center, this.followStar.planets[i].circle.center);
-            angle = angle + orbitSpeed/this.followStar.planets[i].size % 360;
+            angle = angle + orbitSpeed / this.followStar.planets[i].size % 360;
             angle = (Math.PI * angle) / 180;
 
             this.followStar.planets[i].circle.center = this.getCirclePoint(
-                this.followStar.circle.center, 
-                this.getDistance(this.followStar.circle.center, this.followStar.planets[i].circle.center), 
+                this.followStar.circle.center,
+                this.getDistance(this.followStar.circle.center, this.followStar.planets[i].circle.center),
                 angle
             );
         }
@@ -299,8 +313,8 @@ export class StarMapComponent implements AfterViewInit {
             x: 10,
             y: 200
         } as paper.Point;
-        if(this.starList.length) {
-            prevPoint = this.starList[this.starList.length-1].circle.center;
+        if (this.starList.length) {
+            prevPoint = this.starList[this.starList.length - 1].circle.center;
         }
 
         for (var i = 0; i < num_stars; i++) {
@@ -309,7 +323,7 @@ export class StarMapComponent implements AfterViewInit {
                 y: Math.max(prevPoint.y + this.getRandomNumberBetween(-50, 50), 50)
             } as paper.Point;
 
-            var starCircle = this.getRandomCircle(point, 15, 20);
+            var starCircle = this.getRandomCircle(point, 15, 30);
             var planets = [];
             for (var j = 0; j < this.getRandomNumberBetween(5, 10); j++) {
                 const posX = this.getRandomNumberBetween(0, 10) > 5;
@@ -318,7 +332,8 @@ export class StarMapComponent implements AfterViewInit {
                 var orbitDist = this.getRandomNumberBetween(50, 150);
                 var angle = this.getRandomNumberBetween(0, 360);
                 var planetPoint = this.getCirclePoint(starCircle.center, orbitDist, angle);
-                var planetCircle = this.getRandomCircle(planetPoint, 2, 5);
+                var planetCircle = this.getRandomCircle(planetPoint, 4, 8);
+                var planetImage = this.getRandomNumberBetween(1, 8);
 
                 const planet: Planet = {
                     id: i + j,
@@ -328,28 +343,34 @@ export class StarMapComponent implements AfterViewInit {
                         x: starCircle.center.x - planetCircle.center.x,
                         y: starCircle.center.y - planetCircle.center.y,
                     } as paper.Point,
-                    circlePath: {} as paper.Path
+                    circlePath: {} as paper.Path,
+                    imageId: planetImage,
+                    imageRaster: {} as paper.Raster
                 }
                 planets.push(planet);
             }
+            var starImage = this.getRandomNumberBetween(1, 8);
+
             const star: Star = {
                 id: i,
                 size: starCircle.radius,
                 circle: starCircle,
                 circlePath: {} as paper.Path,
-                planets
+                planets,
+                imageId: starImage,
+                imageRaster: {} as paper.Raster
             }
             this.starList.push(star);
             prevPoint = point;
         }
     }
-    private getCircle(center: paper.Point, radius: number, fillColour = 'yellow', strokeColour = 'black'): CircleData {
+    private getCircle(center: paper.Point, radius: number, fillColour = 'yellow', strokeColour = 'black', strokeWidth = 0): CircleData {
         return {
             center,
             radius,
             fillColour,
             strokeColour,
-            strokeWidth: 3
+            strokeWidth
         };
     }
     private drawCirclePath(circle: CircleData) {
@@ -359,29 +380,7 @@ export class StarMapComponent implements AfterViewInit {
         path.strokeWidth = circle.strokeWidth;
         return path;
     }
-    // public addStar() {
-    //     var point = {
-    //         x: this.starList[this.starList.length - 1].circle.center.x + this.getRandomNumberBetween(50, 100),
-    //         y: Math.max(this.starList[this.starList.length - 1].circle.center.y + this.getRandomNumberBetween(-50, 50), 50)
-    //     } as paper.Point;
-    //     var fillColour = this.getRandomColourCode();
-    //     var size = this.getRandomNumberBetween(10, 20);
-    //     var circle = this.getCircle(
-    //         point,
-    //         size,
-    //         fillColour
-    //     );
-    //     const star: Star = {
-    //         id: this.starList.length,
-    //         size: this.getRandomNumberBetween(10, 20),
-    //         circle,
-    //         circlePath: {} as paper.Path
-    //     }
-    //     this.starList.push(star);
 
-    //     this.drawScene();
-
-    // }
 
     public removeStar() {
         this.starList.pop();
@@ -395,8 +394,28 @@ export class StarMapComponent implements AfterViewInit {
         path.add({ x: this.canvas.nativeElement.clientWidth, y: this.canvas.nativeElement.clientHeight } as paper.Point);
         path.add({ x: 0, y: this.canvas.nativeElement.clientHeight } as paper.Point);
         path.closePath();
-        path.strokeColor = new Color('black');
-        path.strokeWidth = 3;
+        path.fillColor = new Color('black');
+    }
+
+
+    private pasteImage(image_id: string, point: paper.Point, width: number) {
+        var raster = new Raster(image_id);
+        raster.scale(width / raster.width);
+        raster.position = point;
+        return raster;
+    }
+
+    private zoomOnStar(star: Star) {
+        star.size = this._zoomedStarSize;
+        star.circle = this.getCircle(this.getCanvasMidPoint(), star.size, star.circle.fillColour, star.circle.strokeColour, star.circle.strokeWidth);
+        this.pasteImage(`star${star.imageId}`, star.circle.center, star.circle.radius * 2);
+        this.planetsFollowStar();
+    }
+
+    public drawFollowStar(star:Star) {
+        star.circlePath = this.drawCirclePath(star.circle);
+
+        star.imageRaster = this.pasteImage(`star${star.imageId}`, star.circle.center, star.circle.radius * 2);
     }
 
     public drawStars() {
@@ -408,13 +427,15 @@ export class StarMapComponent implements AfterViewInit {
                 this.drawLineBetween(prevStar.circle.center, star.circle.center);
                 prevStar = star;
             }
-
             for (var i = 0; i < this.starList.length; i++) {
                 const star = this.starList[i];
                 star.circlePath = this.drawCirclePath(star.circle);
+                star.imageRaster = this.pasteImage(`star${star.imageId}`, star.circle.center, star.circle.radius * 2);
+
             }
             if (this.isFollowing) {
                 this.followStar.circlePath.bringToFront()
+                this.followStar.imageRaster.bringToFront();
             }
         }
     }
@@ -424,6 +445,7 @@ export class StarMapComponent implements AfterViewInit {
         for (var i = 0; i < planets.length; i++) {
             const p = planets[i];
             p.circlePath = this.drawCirclePath(p.circle);
+            this.pasteImage(`planet${p.imageId}`, p.circle.center, p.circle.radius * 2)
         }
     }
     public drawScene(animate = false) {
@@ -432,7 +454,7 @@ export class StarMapComponent implements AfterViewInit {
             this.project.clear();
             this.drawOutline();
             this.drawStars();
-            // this.planetsFollowStar();
+
             if (animate) {
                 if (this.newFollowStar) {
                     window.cancelAnimationFrame(this.animationId);
@@ -440,7 +462,6 @@ export class StarMapComponent implements AfterViewInit {
                 }
                 if (this.hasClicked) {
                     this.animationId = window.requestAnimationFrame(() => {
-                        // console.log(this.orbitTracker);
                         this.updatePlanets();
                         this.planetsFollowStar();
                         this.drawScene(true);
@@ -450,14 +471,19 @@ export class StarMapComponent implements AfterViewInit {
                 } else {
                     window.cancelAnimationFrame(this.animationId);
                     this.animationId = -1;
-                    console.log('cancelled');
                 }
             }
+            this.project.view.draw();
 
         });
     }
 
-
+    private getCanvasMidPoint(): paper.Point {
+        return new Point(
+            this.canvas.nativeElement.clientWidth/2,
+            this.canvas.nativeElement.clientHeight/2
+        );
+    }
     private drawLineBetween(point_1: paper.Point, point_2: paper.Point, colour = 'black') {
         var path = new Path.Line(point_1, point_2);
         path.strokeColor = new Color(colour);
