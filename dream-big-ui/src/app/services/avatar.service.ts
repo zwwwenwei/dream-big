@@ -2,7 +2,7 @@ import { Injectable } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { CachedEntityService, Entity, EntityMapping } from 'ngx-entity-service';
 import API_URL from 'src/app/config/constants/apiURL';
-import { Category } from 'src/app/model/category';
+import { Avatar } from 'src/app/model/avatar';
 
 export type IloStats = {
   median: number;
@@ -13,9 +13,9 @@ export type IloStats = {
 }[];
 
 @Injectable()
-export class CategoryService extends CachedEntityService<Category> {
-  protected readonly endpointFormat = 'category/:id:';
-  public readonly rolloverEndpoint = 'category/:id:/rollover';
+export class AvatarService extends CachedEntityService<Avatar> {
+  protected readonly endpointFormat = 'avatar/:id:';
+  public readonly rolloverEndpoint = 'avatar/:id:/rollover';
 
   constructor(
     httpClient: HttpClient,
@@ -26,10 +26,10 @@ export class CategoryService extends CachedEntityService<Category> {
     'id',
     'name',
     'description',
-    'weight_value_id',
+    'weight_value_id'
   );
   }
-  public override createInstanceFrom(json: any, other?: any): Category {
-    return new Category();
+  public override createInstanceFrom(json: any, other?: any): Avatar{
+    return new Avatar();
   }
 }

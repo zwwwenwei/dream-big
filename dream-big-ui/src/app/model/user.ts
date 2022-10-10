@@ -7,7 +7,8 @@ const KEYS =
     'username',
     'name',
     'password',
-    'token'
+    'token',
+    'role'
   ];
 
 export class User extends Entity {
@@ -15,6 +16,7 @@ export class User extends Entity {
   public username: string = '';
   public name: string = '';
   public password: string = '';
+  public role_id: number = -1;
 
 
 

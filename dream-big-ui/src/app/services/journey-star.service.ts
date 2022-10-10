@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { CachedEntityService, Entity, EntityMapping } from 'ngx-entity-service';
 import API_URL from 'src/app/config/constants/apiURL';
 import { Category } from 'src/app/model/category';
+import { JourneyStar } from 'src/app/model/journey-star';
 
 export type IloStats = {
   median: number;
@@ -13,9 +14,9 @@ export type IloStats = {
 }[];
 
 @Injectable()
-export class CategoryService extends CachedEntityService<Category> {
-  protected readonly endpointFormat = 'category/:id:';
-  public readonly rolloverEndpoint = 'category/:id:/rollover';
+export class JourneyStarService extends CachedEntityService<JourneyStar> {
+  protected readonly endpointFormat = 'journey-star/:id:';
+  public readonly rolloverEndpoint = 'journey-star/:id:/rollover';
 
   constructor(
     httpClient: HttpClient,
@@ -24,12 +25,11 @@ export class CategoryService extends CachedEntityService<Category> {
   
   this.mapping.addKeys(
     'id',
-    'name',
-    'description',
-    'weight_value_id',
+    'category_id',
+    'isMaxed'
   );
   }
-  public override createInstanceFrom(json: any, other?: any): Category {
-    return new Category();
+  public override createInstanceFrom(json: any, other?: any): JourneyStar {
+    return new JourneyStar();
   }
 }

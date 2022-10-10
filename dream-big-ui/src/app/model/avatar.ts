@@ -8,7 +8,7 @@ const KEYS =
     'weight_value_id'
   ];
 
-export class Category extends Entity {
+export class Avatar extends Entity {
   id: number = -1;
   name: string = "";
   description: string = "";

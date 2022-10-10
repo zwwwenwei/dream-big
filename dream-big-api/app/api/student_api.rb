@@ -17,21 +17,25 @@ class StudentApi < Grape::API
   desc 'Allow creation of a Student'
   params do
   
-    requires :name, type: String, desc: 'student Name'
+    requires :firstName, type: String, desc: 'student first Name'
+    requires :lastName, type: String, desc: 'student last Name'
     requires :phone, type: String, desc: 'student Phone number'
     requires :address, type: String, desc: 'student address'
     requires :user_id, type: Integer, desc: 'student user'
     optional :student_type, type: String, desc: 'student type'
+    optional :avatar_id, type: Integer, desc: 'avatar ID once created'
 
   end
   post '/student' do
     student_parameters = ActionController::Parameters.new(params)
       .permit(
-        :name,
+        :firstName,
+        :lastName,
         :phone,
         :address,
         :student_type,
-        :user_id
+        :user_id,
+        :avatar_id
       )
 
     # Auth...
@@ -44,21 +48,24 @@ class StudentApi < Grape::API
   desc 'Allow updating of a student'
   params do
     
-    optional :name, type: String, desc: 'student name'
-    optional :phone, type: String, desc: 'student phone'
+    optional :firstName, type: String, desc: 'student first Name'
+    optional :lastName, type: String, desc: 'student last Name'
+    optional :phone, type: String, desc: 'student Phone number'
     optional :address, type: String, desc: 'student address'
-    optional :student_type, type: String, desc: 'student type'
     optional :user_id, type: Integer, desc: 'student user'
+    optional :student_type, type: String, desc: 'student type'
+    optional :avatar_id, type: Integer, desc: 'avatar ID once created'
   end
   put '/student/:id' do
     student_parameters = ActionController::Parameters.new(params)
       .permit(
-        :name,
+        :firstName,
+        :lastName,
         :phone,
         :address,
         :student_type,
-        :user_id
-        #Ex:- :default =>''
+        :user_id,
+        :avatar_id
       )
 
     # Auth

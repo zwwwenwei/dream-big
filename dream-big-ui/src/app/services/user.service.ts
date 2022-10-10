@@ -17,11 +17,12 @@ export class UserService extends CachedEntityService<User> {
       'username',
       'name',
       'password',
+      'role',
     );
 
 
   }
-
+ 
   protected createInstanceFrom(json: any, other?: any): User {
     const user = new User();
     return user;
@@ -30,4 +31,7 @@ export class UserService extends CachedEntityService<User> {
   public override keyForJson(json: any): string {
     return json.id;
   }
+
+
+
 }
