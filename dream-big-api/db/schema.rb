@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_10_04_084915) do
+ActiveRecord::Schema[7.0].define(version: 2022_10_10_003518) do
   create_table "avatar_accessories", charset: "utf8mb4", force: :cascade do |t|
     t.string "color"
     t.string "shape"
@@ -49,8 +49,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_04_084915) do
   create_table "categories", charset: "utf8mb4", force: :cascade do |t|
     t.string "name"
     t.string "description"
-    t.bigint "weight_value_id"
-    t.index ["weight_value_id"], name: "fk_rails_6db93d18bf"
+    t.bigint "weight_values_id"
+    t.index ["weight_values_id"], name: "fk_rails_1576e280c4"
   end
 
   create_table "course_units", charset: "utf8mb4", force: :cascade do |t|
@@ -69,10 +69,12 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_04_084915) do
     t.string "courseDesc"
   end
 
-  create_table "journey_stars", charset: "utf8mb4", force: :cascade do |t|
-    t.bigint "category_id"
+  create_table "journey_Stars", charset: "utf8mb4", force: :cascade do |t|
     t.boolean "isMaxed"
-    t.index ["category_id"], name: "fk_rails_a572deea0e"
+    t.bigint "student_journey_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["student_journey_id"], name: "fk_rails_cd42b145a0"
   end
 
   create_table "planet_skins", charset: "utf8mb4", force: :cascade do |t|
@@ -86,8 +88,10 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_04_084915) do
     t.boolean "status"
     t.bigint "star_system_id"
     t.bigint "skin_id"
+    t.bigint "category_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["category_id"], name: "fk_rails_54163c97c0"
     t.index ["skin_id"], name: "fk_rails_a26b5012c8"
     t.index ["star_system_id"], name: "fk_rails_301d41c9cb"
   end
@@ -175,8 +179,14 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_04_084915) do
   add_foreign_key "avatars", "avatar_hairs", column: "avatar_haris_id"
   add_foreign_key "avatars", "avatar_heads"
   add_foreign_key "avatars", "avatar_torsos", column: "avatar_torsos_id"
+<<<<<<< HEAD
   add_foreign_key "categories", "weight_values"
   add_foreign_key "journey_stars", "categories"
+=======
+  add_foreign_key "categories", "weight_values", column: "weight_values_id"
+  add_foreign_key "journey_Stars", "student_journeys", on_delete: :cascade
+  add_foreign_key "planets", "categories"
+>>>>>>> 9518faa0505e2e60d06b6e3a9927ed82fb7f752f
   add_foreign_key "planets", "planet_skins", column: "skin_id"
   add_foreign_key "planets", "star_systems", on_delete: :cascade
   add_foreign_key "star_systems", "student_journeys", on_delete: :cascade

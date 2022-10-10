@@ -19,17 +19,15 @@ class JourneyStarApi < Grape::API
   
     requires :isMaxed, type: Boolean, desc: 'is maxed bool'
     requires :category_id, type: Integer, desc: 'category ID assocaited with star'
-
+    requires :student_journey_id, type: Integer, desc: 'Student Journey star associated with'
   end
   post '/journey-star' do
     parameters = ActionController::Parameters.new(params)
       .permit(
         :isMaxed,
-        :category_id
-      )
+        :category_id,
 
     # Auth...
-
     result = JourneyStar.create!(parameters) 
 
     present result, with: Entities::JourneyStarEntity
@@ -40,13 +38,14 @@ class JourneyStarApi < Grape::API
     
     optional :isMaxed, type: Boolean, desc: 'is maxed bool'
     optional :category_id, type: Integer, desc: 'category ID assocaited with star'
-
+    optional :student_journey_id, type: Integer, desc: 'Student Journey star associated with'
   end
   put '/journey-star/:id' do
     parameters = ActionController::Parameters.new(params)
       .permit(
         :isMaxed,
-        :category_id
+        :category_id,
+        :student_journey_id
       )
 
     # Auth

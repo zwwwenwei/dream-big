@@ -94,6 +94,7 @@ end
 
 user_data = {
   'name': method(:faker_first_name),
+  'email': method(:faker_email)
   'username': method(:faker_name),
   'password': method(:faker_name),
 }
@@ -106,7 +107,7 @@ student_data = {
 seed_data_parent_child(User, user_data, Student, student_data, 5)
 
 
-users = seed_sequence_data(User, ['name', 'username', 'password'], 5)
+users = seed_sequence_data(User, ['name','email', 'username', 'password'], 5)
 students = seed_child_data(users, Student, ['name', 'phone', 'address'])
 student_journeys = seed_child_data(students, StudentJourney, ['timeline'])
 star_systems = seed_child_data(student_journeys, StarSystem, ['status', 'name'])
