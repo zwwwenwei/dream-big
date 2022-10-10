@@ -179,14 +179,9 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_10_003518) do
   add_foreign_key "avatars", "avatar_hairs", column: "avatar_haris_id"
   add_foreign_key "avatars", "avatar_heads"
   add_foreign_key "avatars", "avatar_torsos", column: "avatar_torsos_id"
-<<<<<<< HEAD
-  add_foreign_key "categories", "weight_values"
-  add_foreign_key "journey_stars", "categories"
-=======
   add_foreign_key "categories", "weight_values", column: "weight_values_id"
   add_foreign_key "journey_Stars", "student_journeys", on_delete: :cascade
   add_foreign_key "planets", "categories"
->>>>>>> 9518faa0505e2e60d06b6e3a9927ed82fb7f752f
   add_foreign_key "planets", "planet_skins", column: "skin_id"
   add_foreign_key "planets", "star_systems", on_delete: :cascade
   add_foreign_key "star_systems", "student_journeys", on_delete: :cascade

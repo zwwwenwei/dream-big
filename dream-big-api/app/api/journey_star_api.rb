@@ -26,6 +26,8 @@ class JourneyStarApi < Grape::API
       .permit(
         :isMaxed,
         :category_id,
+        :student_journey_id
+      )
 
     # Auth...
     result = JourneyStar.create!(parameters) 

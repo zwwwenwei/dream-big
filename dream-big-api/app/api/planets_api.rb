@@ -17,8 +17,11 @@ class PlanetsApi < Grape::API
         :name, 
         :status,
         :star_system_id,
+        :skin_id,
+        :category_id
       )
 
+    # Auth...
 
     result = Planet.create!(planet_parameters)
 
@@ -32,7 +35,6 @@ class PlanetsApi < Grape::API
     optional :status, type: String, desc: 'planet status'
     optional :star_system_id, type: Integer, desc: 'the id for the star system this planet belongs to'
     optional :skin_id, type: Integer, desc: 'ID of the Planet Skin'
-
     optional :category_id, type: Integer, desc: 'Category of the plannet'
   end
   put '/planet/:id' do

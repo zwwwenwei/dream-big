@@ -4,7 +4,6 @@ class CreateJourneyStars < ActiveRecord::Migration[7.0]
       t.bigint :category_id
       t.boolean :isMaxed
       t.bigint :student_journey_id
-      t.timestamps
     end
   end
 end
