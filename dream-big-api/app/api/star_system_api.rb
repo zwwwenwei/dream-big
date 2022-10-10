@@ -5,6 +5,7 @@ class StarSystemApi < Grape::API
   desc 'Allow creation of a Star System'
   params do
   
+    requires :name, type: String, desc: 'Name of the Star System'
     requires :status, type: String, desc: 'Status of a star system (complete/incomplete)'
     requires :student_journey_id, type: Integer, desc: 'Journey ID'
 
@@ -13,6 +14,7 @@ class StarSystemApi < Grape::API
   post '/starsystem' do
     starsystem_parameters = ActionController::Parameters.new(params)
       .permit(
+        :name,
         :status,
         :student_journey_id
       )
@@ -26,7 +28,7 @@ class StarSystemApi < Grape::API
 
   desc 'Allow updating of a Star System'
   params do
-    
+    optional :name, type: String, desc: 'Name of the Star System'
     optional :status, type: String, desc: 'Status of a star system'
     requires :student_journey_id, type: Integer, desc: 'Journey ID'
 
@@ -34,10 +36,9 @@ class StarSystemApi < Grape::API
   put '/starsystem/:id' do
     starsystem_parameters = ActionController::Parameters.new(params)
       .permit(
-        :system,
+        :name,
+        :status,
         :student_journey_id
-
-        #Ex:- :default =>''
       )
 
     # Auth

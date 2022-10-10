@@ -5,14 +5,14 @@ const KEYS =
     'id',
     'name',
     'description',
-    'weight'
+    'weight_value_id'
   ];
 
 export class Category extends Entity {
   id: number = -1;
   name: string = "";
   description: string = "";
-  weight: string = "";
+  weight_value_id: number = -1;
 
   /**
    * Indicates that the Unit has yet to be stored in the database

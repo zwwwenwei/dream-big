@@ -1,11 +1,16 @@
 import { Component, OnInit } from '@angular/core';
 import { Router, ActivatedRoute } from '@angular/router';
 import { FormBuilder, FormGroup, Validators } from '@angular/forms';
+import { first } from 'rxjs/operators';
+
 import { User } from 'src/app/model/user';
 import { AuthService } from 'src/app/services/auth.service';
 import { UserService } from 'src/app/services/user.service';
+
 import { AuthGuard } from 'src/app/services/authguard.service';
 
+import { StudentJourney } from 'src/app/model/student-journey';
+import { StudentJourneyService } from 'src/app/services/student-journey.service';
 
 @Component({
   selector: 'app-profile',
@@ -13,24 +18,27 @@ import { AuthGuard } from 'src/app/services/authguard.service';
   styleUrls: ['./profile.component.scss']
 })
 export class ProfileComponent implements OnInit {
-    user:any;
-    isLoading = false;
+  loading = false;
+  users: User[];
+  journey: StudentJourney[];
 
-    constructor(private userService: UserService, private router: Router, private authService: AuthService){
+    constructor(private userService: UserService, private router: Router, private authService: AuthService, private jouney: StudentJourneyService){
         
     }
     ngOnInit() {
-      try{
-        this.user = JSON.parse(this.userService.get.name);
-     }catch(error){}
-         
-    }
+      this.loading = true;
+      this.userService.query().pipe(first()).subscribe(users => {
+          this.loading = false;
+          this.users = users;
+      });
+      this.jouney.query().pipe(first()).subscribe(journey=> {
+        this.loading = false;
+        this.journey= journey;
+    });
+  }
 
-    getUser() {
-       
-    }
     onLogOut() {
-      this.isLoading = true;
+      this.loading = true;
       setTimeout(() => {
         this.router.navigate(['/login']);
       }, 1000)

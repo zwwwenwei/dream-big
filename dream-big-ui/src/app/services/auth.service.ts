@@ -1,6 +1,9 @@
 import { Injectable } from '@angular/core';
 import { HttpClientModule, HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable } from "rxjs";
 import { Router } from '@angular/router';
+import { User } from '../model/user';
+import { map } from "rxjs/operators";
  
 @Injectable({
   providedIn: 'root'
@@ -10,35 +13,42 @@ export class AuthService {
  
   uri = 'http://localhost:3000';
   token: any;
-  private loggedInStatus = JSON.parse(localStorage.getItem('loggedIn') || ('false'));
+  private currentUserSubject: BehaviorSubject<User>;
+  public currentUser: Observable<User>;
   
-  constructor(private http: HttpClient,private router: Router) { }
+  constructor(private http: HttpClient,private router: Router) { 
+    this.currentUserSubject = new BehaviorSubject<User>(
+      JSON.parse(localStorage.getItem("currentUser"))
+    );
+    this.currentUser = this.currentUserSubject.asObservable();
+  }
+
+  public get currentUserValue(): User {
+    return this.currentUserSubject.value;
+  }
+
   login(email: string, password: string) {
-    this.http.post(this.uri + '/auth/login', {email: email,password: password})
-    .subscribe((resp: any) => {
-     
-      this.router.navigate(['intro']);
-      localStorage.setItem('auth_token', resp.token);
-      
-      });
-       
-    }
+    // post to fake back end, this url will be handled there...
+
+    return this.http
+      .post<any>(this.uri + '/auth/login', {email: email,password: password})
+      .pipe(
+        map(user => {
+          // store user details and basic auth credentials in local storage to keep user logged in between page refreshes
+          user.authdata = window.btoa(email + ":" + password);
+          localStorage.setItem("currentUser", JSON.stringify(user));
+          this.currentUserSubject.next(user);
+          return user;
+        })
+      );
+  }
+
   logout() {
-      localStorage.removeItem('token');
+      // remove user from local storage to log user out
+      localStorage.removeItem("currentUser");
+      this.currentUserSubject.next(null);
     }
    
-  public get logIn(): boolean {
-      return (localStorage.getItem('token') !== null);
-    }
-
-    setLoginStatus(value: any) {
-      this.loggedInStatus = value;
-      localStorage.setItem('loggedIn', 'true');
-    }
-
-    get LoginStatus() {
-      return JSON.parse(localStorage.getItem('loggedIn') || 
-      this.loggedInStatus.toString());
-    }
+  
 }
 

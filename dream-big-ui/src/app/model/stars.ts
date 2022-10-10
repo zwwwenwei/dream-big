@@ -3,11 +3,21 @@ import { Entity } from 'ngx-entity-service';
 const KEYS = 
 [
   'id',
+  'name',
+  'goals',
+  'reflection',
+  'skin_id',
+  'star_system_id',
   'status'
 ]
 
 export class Stars extends Entity {
   id: number = -1;
+  name: string = "";
+  skin_id: number =-1;
+  goals: string ="";
+  reflection: string = "";
+  star_system_id: number = -1;
   status: string = "";
 
   /**

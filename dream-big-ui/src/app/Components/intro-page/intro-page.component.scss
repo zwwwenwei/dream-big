@@ -5,7 +5,6 @@
     position: absolute;
 
 }
-    
 
 section
 {
@@ -18,9 +17,8 @@ section
 }
     
 
-// Set the animation, color, size and hide the text
-.intro
-{
+/* Center it, set the color, size and hide the text */
+.intro {
     position: absolute;
     top: 30%;
     left: 35%;
@@ -30,6 +28,7 @@ section
     font-weight: 400;
     font-size: 300%;
     opacity: 0;
+    line-height: 50px;
 }
 
 @keyframes intro {
@@ -48,19 +47,20 @@ section
 }
    
 
-// Set the animation & hide the logo
-.logo
-{
+/* Set the animation & hide the logo */
+.logo {    
+    position: absolute;
+    top: 20%;
+    left: 45%;
+    z-index: 1;
+    margin: auto;
     animation: logo 9s ease-out 9s;
-    margin: 0 0 0 (- 18em / 2);
     opacity: 0;
-    svg
-    {
-        width: inherit;
-    }
-        
 }
-    
+
+.logo svg {
+    width: inherit;
+}
 
 /* Scale the logo down and maintain it centered */
 @keyframes logo {
@@ -76,7 +76,7 @@ section
     100% {
         opacity: 0;
         transform: scale(0.1);
-        width: 18em;
+        width: 18em;        
     }
 }
 
@@ -84,10 +84,8 @@ p
 {
     color: #FFFF82
 }
-
-   
-
-// Set the font, lean the board, position it
+  
+  /* Set the font, lean the board, position it */
 #board {
     font-family: Century Gothic, CenturyGothic, AppleGothic, sans-serif;
     transform: perspective(300px) rotateX(25deg);
@@ -98,20 +96,20 @@ p
     font-weight: bold;
     overflow: hidden;
     font-size: 350%;
-    height: 50em;
+    height: 60em;
     width: 18em;
     bottom: 0;
     left: 50%;
-    
+    line-height: 50px;
 }
-#board :after
-{
-  position: absolute;
-  content: ' ';
-  bottom: 60%;
-  left: 0;
-  right: 0;
-  top: 0;
+
+#board:after {
+    position: absolute;
+    content: ' ';
+    bottom: 60%;
+    left: 0;
+    right: 0;
+    top: 0;
 }
 
 /* Set the scrolling animation and position it */
@@ -119,14 +117,11 @@ p
     animation: scroll 100s linear 16s;
     position: absolute;
     top: 100%;
-  }
-  
+}
 
-#title, #subtitle
-{
+#title, #subtitle {
     text-align: center;
-    color: #FFFF82;
-    opacity: 1;
+    line-height: 50px;
 }
 
 @keyframes scroll {
