@@ -1,5 +1,5 @@
 module Entities
-    class WeightValueEntity < Grape::Entity
+    class WeightValuesEntity < Grape::Entity
       expose :id
       expose :weight
     end

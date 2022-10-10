@@ -70,10 +70,10 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_10_003518) do
   end
 
   create_table "journey_Stars", charset: "utf8mb4", force: :cascade do |t|
+    t.bigint "category_id"
     t.boolean "isMaxed"
     t.bigint "student_journey_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
+    t.index ["category_id"], name: "fk_rails_a572deea0e"
     t.index ["student_journey_id"], name: "fk_rails_cd42b145a0"
   end
 
@@ -180,6 +180,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_10_003518) do
   add_foreign_key "avatars", "avatar_heads"
   add_foreign_key "avatars", "avatar_torsos", column: "avatar_torsos_id"
   add_foreign_key "categories", "weight_values", column: "weight_values_id"
+  add_foreign_key "journey_Stars", "categories"
   add_foreign_key "journey_Stars", "student_journeys", on_delete: :cascade
   add_foreign_key "planets", "categories"
   add_foreign_key "planets", "planet_skins", column: "skin_id"

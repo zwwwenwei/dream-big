@@ -8,7 +8,7 @@ class PlanetsApi < Grape::API
     requires :name, type: String, desc: 'Name of the Planet Object'
     requires :status, type: String, desc: 'planet status'
     requires :star_system_id, type: Integer, desc: 'the id for the star system this planet belongs to'
-    requires :skin_id, type: Integer, desc: 'ID of the Planet Skin'
+    # requires :skin_id, type: Integer, desc: 'ID of the Planet Skin'
     requires :category_id, type: Integer, desc: 'Category of the plannet'
   end
   post '/planet' do
@@ -17,7 +17,7 @@ class PlanetsApi < Grape::API
         :name, 
         :status,
         :star_system_id,
-        :skin_id,
+        # :skin_id,
         :category_id
       )
 
@@ -34,7 +34,7 @@ class PlanetsApi < Grape::API
     optional :name, type: String, desc: 'Name of the Planet Object'
     optional :status, type: String, desc: 'planet status'
     optional :star_system_id, type: Integer, desc: 'the id for the star system this planet belongs to'
-    optional :skin_id, type: Integer, desc: 'ID of the Planet Skin'
+    # optional :skin_id, type: Integer, desc: 'ID of the Planet Skin'
     optional :category_id, type: Integer, desc: 'Category of the plannet'
   end
   put '/planet/:id' do
@@ -43,7 +43,7 @@ class PlanetsApi < Grape::API
         :name, 
         :status,
         :star_system_id,
-        :skin_id,
+        # :skin_id,
         :category_id
       )
 
@@ -64,13 +64,5 @@ class PlanetsApi < Grape::API
     true
   end
 
-  desc 'Get all planets with the indicated star_system_id'
-  params do
-    requires :star_system_id, type: Integer, desc: 'The id of the star_system'
-  end
-  get '/planet' do
-    result = Planet.where(star_system_id: params[:star_system_id])
 
-    present result, with: Entities::PlanetsEntity
-  end
 end
