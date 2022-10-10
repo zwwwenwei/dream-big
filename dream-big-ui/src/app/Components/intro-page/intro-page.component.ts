@@ -35,7 +35,7 @@ ngOnInit() {
     this.document.getElementById("space").append(star);
   }
   setTimeout(() => {
-    this.router.navigate(['/profile'])
+    this.router.navigate(['/home'])
   }, 100000);
   
 }
