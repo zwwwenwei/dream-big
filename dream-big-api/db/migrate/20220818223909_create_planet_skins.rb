@@ -4,7 +4,6 @@ class CreatePlanetSkins < ActiveRecord::Migration[7.0]
       t.string :name
       t.string :color
       t.string :asset
-      t.timestamps
     end
   end
 end

@@ -1,4 +1,13 @@
-
-<p>
-  <a>welcome {{user}}</a>
-</p>>
+<div class="card mt-4">
+  <h4 class="card-header">Dreamy Welcomes you to your Dream Big Profile page!!</h4>
+  <div class="card-body">
+      <h6>User Details</h6>
+      <div *ngIf="loading" class="spinner-border spinner-border-sm"></div>
+      <ul *ngIf="users">
+          <li *ngFor="let user of users">Logged in user: {{user.name}}</li>
+      </ul>
+      <ul *ngIf="journey">
+        <li *ngFor="let journey for user">Student Journey: {{journey.id}}</li>
+    </ul>
+  </div>
+</div>

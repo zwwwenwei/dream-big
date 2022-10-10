@@ -15,6 +15,7 @@ export class UnitService extends CachedEntityService<PlanetsSkin> {
     super(httpClient, API_URL);
     this.mapping.addKeys(
       'id',
+      'name',
       'asset',
       'color',
     );
