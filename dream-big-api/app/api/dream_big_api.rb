@@ -53,8 +53,15 @@ class DreamBigApi < Grape::API
   mount StarSystemApi
   mount PlanetsApi
   mount StarsApi
+  mount PlanetSkinApi
+  mount StarSkinApi
   mount WeightValuesApi
-
+  mount AvatarApi
+  mount AvatarHairsApi
+  mount AvatarHeadsApi
+  mount AvatarAccessoriesApi
+  mount AvatarTorsosApi
+  
   add_swagger_documentation(
     base_path: nil,
     api_version: "v1",
