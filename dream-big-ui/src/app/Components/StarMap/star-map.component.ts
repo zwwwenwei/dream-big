@@ -385,7 +385,6 @@ export class StarMapComponent implements AfterViewInit {
             let maxOrbitDist = 200;
             let orbitCtr = 0;
             for (let j = 0; j < this.randInt(5, 10); j++) {
-
                 let orbitDist = (star.size * this.viewSystemZoom) + ((++orbitCtr * addOrbitDist) % maxOrbitDist)
                 let angle = angleCtr;
                 angleCtr += this.addOrbitAngle;
@@ -406,7 +405,8 @@ export class StarMapComponent implements AfterViewInit {
                     circlePath: {} as paper.Path,
                     orbitCirclePath: {} as paper.Path,
                     clicked: false,
-                    collided: false
+                    collided: false,
+                    speed: this.randInt(1, 7)
                 }
                 planets.push(planet);
             }
@@ -580,7 +580,7 @@ export class StarMapComponent implements AfterViewInit {
 
             var orbitSpeed = this.orbitTracker[i];
             var angle = this.getAngle(this.viewSystem.star.circle.center, this.viewSystem.planets[i].circle.center);
-            angle = angle + orbitSpeed / this.viewSystem.planets[i].size;
+            angle = angle + orbitSpeed*this.viewSystem.planets[i].speed / this.viewSystem.planets[i].size;
             angle = (Math.PI * angle) / 180;
 
             this.viewSystem.planets[i].circle.center = this.getCirclePoint(

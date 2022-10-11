@@ -20,6 +20,7 @@ export interface Planet extends CircleSprite {
     orbitCircle: CircleData
     orbitCirclePath: paper.Path
     name: string
+    speed: number
 }
 
 export interface CircleData {
