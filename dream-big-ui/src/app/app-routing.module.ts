@@ -21,7 +21,7 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'intro', canActivate: [AuthGuard], component: IntroPageComponent},
   { path: 'profile', canActivate: [AuthGuard], component: ProfileComponent },
-  { path: 'home', canActivate: [AuthGuard], component: HomeComponent }, 
+  { path: 'home', component: HomeComponent }, 
   { path: 'star', canActivate: [AuthGuard], component: StarControlComponent },
   { path: 'avatar-builder', canActivate: [AuthGuard], component: AvatarBuilderComponent },
   { path: 'admin', canActivate: [AuthGuard], loadChildren: adminModule },
