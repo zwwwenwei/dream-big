@@ -22,7 +22,7 @@ const routes: Routes = [
   { path: 'intro', canActivate: [AuthGuard], component: IntroPageComponent},
   { path: 'profile', canActivate: [AuthGuard], component: ProfileComponent },
   { path: 'home', component: HomeComponent }, 
-  { path: 'star', canActivate: [AuthGuard], component: StarControlComponent },
+  { path: 'star', component: StarControlComponent },
   { path: 'avatar-builder', canActivate: [AuthGuard], component: AvatarBuilderComponent },
   { path: 'admin', canActivate: [AuthGuard], loadChildren: adminModule },
   { path: 'star-map', component: StarMapComponent },
