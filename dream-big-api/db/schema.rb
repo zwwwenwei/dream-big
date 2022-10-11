@@ -12,36 +12,28 @@
 
 ActiveRecord::Schema[7.0].define(version: 2022_10_10_003518) do
   create_table "avatar_accessories", charset: "utf8mb4", force: :cascade do |t|
-    t.string "color"
-    t.string "shape"
-    t.string "texture"
+    t.string "imgpath"
   end
 
   create_table "avatar_hairs", charset: "utf8mb4", force: :cascade do |t|
-    t.string "color"
-    t.string "shape"
-    t.string "texture"
+    t.string "imgpath"
   end
 
   create_table "avatar_heads", charset: "utf8mb4", force: :cascade do |t|
-    t.string "color"
-    t.string "shape"
-    t.string "texture"
+    t.string "imgpath"
   end
 
   create_table "avatar_torsos", charset: "utf8mb4", force: :cascade do |t|
-    t.string "color"
-    t.string "shape"
-    t.string "texture"
+    t.string "imgpath"
   end
 
   create_table "avatars", charset: "utf8mb4", force: :cascade do |t|
     t.bigint "avatar_head_id"
     t.bigint "avatar_torsos_id"
-    t.bigint "avatar_haris_id"
+    t.bigint "avatar_hairs_id"
     t.bigint "avatar_accessories_id"
     t.index ["avatar_accessories_id"], name: "fk_rails_b7154260fe"
-    t.index ["avatar_haris_id"], name: "fk_rails_f4ac0ee8ab"
+    t.index ["avatar_hairs_id"], name: "fk_rails_d213291014"
     t.index ["avatar_head_id"], name: "fk_rails_a8fde6201d"
     t.index ["avatar_torsos_id"], name: "fk_rails_12f7f2f036"
   end
@@ -176,7 +168,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_10_003518) do
   end
 
   add_foreign_key "avatars", "avatar_accessories", column: "avatar_accessories_id"
-  add_foreign_key "avatars", "avatar_hairs", column: "avatar_haris_id"
+  add_foreign_key "avatars", "avatar_hairs", column: "avatar_hairs_id"
   add_foreign_key "avatars", "avatar_heads"
   add_foreign_key "avatars", "avatar_torsos", column: "avatar_torsos_id"
   add_foreign_key "categories", "weight_values", column: "weight_values_id"

@@ -6,7 +6,7 @@ class PlanetSkinApi < Grape::API
   params do
     requires :name, type: String, desc: 'Name of the skin'
     requires :asset, type: String, desc: 'Image url'
-    requires :color type: String, desc: 'planets color'
+    requires :color, type: String, desc: 'planets color'
   end
   post '/planetskin' do
     planet_skin_parameters = ActionController::Parameters.new(params)

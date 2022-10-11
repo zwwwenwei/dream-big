@@ -3,7 +3,7 @@ class CreateAvatars < ActiveRecord::Migration[7.0]
     create_table :avatars do |t|
       t.bigint :avatar_head_id
       t.bigint :avatar_torsos_id
-      t.bigint :avatar_haris_id
+      t.bigint :avatar_hairs_id
       t.bigint :avatar_accessories_id
     end
   end
