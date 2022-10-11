@@ -5,6 +5,8 @@ export interface CircleSprite {
     size: number
     circle: CircleData
     circlePath: paper.Path
+    clicked: boolean
+    collided: boolean
     // imageId: number
     // imageRaster: paper.Raster
 }
@@ -16,6 +18,7 @@ export interface Star extends CircleSprite {
 export interface Planet extends CircleSprite {
     offset: paper.Point
     orbitCircle: CircleData
+    orbitCirclePath: paper.Path
     name: string
 }
 
