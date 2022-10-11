@@ -28,7 +28,23 @@ export class HomeComponent implements OnInit {
   }
 
   public viewStarSystem() {
-    this.starmap.isSolarView = true;
-    this.starmap.drawScene();
+    setTimeout(() => {
+      this.starmap.isSolarView = true;
+      this.starmap.drawScene();
+    });
+  }
+
+  public viewStarMap() {
+    setTimeout(() => {
+      this.starmap.isSolarView = false;
+      this.starmap.isViewingSystem = false;
+      if (this.starmap.hasClickedPlanet) {
+        this.starmap.resetCircleStroke(this.starmap.viewPlanet.circle);
+        this.starmap.hasClickedPlanet = false;
+      }
+      this.starmap.viewSystem.star = this.starmap.saveStar;
+
+      this.starmap.drawScene();
+    });
   }
 }

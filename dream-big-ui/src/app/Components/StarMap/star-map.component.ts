@@ -1,6 +1,6 @@
 import { Component, ViewChild, ElementRef, AfterViewInit, Renderer2 } from '@angular/core';
 import { Color, Path, Point, Project, PointText, Raster, Group } from 'paper/dist/paper-core';
-import { Star, CircleData, Planet, StarSystem } from './types';
+import { Star, CircleData, Planet, StarSystem, CircleSprite } from './types';
 
 @Component({
     selector: 'app-star-map',
@@ -20,13 +20,16 @@ export class StarMapComponent implements AfterViewInit {
     public hasClickedPlanet: boolean = false;
     public followSystem: boolean = false;
     public viewSystem: StarSystem = {} as StarSystem;
+
+    // this variable is used to reassign a star with its original coordinates after backing out from star system view
+    public saveStar: Star = {} as Star;
     public viewPlanet: Planet = {} as Planet;
     private collidingPlanet: Planet = {} as Planet;
 
     public isSolarView: boolean = false;
     private collideSystem: StarSystem = {} as StarSystem;
-    private circleStrokeColour = 'white';
-    private circleStrokeWidth = 2;
+    private _circleStrokeColour = 'white';
+    private _circleStrokeWidth = 2;
     private _selectStrokeWidth = 2;
     private _selectStrokeColour = 'red';
     private _highlightStrokeWidth = 2;
@@ -37,19 +40,23 @@ export class StarMapComponent implements AfterViewInit {
     private viewSystemZoom: number = 3;
     private addOrbitAngle: number = 60;
 
+    public watchCircles: CircleSprite[] = [];
+    public collidedCircle: CircleSprite = {} as CircleSprite;
+    public selectedCircle: CircleSprite = {} as CircleSprite;
+    public hasClickedCircle: boolean = false;
+
+
     constructor(private renderer: Renderer2) {
 
     }
 
     ngAfterViewInit(): void {
-
         this.project = new Project(this.canvas.nativeElement);
 
         setTimeout(() => {
             // get star systems from api
             // or use this test method
             this.createStarSystems();
-
             this.drawScene();
         }, 0);
     }
@@ -76,20 +83,26 @@ export class StarMapComponent implements AfterViewInit {
             }
 
         } else {
-            let collidingPlanet = this.getPlanetCollision(mousePoint);
-
-            if (!!Object.entries(collidingPlanet).length) {
-                if (collidingPlanet !== this.viewPlanet) {
-                    this.highlightCircle(collidingPlanet.circle)
-                    this.collidingPlanet = collidingPlanet;
-                }
-                this.setCursor('pointer');
+            let collidingStar = this.viewSystem.star.circlePath.contains(mousePoint);
+            if (!!Object.entries(collidingStar).length) {
 
             } else {
-                this.setCursor('default');
-                if (!!Object.entries(this.collidingPlanet).length && this.collidingPlanet != this.viewPlanet) {
-                    this.resetCircleStroke(this.collidingPlanet.circle)
-                    this.collidingPlanet = {} as Planet;
+
+                let collidingPlanet = this.getPlanetCollision(mousePoint);
+
+                if (!!Object.entries(collidingPlanet).length) {
+                    if (collidingPlanet !== this.viewPlanet) {
+                        this.highlightCircle(collidingPlanet.circle)
+                        this.collidingPlanet = collidingPlanet;
+                    }
+                    this.setCursor('pointer');
+
+                } else {
+                    this.setCursor('default');
+                    if (!!Object.entries(this.collidingPlanet).length && this.collidingPlanet != this.viewPlanet) {
+                        this.resetCircleStroke(this.collidingPlanet.circle)
+                        this.collidingPlanet = {} as Planet;
+                    }
                 }
             }
         }
@@ -136,6 +149,59 @@ export class StarMapComponent implements AfterViewInit {
         this.drawScene();
     }
 
+
+    // public onMouseMove(e: any) {
+    //     const mousePoint = new Point(e.offsetX, e.offsetY);
+
+    //     const collidingCircle = this.getCircleCollision(mousePoint);
+
+    //     if (!!Object.entries(collidingCircle).length) {
+    //         if (collidingCircle !== this.selectedCircle) {
+    //             this.highlightCircle(collidingCircle.circle);
+    //             this.collidedCircle = collidingCircle;
+    //         }
+    //         this.setCursor('pointer');
+
+    //     } else {
+    //         this.setCursor('default');
+    //         if (!!Object.entries(this.collidedCircle).length && this.collidedCircle != this.selectedCircle) {
+    //             this.resetCircleStroke(this.collidedCircle.circle)
+    //             this.collidedCircle = {} as CircleSprite;
+    //         }
+    //     }
+
+    //     this.drawScene();
+    // }
+
+    // public onMouseClick(e: any) {
+    //     let mousePoint = new Point(e.offsetX, e.offsetY);
+
+    //     const clickedCircle = this.getCircleCollision(mousePoint);
+
+    //     if (!!Object.entries(clickedCircle).length) {
+    //         if (!!Object.entries(this.selectedCircle).length) {
+    //             this.resetCircleStroke(this.selectedCircle.circle);
+    //         }
+    //         this.selectCircle(clickedCircle.circle)
+    //         this.selectedCircle = clickedCircle;
+    //         this.hasClickedCircle = true;
+
+    //         if (!this.isSolarView) {
+    //             this
+    //         }
+    //     }
+    //     this.drawScene();
+    // }
+    // public watchStarSystem() {
+    //     this.watchCircles = [...this.viewSystem.planets, this.viewSystem.star];
+    // }
+
+    // public watchStarMap() {
+    //     this.starSystemList.forEach((system) => {
+    //         this.watchCircles.push(system.star);
+    //     })
+    // }
+
     private highlightCircle(circle: CircleData) {
         circle.strokeColour = this._highlightStrokeColour;
         circle.strokeWidth = this._highlightStrokeWidth;
@@ -144,14 +210,24 @@ export class StarMapComponent implements AfterViewInit {
         circle.strokeColour = this._selectStrokeColour;
         circle.strokeWidth = this._selectStrokeWidth;
     }
-    private resetCircleStroke(circle: CircleData) {
-        circle.strokeColour = this.circleStrokeColour;
-        circle.strokeWidth = this.circleStrokeWidth;
+    public resetCircleStroke(circle: CircleData) {
+        circle.strokeColour = this._circleStrokeColour;
+        circle.strokeWidth = this._circleStrokeWidth;
     }
     private setCursor(type: string) {
         window.document.getElementById("star-map-div")?.setAttribute("style", "cursor:" + type);
     }
 
+    private getCircleCollision(xy: paper.Point) {
+        let collision = {} as CircleSprite;
+        for (let i = 0; i < this.watchCircles.length; i++) {
+
+            if (!!Object.entries(this.watchCircles[i].circlePath).length && this.watchCircles[i].circlePath.contains(xy)) {
+                collision = this.watchCircles[i];
+            }
+        }
+        return collision;
+    }
 
     private getStarCollision(xy: paper.Point) {
         let collision = {} as StarSystem;
@@ -264,7 +340,7 @@ export class StarMapComponent implements AfterViewInit {
             prevPoint = point;
         }
     }
-    private getCircle(center: paper.Point, radius: number, fillColour = 'yellow', strokeColour = this.circleStrokeColour, strokeWidth = this.circleStrokeWidth): CircleData {
+    private getCircle(center: paper.Point, radius: number, fillColour = 'yellow', strokeColour = this._circleStrokeColour, strokeWidth = this._circleStrokeWidth): CircleData {
         return {
             center,
             radius,
@@ -288,20 +364,9 @@ export class StarMapComponent implements AfterViewInit {
         return path;
     }
 
-
     public removeSystem() {
         this.starSystemList.pop();
         this.drawScene();
-    }
-
-    private drawOutline() {
-        let path = new Path;
-        path.add({ x: 0, y: 0 } as paper.Point);
-        path.add({ x: this.canvas.nativeElement.clientWidth, y: 0 } as paper.Point);
-        path.add({ x: this.canvas.nativeElement.clientWidth, y: this.canvas.nativeElement.clientHeight } as paper.Point);
-        path.add({ x: 0, y: this.canvas.nativeElement.clientHeight } as paper.Point);
-        path.closePath();
-        path.fillColor = new Color('black');
     }
 
     private drawStarName(xy: paper.Point, content: string, x_offset: number, y_offset: number) {
@@ -324,16 +389,16 @@ export class StarMapComponent implements AfterViewInit {
             console.log('something bad when drawing star system')
             return;
         }
+        // user just switched to view a star system
         if (!this.isViewingSystem) {
+            this.saveStar = Object.assign({}, this.viewSystem.star);
             this.viewSystem.star.circle = this.getCircle(this.getCanvasMidPoint(), this.viewSystem.star.circle.radius * this.viewSystemZoom, this.viewSystem.star.circle.fillColour, this.viewSystem.star.circle.strokeColour, this.viewSystem.star.circle.strokeWidth)
             this.isViewingSystem = true;
         }
         this.viewSystem.star.circlePath = this.drawCirclePath(this.viewSystem.star.circle);
 
         this.viewSystem.planets.forEach((planet) => {
-            // if (this.randInt(0, 10) > 6) {
             this.drawCirclePath(planet.orbitCircle);
-            // }
         });
         this.viewSystem.planets.forEach((planet) => {
             planet.circle = this.getCircle(planet.circle.center, planet.circle.radius, planet.circle.fillColour, planet.circle.strokeColour, planet.circle.strokeWidth);
@@ -363,20 +428,13 @@ export class StarMapComponent implements AfterViewInit {
         }
     }
 
-    private drawPlanets() {
-        let planets = this.viewSystem.planets;
-        for (let i = 0; i < planets.length; i++) {
-            const p = planets[i];
-            p.circlePath = this.drawCirclePath(p.circle);
-        }
-    }
-
     public drawScene() {
         setTimeout(() => {
             // clear the canvas so the star can be redrawn
             this.project.clear();
             // this.drawOutline();
             if (this.isSolarView) {
+                console.log('star system');
                 this.drawStarSystem();
             } else {
                 this.drawStars();
