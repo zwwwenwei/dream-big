@@ -88,39 +88,38 @@ export class StarMapComponent implements AfterViewInit {
 
         if (this.isSystemView) {
             // in star system view
+
             const collidingCircle = this.collideCircles(mousePoint, [...this.viewSystem.planets, this.viewSystem.star]);
             const collidingOrbit = this.getOrbitCircleCollision(mousePoint);
             if (!!Object.entries(collidingCircle).length) {
                 if (this.viewSystem.star.collided) {
+                    // the star was hovered over
+
                     if (!!Object.entries(this.collidingPlanet).length && this.collidingPlanet != this.viewPlanet) {
                         this.resetCircleStroke(this.collidingPlanet.orbitCircle, this._orbitStrokeColour, this._orbitStrokeWidth);
                     }
-                    console.log('star!')
-                    // the star was hovered over
                 } else {
+                    // a planet was hovered over
                     const collidingPlanet = this.getCollidedPlanet();
-                    if (!!Object.entries(collidingPlanet).length) {
-                        if (!!Object.entries(this.collidingPlanet).length && this.collidingPlanet != this.viewPlanet) {
-                            this.resetCircleStroke(this.collidingPlanet.orbitCircle, this._orbitStrokeColour, this._orbitStrokeWidth);
-                        }
 
-                        // a planet was hovered over
-                        this.collidingPlanet = collidingPlanet;
-                        if (this.collidingPlanet != this.viewPlanet) {
-                            this.highlightCircle(collidingPlanet.orbitCircle, this._highlightOrbitColour, this._hightlightOrbitWidth);
-                        }
-                    } else {
-                        console.log('something bad')
+                    if (!!Object.entries(this.collidingPlanet).length && this.collidingPlanet != this.viewPlanet) {
+                        this.resetCircleStroke(this.collidingPlanet.orbitCircle, this._orbitStrokeColour, this._orbitStrokeWidth);
                     }
+
+                    this.collidingPlanet = collidingPlanet;
+                    if (this.collidingPlanet != this.viewPlanet) {
+                        this.highlightCircle(collidingPlanet.orbitCircle, this._highlightOrbitColour, this._hightlightOrbitWidth);
+                    }
+
                 }
                 this.setCursor('pointer');
             } else if (!!Object.entries(collidingOrbit).length) {
                 // mouse collision with an orbit circle
+
                 if (!!Object.entries(this.collidingPlanet).length && this.collidingPlanet != this.viewPlanet) {
                     this.resetCircleStroke(this.collidingPlanet.orbitCircle, this._orbitStrokeColour, this._orbitStrokeWidth);
                 }
 
-                // a planet orbit was hovered over
                 this.collidingPlanet = collidingOrbit;
                 this.collidingPlanet.collided = true;
                 if (this.collidingPlanet != this.viewPlanet) {
@@ -129,16 +128,17 @@ export class StarMapComponent implements AfterViewInit {
                 }
                 this.setCursor('default');
             } else {
+                // mouse collided with no objects
+
                 this.setCursor('default');
                 if (!!Object.entries(this.collidingPlanet).length && this.collidingPlanet != this.viewPlanet) {
-
                     this.resetCircleStroke(this.collidingPlanet.orbitCircle, this._orbitStrokeColour, this._orbitStrokeWidth);
                     this.collidingPlanet = {} as Planet;
-
                 }
             }
         } else {
             // in star map view
+
             let collidingSystem = this.getStarCollision(mousePoint);
             if (!!Object.entries(collidingSystem).length) {
                 if (collidingSystem !== this.viewSystem) {
@@ -146,7 +146,6 @@ export class StarMapComponent implements AfterViewInit {
                     this.collideSystem = collidingSystem;
                 }
                 this.setCursor('pointer');
-
             } else {
                 this.setCursor('default');
                 if (!!Object.entries(this.collideSystem).length && this.collideSystem != this.viewSystem) {
@@ -163,39 +162,47 @@ export class StarMapComponent implements AfterViewInit {
         let mousePoint = new Point(e.offsetX, e.offsetY);
         if (this.isSystemView) {
             // star system view
+
             const clickedCircle = this.clickCircles(mousePoint, [...this.viewSystem.planets, this.viewSystem.star]);
             const collidingOrbit = this.getOrbitCircleCollision(mousePoint);
+
+            // check collision with the planets and star first
             if (!!Object.entries(clickedCircle).length) {
                 // the star or a planet was clicked
+
                 if (this.viewSystem.star.clicked) {
+                    // the star was clicked
+
                     if (!!Object.entries(this.viewPlanet).length) {
+                        // unselect the currently selected planet after clicking on the star
                         this.resetCircleStroke(this.viewPlanet.circle);
                         this.resetCircleStroke(this.viewPlanet.orbitCircle, this._orbitStrokeColour, this._orbitStrokeWidth);
                     }
-                    // the star was clicked
-                    console.log('star clicked!')
                 } else {
+                    // a planet was clicked
                     const clickedPlanet = this.getClickedPlanet();
-                    if (!!Object.entries(clickedPlanet).length) {
-                        if (!!Object.entries(this.viewPlanet).length && !this.viewPlanet.clicked) {
-                            this.resetCircleStroke(this.viewPlanet.orbitCircle, this._orbitStrokeColour, this._orbitStrokeWidth);
-                        }
-                        // a planet was clicked
-                        this.viewPlanet = clickedPlanet;
-                        this.hasClickedPlanet = true;
-                        this.highlightCircle(this.viewPlanet.orbitCircle, this._selectOrbitColour, this._selectOrbitWidth);
-                    } else {
-                        console.error('Should have received a clicked planet', clickedPlanet);
-                    }
-                }
 
+                    if (!!Object.entries(this.viewPlanet).length && !this.viewPlanet.clicked) {
+                        // reset the currently selected planet so a new planet can be selected
+                        this.resetCircleStroke(this.viewPlanet.orbitCircle, this._orbitStrokeColour, this._orbitStrokeWidth);
+                    }
+
+                    // set the select planet and highlight its orbit circle
+                    this.viewPlanet = clickedPlanet;
+                    this.hasClickedPlanet = true;
+                    this.highlightCircle(this.viewPlanet.orbitCircle, this._selectOrbitColour, this._selectOrbitWidth);
+                }
             } else if (!!Object.entries(collidingOrbit).length) {
                 // mouse click on orbit circle
+
                 if (!!Object.entries(this.viewPlanet).length && !this.viewPlanet.clicked) {
+                    // reset the currently selected planet so a new planet can be selected
                     this.resetCircleStroke(this.viewPlanet.orbitCircle, this._orbitStrokeColour, this._orbitStrokeWidth);
                 }
 
-                // a planet orbit was clicked over
+                // set the planet for the collided orbit
+                // manually update planet attributes
+                // force stroke colour and width to required values
                 this.viewPlanet = collidingOrbit;
                 this.viewPlanet.clicked = true;
                 this.viewPlanet.collided = false;
@@ -204,12 +211,15 @@ export class StarMapComponent implements AfterViewInit {
                 this.selectCircle(this.viewPlanet.orbitCircle, this._selectOrbitColour, this._selectOrbitWidth);
             } else {
                 // the user clicked but not on a star or planet
+
+                // unset the currently selected planet
                 this.resetCircleStroke(this.viewPlanet.orbitCircle, this._orbitStrokeColour, this._orbitStrokeWidth);
                 this.viewPlanet = {} as Planet;
                 this.hasClickedPlanet = false;
             }
         } else {
             // star map view
+
             const clickedSystem = this.getStarCollision(mousePoint);
             if (!!Object.entries(clickedSystem).length) {
                 if (!!Object.entries(this.viewSystem).length) {
@@ -570,7 +580,7 @@ export class StarMapComponent implements AfterViewInit {
 
             var orbitSpeed = this.orbitTracker[i];
             var angle = this.getAngle(this.viewSystem.star.circle.center, this.viewSystem.planets[i].circle.center);
-            angle = angle + orbitSpeed / this.viewSystem.planets[i].size % 360;
+            angle = angle + orbitSpeed / this.viewSystem.planets[i].size;
             angle = (Math.PI * angle) / 180;
 
             this.viewSystem.planets[i].circle.center = this.getCirclePoint(
