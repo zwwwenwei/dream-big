@@ -4,19 +4,19 @@ import { BehaviorSubject, Observable } from "rxjs";
 import { Router } from '@angular/router';
 import { User } from '../model/user';
 import { map } from "rxjs/operators";
- 
+
 @Injectable({
   providedIn: 'root'
 })
- 
+
 export class AuthService {
- 
+
   uri = 'http://localhost:3000';
   token: any;
   private currentUserSubject: BehaviorSubject<User>;
   public currentUser: Observable<User>;
-  
-  constructor(private http: HttpClient,private router: Router) { 
+
+  constructor(private http: HttpClient, private router: Router) {
     this.currentUserSubject = new BehaviorSubject<User>(
       JSON.parse(localStorage.getItem("currentUser"))
     );
@@ -31,7 +31,7 @@ export class AuthService {
     // post to fake back end, this url will be handled there...
 
     return this.http
-      .post<any>(this.uri + '/auth/login', {email: email,password: password})
+      .post<any>(this.uri + '/auth/login', { email: email, password: password })
       .pipe(
         map(user => {
           // store user details and basic auth credentials in local storage to keep user logged in between page refreshes
@@ -44,11 +44,19 @@ export class AuthService {
   }
 
   logout() {
-      // remove user from local storage to log user out
-      localStorage.removeItem("currentUser");
-      this.currentUserSubject.next(null);
-    }
-   
-  
+    // remove user from local storage to log user out
+    localStorage.removeItem("currentUser");
+    this.currentUserSubject.next(null);
+  }
+
+  parseJwt(token:string) {
+    var base64Url = token.split('.')[1];
+    var base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
+    var jsonPayload = decodeURIComponent(window.atob(base64).split('').map(function (c) {
+      return '%' + ('00' + c.charCodeAt(0).toString(16)).slice(-2);
+    }).join(''));
+
+    return JSON.parse(jsonPayload);
+  };
 }
 

@@ -37,6 +37,7 @@ import { StarWizardComponent } from './Components/Wizard/star-wizard/star-wizard
 import { CompleteWizardComponent } from './Components/Wizard/complete-wizard/complete-wizard.component';
 import { HomeComponent } from './Components/home/home.component';
 import { WizardDialogComponent } from './wizard-dialog/wizard-dialog.component';
+import { StarSystemService } from './services/star-system.service';
 
 @NgModule({
   declarations: [
@@ -85,6 +86,7 @@ import { WizardDialogComponent } from './wizard-dialog/wizard-dialog.component';
     AuthService,
     StudentService,
     StudentJourneyService,
+    StarSystemService,
     { provide: MAT_DIALOG_DEFAULT_OPTIONS, useValue: { hasBackdrop: true } },
     // {
     // provide: HTTP_INTERCEPTORS,

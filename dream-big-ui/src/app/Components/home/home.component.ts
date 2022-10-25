@@ -1,5 +1,11 @@
 import { Component, OnInit, ViewChild } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
+import { StarSystem } from 'src/app/model/star-systems';
+import { Student } from 'src/app/model/student';
+import { User } from 'src/app/model/user';
+import { AuthService } from 'src/app/services/auth.service';
+import { StarSystemService } from 'src/app/services/star-system.service';
+import { StudentService } from 'src/app/services/student.service';
 import { WizardDialogComponent } from 'src/app/wizard-dialog/wizard-dialog.component';
 import { StarMapComponent } from '../StarMap/star-map.component';
 
@@ -10,9 +16,31 @@ import { StarMapComponent } from '../StarMap/star-map.component';
 })
 export class HomeComponent implements OnInit {
   @ViewChild(StarMapComponent) starmap: StarMapComponent = {} as StarMapComponent;
-  constructor(public dialog: MatDialog) { }
 
-  ngOnInit(): void {
+  private user: User;
+  private student: Student;
+  public userStarSystems: StarSystem[];
+
+
+  constructor(
+    public dialog: MatDialog,
+    private authService: AuthService,
+    private starSystemService: StarSystemService,
+    private studentService: StudentService,
+  ) { }
+
+  async ngOnInit() {
+    await this.getStarSystems();
+    this.starmap.loadStarSystems(this.userStarSystems);
+
+  }
+
+  private async getStarSystems() {
+    const yes: any = this.authService.currentUserValue;
+    const user_id = this.authService.parseJwt(yes.token!).user_id
+
+    this.student = await this.studentService.get({ 'user_id': user_id }).toPromise();
+    this.userStarSystems = await this.starSystemService.fetchAll({}, { params: { 'student_journey_id': 1 } }).toPromise();
   }
 
   public addStarSystem() {
