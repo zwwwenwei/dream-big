@@ -80,10 +80,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_10_003518) do
     t.boolean "status"
     t.bigint "star_system_id"
     t.bigint "skin_id"
-    t.bigint "category_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["category_id"], name: "fk_rails_54163c97c0"
     t.index ["skin_id"], name: "fk_rails_a26b5012c8"
     t.index ["star_system_id"], name: "fk_rails_301d41c9cb"
   end
@@ -174,7 +172,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_10_003518) do
   add_foreign_key "categories", "weight_values", column: "weight_values_id"
   add_foreign_key "journey_stars", "categories"
   add_foreign_key "journey_stars", "student_journeys", on_delete: :cascade
-  add_foreign_key "planets", "categories"
   add_foreign_key "planets", "planet_skins", column: "skin_id"
   add_foreign_key "planets", "star_systems", on_delete: :cascade
   add_foreign_key "star_systems", "student_journeys", on_delete: :cascade

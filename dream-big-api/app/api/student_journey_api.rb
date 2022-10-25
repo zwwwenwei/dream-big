@@ -9,7 +9,7 @@ class StudentJourneyApi < Grape::API
       )
 
     # Auth for user->journey
-
+      # this should send a 404 response when the model isn't found
     result = StudentJourney.find(params[:id])
     present result, with: Entities::StudentJourneyEntity
   end

@@ -30,8 +30,9 @@ export class StarMapComponent implements AfterViewInit {
     public isSystemView: boolean = false;
     private orbitTracker: any = {}
     private animationId: number = -1;
-
     private collideSystem: StarSystem = {} as StarSystem;
+
+
     private _circleStrokeColour = 'white';
     private _circleStrokeWidth = 2;
     private _selectStrokeWidth = 2;
@@ -50,9 +51,6 @@ export class StarMapComponent implements AfterViewInit {
     private _viewSystemZoom: number = 3;
     private _addOrbitAngle: number = 60;
 
-    constructor(private renderer: Renderer2) {
-
-    }
 
     ngAfterViewInit(): void {
         this.project = new Project(this.canvas.nativeElement);

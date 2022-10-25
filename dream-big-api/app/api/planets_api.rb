@@ -9,7 +9,10 @@ class PlanetsApi < Grape::API
     requires :status, type: String, desc: 'planet status'
     requires :star_system_id, type: Integer, desc: 'the id for the star system this planet belongs to'
     # requires :skin_id, type: Integer, desc: 'ID of the Planet Skin'
-    requires :category_id, type: Integer, desc: 'Category of the plannet'
+
+    # planet category should have a bridging table as it is a many-to-many relationship
+    # requires :category_id, type: Integer, desc: 'Category of the planet'
+
   end
   post '/planet' do
     planet_parameters = ActionController::Parameters.new(params)
@@ -18,7 +21,6 @@ class PlanetsApi < Grape::API
         :status,
         :star_system_id,
         # :skin_id,
-        :category_id
       )
 
     # Auth...
@@ -35,7 +37,6 @@ class PlanetsApi < Grape::API
     optional :status, type: String, desc: 'planet status'
     optional :star_system_id, type: Integer, desc: 'the id for the star system this planet belongs to'
     # optional :skin_id, type: Integer, desc: 'ID of the Planet Skin'
-    optional :category_id, type: Integer, desc: 'Category of the plannet'
   end
   put '/planet/:id' do
     planet_parameters = ActionController::Parameters.new(params)
@@ -43,8 +44,7 @@ class PlanetsApi < Grape::API
         :name, 
         :status,
         :star_system_id,
-        # :skin_id,
-        :category_id
+        # :skin_id
       )
 
     # Auth
