@@ -61,12 +61,12 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_10_003518) do
     t.string "courseDesc"
   end
 
-  create_table "journey_Stars", charset: "utf8mb4", force: :cascade do |t|
+  create_table "journey_stars", charset: "utf8mb4", force: :cascade do |t|
     t.bigint "category_id"
     t.boolean "isMaxed"
     t.bigint "student_journey_id"
     t.index ["category_id"], name: "fk_rails_a572deea0e"
-    t.index ["student_journey_id"], name: "fk_rails_cd42b145a0"
+    t.index ["student_journey_id"], name: "fk_rails_c0c5585511"
   end
 
   create_table "planet_skins", charset: "utf8mb4", force: :cascade do |t|
@@ -172,8 +172,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_10_003518) do
   add_foreign_key "avatars", "avatar_heads"
   add_foreign_key "avatars", "avatar_torsos", column: "avatar_torsos_id"
   add_foreign_key "categories", "weight_values", column: "weight_values_id"
-  add_foreign_key "journey_Stars", "categories"
-  add_foreign_key "journey_Stars", "student_journeys", on_delete: :cascade
+  add_foreign_key "journey_stars", "categories"
+  add_foreign_key "journey_stars", "student_journeys", on_delete: :cascade
   add_foreign_key "planets", "categories"
   add_foreign_key "planets", "planet_skins", column: "skin_id"
   add_foreign_key "planets", "star_systems", on_delete: :cascade

@@ -16,7 +16,7 @@ USER "${USER}"
 # Pre-create the target dir for global install.
 RUN mkdir -p "${NPM_CONFIG_PREFIX}/lib"
 
-WORKDIR /dreambig-ui
+WORKDIR /ui
 
 # Install global packages
 RUN npm --global config set user "${USER}"
