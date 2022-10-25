@@ -1,5 +1,5 @@
-import { Component, ViewChild, ElementRef, AfterViewInit, Renderer2 } from '@angular/core';
-import { Color, Path, Point, Project, PointText, Raster, Group } from 'paper/dist/paper-core';
+import { Component, ViewChild, ElementRef, AfterViewInit, Renderer2, Input } from '@angular/core';
+import { Color, Path, Point, Project, PointText } from 'paper/dist/paper-core';
 import { Star, CircleData, Planet, StarSystem, CircleSprite } from './types';
 
 @Component({
@@ -9,6 +9,8 @@ import { Star, CircleData, Planet, StarSystem, CircleSprite } from './types';
 
 })
 export class StarMapComponent implements AfterViewInit {
+    @Input() loadedStarSystems!: any[];
+
     @ViewChild('canvas') canvas: ElementRef<HTMLCanvasElement> = {} as ElementRef<HTMLCanvasElement>;
     @ViewChild('planet') planet: ElementRef<HTMLImageElement> = {} as ElementRef<HTMLImageElement>;
 
@@ -28,8 +30,9 @@ export class StarMapComponent implements AfterViewInit {
     public isSystemView: boolean = false;
     private orbitTracker: any = {}
     private animationId: number = -1;
-
     private collideSystem: StarSystem = {} as StarSystem;
+
+
     private _circleStrokeColour = 'white';
     private _circleStrokeWidth = 2;
     private _selectStrokeWidth = 2;
@@ -42,15 +45,12 @@ export class StarMapComponent implements AfterViewInit {
     private _selectOrbitColour = 'white';
     private _orbitStrokeWidth = 0.2;
     private _orbitStrokeColour = 'lightgray';
-    private textColour: string = 'white';
-    private textFont: string = 'Arial'
-    private textSize: number = 15;
-    private viewSystemZoom: number = 3;
-    private addOrbitAngle: number = 60;
+    private _textColour: string = 'white';
+    private _textFont: string = 'Arial'
+    private _textSize: number = 15;
+    private _viewSystemZoom: number = 3;
+    private _addOrbitAngle: number = 60;
 
-    constructor(private renderer: Renderer2) {
-
-    }
 
     ngAfterViewInit(): void {
         this.project = new Project(this.canvas.nativeElement);
@@ -58,7 +58,7 @@ export class StarMapComponent implements AfterViewInit {
         setTimeout(() => {
             // get star systems from api
             // or use this test method
-            this.createStarSystems();
+            // this.createStarSystems();
             this.drawScene();
         }, 0);
     }
@@ -354,6 +354,77 @@ export class StarMapComponent implements AfterViewInit {
         )
     }
 
+    public loadStarSystems(starSystems: any[]) {
+        let prevPoint = {
+            x: 10,
+            y: 200
+        } as paper.Point;
+
+        for (let i = 0; i < starSystems.length; i++) {
+            let point = {
+                x: prevPoint.x + this.randInt(50, 100),
+                y: Math.max(prevPoint.y + this.randInt(-50, 50), 50)
+            } as paper.Point;
+
+            let starCircle = this.getRandomCircle(point, 15, 30);
+            if (starSystems[i].star) {
+                const star: Star = {
+                    id: starSystems[i].star.id,
+                    name: starSystems[i].star.name,
+                    size: starCircle.radius,
+                    circle: starCircle,
+                    circlePath: {} as paper.Path,
+                    clicked: false,
+                    collided: false
+                }
+
+                let planets = [];
+                let angleCtr = 0;
+                let addOrbitDist = 20;
+                let maxOrbitDist = 200;
+                let orbitCtr = 0;
+                for (let j = 0; j < starSystems[i].planets.length; j++) {
+                    let orbitDist = (star.size * this._viewSystemZoom) + ((++orbitCtr * addOrbitDist) % maxOrbitDist)
+                    let angle = angleCtr;
+                    angleCtr += this._addOrbitAngle;
+                    let planetPoint = this.getCirclePoint(this.getCanvasMidPoint(), orbitDist, angle);
+                    let orbitCircle = this.getCircle(this.getCanvasMidPoint(), orbitDist, '', this._orbitStrokeColour, this._orbitStrokeWidth);
+                    let planetCircle = this.getRandomCircle(planetPoint, 10, 15);
+
+                    const planet: Planet = {
+                        id: starSystems[i].planets[j].id,
+                        size: planetCircle.radius,
+                        circle: planetCircle,
+                        orbitCircle: orbitCircle,
+                        offset: {
+                            x: starCircle.center.x - planetCircle.center.x,
+                            y: starCircle.center.y - planetCircle.center.y,
+                        } as paper.Point,
+                        name: starSystems[i].planets[j].name,
+                        circlePath: {} as paper.Path,
+                        orbitCirclePath: {} as paper.Path,
+                        clicked: false,
+                        collided: false,
+                        speed: 10 / (j + this.randInt(1, 5))
+                    }
+                    planets.push(planet);
+                }
+
+                const starSystem: StarSystem = {
+                    id: starSystems[i].id,
+                    star,
+                    planets,
+                    name: 'no name',
+                    status: starSystems[i].status,
+                }
+                this.starSystemList.push(starSystem);
+                prevPoint = point;
+            }
+        }
+        console.log(this.starSystemList);
+        this.drawScene();
+    }
+
     public createStarSystems() {
         let prevPoint = {
             x: 10,
@@ -385,9 +456,9 @@ export class StarMapComponent implements AfterViewInit {
             let maxOrbitDist = 200;
             let orbitCtr = 0;
             for (let j = 0; j < this.randInt(5, 10); j++) {
-                let orbitDist = (star.size * this.viewSystemZoom) + ((++orbitCtr * addOrbitDist) % maxOrbitDist)
+                let orbitDist = (star.size * this._viewSystemZoom) + ((++orbitCtr * addOrbitDist) % maxOrbitDist)
                 let angle = angleCtr;
-                angleCtr += this.addOrbitAngle;
+                angleCtr += this._addOrbitAngle;
                 let planetPoint = this.getCirclePoint(this.getCanvasMidPoint(), orbitDist, angle);
                 let orbitCircle = this.getCircle(this.getCanvasMidPoint(), orbitDist, '', this._orbitStrokeColour, this._orbitStrokeWidth);
                 let planetCircle = this.getRandomCircle(planetPoint, 10, 15);
@@ -406,7 +477,7 @@ export class StarMapComponent implements AfterViewInit {
                     orbitCirclePath: {} as paper.Path,
                     clicked: false,
                     collided: false,
-                    speed: this.randInt(1, 7)
+                    speed: 10 / (j + this.randInt(1, 5))
                 }
                 planets.push(planet);
             }
@@ -458,9 +529,9 @@ export class StarMapComponent implements AfterViewInit {
         const pt = new PointText({
             point,
             content,
-            fillColor: this.textColour,
-            fontFamily: this.textFont,
-            fontSize: this.textSize,
+            fillColor: this._textColour,
+            fontFamily: this._textFont,
+            fontSize: this._textSize,
         });
     }
     private drawText(xy: paper.Point, content: string, x_offset: number, y_offset: number) {
@@ -472,9 +543,9 @@ export class StarMapComponent implements AfterViewInit {
         const pt = new PointText({
             point,
             content,
-            fillColor: this.textColour,
-            fontFamily: this.textFont,
-            fontSize: this.textSize,
+            fillColor: this._textColour,
+            fontFamily: this._textFont,
+            fontSize: this._textSize,
         });
     }
 
@@ -497,7 +568,7 @@ export class StarMapComponent implements AfterViewInit {
         // user just switched to view a star system
         if (!this.isViewingSystem) {
             this.saveStar = Object.assign({}, this.viewSystem.star);
-            this.viewSystem.star.circle = this.getCircle(this.getCanvasMidPoint(), this.viewSystem.star.circle.radius * this.viewSystemZoom, this.viewSystem.star.circle.fillColour, this.viewSystem.star.circle.strokeColour, this.viewSystem.star.circle.strokeWidth)
+            this.viewSystem.star.circle = this.getCircle(this.getCanvasMidPoint(), this.viewSystem.star.circle.radius * this._viewSystemZoom, this.viewSystem.star.circle.fillColour, this.viewSystem.star.circle.strokeColour, this.viewSystem.star.circle.strokeWidth)
             this.isViewingSystem = true;
             window.cancelAnimationFrame(this.animationId);
         }
@@ -580,7 +651,7 @@ export class StarMapComponent implements AfterViewInit {
 
             var orbitSpeed = this.orbitTracker[i];
             var angle = this.getAngle(this.viewSystem.star.circle.center, this.viewSystem.planets[i].circle.center);
-            angle = angle + orbitSpeed*this.viewSystem.planets[i].speed / this.viewSystem.planets[i].size;
+            angle = angle + orbitSpeed * this.viewSystem.planets[i].speed / this.viewSystem.planets[i].size;
             angle = (Math.PI * angle) / 180;
 
             this.viewSystem.planets[i].circle.center = this.getCirclePoint(

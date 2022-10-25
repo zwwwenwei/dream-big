@@ -75,6 +75,21 @@ def seed_sequence_data(model, attributes, num)
   return items
 end
 
+def create_admin_user_student()
+  admin = User.find_or_initialize_by(email: 'admin')
+  admin.password = 'admin'
+  admin.username = 'admin'
+  admin.save!
+
+  admin_s = Student.find_or_initialize_by(user_id: admin.id)
+  admin_s.firstName = 'admin'
+  admin_s.save!
+
+  puts "Created user\nemail: admin\npassword: admin"
+  return admin_s
+
+end
+
 def faker_first_name()
   return Faker::Name.first_name
 end
@@ -92,26 +107,36 @@ end
 # import_from_csv(Rails.root.join('db','resources','units.csv'), Unit, ['name', 'description', 'code'])
 
 
-user_data = {
-  'name': method(:faker_first_name),
-  'email': method(:faker_email)
-  'username': method(:faker_name),
-  'password': method(:faker_name),
-}
-student_data = {
-  'name': method(:faker_name),
-  'phone': method(:faker_phone),
-  'address': method(:faker_name),
-}
+# user_data = {
+#   'name': method(:faker_first_name),
+#   'email': method(:faker_email)
+#   'username': method(:faker_name),
+#   'password': method(:faker_name),
+# }
+# student_data = {
+#   'name': method(:faker_name),
+#   'phone': method(:faker_phone),
+#   'address': method(:faker_name),
+# }
 
-seed_data_parent_child(User, user_data, Student, student_data, 5)
+# seed_data_parent_child(User, user_data, Student, student_data, 5)
 
 
-users = seed_sequence_data(User, ['name','email', 'username', 'password'], 5)
-students = seed_child_data(users, Student, ['name', 'phone', 'address'])
-student_journeys = seed_child_data(students, StudentJourney, ['timeline'])
-star_systems = seed_child_data(student_journeys, StarSystem, ['status', 'name'])
-stars = seed_child_data(star_systems, Star, ['name', 'status'])
-planets = seed_child_data(star_systems, Planet, ['status', 'name'])
+admin_student = create_admin_user_student()
+# users = seed_sequence_data(User, ['username','email', 'password'], 5)
 
-seed_sequence_data(Category, ['name', 'description', 'weight'], 5)
+student_journey = seed_child_data([admin_student], StudentJourney, ['timeline'])
+
+star_system_1 = seed_child_data(student_journey, StarSystem, ['status', 'name'])
+seed_child_data(star_system_1, Star, ['name', 'status'])
+seed_child_data(star_system_1, Planet, ['status', 'name'], 5)
+
+star_system_2 = seed_child_data(student_journey, StarSystem, ['status', 'name'])
+seed_child_data(star_system_2, Star, ['name', 'status'])
+seed_child_data(star_system_2, Planet, ['status', 'name'], 6)
+
+star_system_3 = seed_child_data(student_journey, StarSystem, ['status', 'name'])
+seed_child_data(star_system_3, Star, ['name', 'status'])
+seed_child_data(star_system_3, Planet, ['status', 'name'], 4)
+
+# seed_sequence_data(Category, ['name', 'description', 'weight'], 5)

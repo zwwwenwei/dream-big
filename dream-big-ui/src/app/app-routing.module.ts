@@ -19,7 +19,7 @@ const adminModule = () => import('./admin/admin.module').then(x => x.AdminModule
 const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full'},
   { path: 'login', component: LoginComponent },
-  { path: 'intro', canActivate: [AuthGuard], component: IntroPageComponent},
+  { path: 'intro', component: IntroPageComponent},
   { path: 'profile', canActivate: [AuthGuard], component: ProfileComponent },
   { path: 'home', component: HomeComponent }, 
   { path: 'star', component: StarControlComponent },

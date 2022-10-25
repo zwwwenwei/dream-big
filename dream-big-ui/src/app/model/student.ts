@@ -2,6 +2,7 @@ import { Entity } from 'ngx-entity-service';
 import { User } from './user';
 import { Avatar} from './avatar';
 import { AvatarBuilderComponent } from '../Components/avatar-builder/avatar-builder.component';
+import { StudentJourney } from './student-journey';
 
 const KEYS =
   [
@@ -12,6 +13,7 @@ const KEYS =
     'address',
     'user',
     'avatar',
+    'student_journey'
   ];
 
 export class Student extends Entity {
@@ -24,7 +26,7 @@ export class Student extends Entity {
   user_id: number = -1;
   avatar: Avatar = {} as Avatar;
   avatar_id: number = -1;
-
+  student_journey: StudentJourney = {} as StudentJourney
   /**
    * Indicates that the Unit has yet to be stored in the database
    */

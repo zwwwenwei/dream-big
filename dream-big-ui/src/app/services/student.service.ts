@@ -14,8 +14,8 @@ export type IloStats = {
 
 @Injectable()
 export class StudentService extends CachedEntityService<Student> {
-  protected readonly endpointFormat = 'student/:id:';
-  public readonly rolloverEndpoint = 'student/:id:/rollover';
+  protected readonly endpointFormat = 'student/:user_id:';
+  public readonly rolloverEndpoint = 'student/:user_id:/rollover';
 
   constructor(
     httpClient: HttpClient,

@@ -4,5 +4,7 @@ module Entities
     expose :status
     expose :name
     expose :student_journey_id
+    expose :planets
+    expose :star
   end
 end
