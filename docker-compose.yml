@@ -1,6 +1,7 @@
 version: '3'
 services:
   api:
+    image: api:latest
     container_name: dream-big-api
     build: ./dream-big-api
     ports:
@@ -12,22 +13,26 @@ services:
     environment:
       RAILS_ENV: 'development'
       DEV_DB_DATABASE: 'dream_big_api_development'
+      TEST_DB_DATABASE: 'dream_big_api_test'
       DEV_DB_USERNAME: dream
       DEV_DB_PASSWORD: pwd
       DEV_DB_HOST: dream-big-dev-db
     command:
-      /bin/bash -c 'rm -f /api/tmp/pids/server.pid && bundle install && rails s -b 0.0.0.0'
-  # ui:
-  #   container_name: dream-big-ui
-  #   build: ./dream-big-ui
-  #   ports:
-  #     - "4200:4200"
-  #   volumes:
-  #     - ./dream-big-ui:/dream-big-ui
-  #   depends_on:
-  #     - api
-  #   command:
-  #     /bin/bash -c 'npm install; npm start'
+      /bin/bash -c 'rm -f /api/tmp/pids/server.pid && bundle install && rails db:migrate RAILS_ENV=test && rails db:migrate && rails s -b 0.0.0.0'
+
+  ui:
+    image: ui:latest
+    container_name: dream-big-ui
+    build: ./dream-big-ui
+    ports:
+      - "4200:4200"
+    volumes:
+      - ./dream-big-ui:/dream-big-ui
+    depends_on:
+      - api
+    command:
+      /bin/bash -c 'npm install; npm start'
+
   dev-db:
     container_name: dream-big-dev-db
     image: mariadb
@@ -40,4 +45,5 @@ services:
     ports:
       - "3306:3306"
     volumes:
-      - ./data/database:/var/lib/mysql
+      - ./db-init:/docker-entrypoint-initdb.d
+      # - ./data/database:/var/lib/mysql
