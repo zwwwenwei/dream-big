@@ -1,6 +1,6 @@
 require "test_helper"
 
-class PlanetTest < ActiveSupport::TestCase
+class CategoryQuestionTest < ActiveSupport::TestCase
   # test "the truth" do
   #   assert true
   # end

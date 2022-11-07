@@ -45,17 +45,9 @@ class DreamBigApi < Grape::API
   end
 
   #mount DreamBigApi
-  mount UnitApi
   mount CategoryApi
   mount UsersApi
   mount StudentApi
-  mount StudentJourneyApi
-  mount StarSystemApi
-  mount PlanetsApi
-  mount StarsApi
-  mount PlanetSkinApi
-  mount StarSkinApi
-  mount WeightValuesApi
   mount AvatarApi
   mount AvatarHairsApi
   mount AvatarHeadsApi
