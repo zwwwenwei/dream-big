@@ -8,6 +8,5 @@ module Entities
     expose :student_type 
     expose :avatar_id
     expose :user_id
-    expose :student_journey
   end
 end

@@ -3,78 +3,69 @@ require 'grape'
 class AnswersApi < Grape::API
   desc 'Allow retrieval of an Answer in the Assessment'
   get '/answer/:id' do
-    avatar_parameters = ActionController::Parameters.new(params)
+    answers_parameters = ActionController::Parameters.new(params)
       .permit(
         :id
       )
 
     # Auth
 
-    result = Avatar.find(params[:id])
+    result = Answers.find(params[:id])
     present result, with: Entities::AvatarEntity
   end
 
-  desc 'Allow creation of an Avatar'
+  desc 'Allow creation of an Answers'
   params do
   
-    requires :avatar_head_id, type: Integer, desc: 'Avatar Head ID'
-    requires :avatar_torsos_id, type: Integer, desc: 'Avatar torso ID'
-    requires :avatar_hairs_id, type: Integer, desc: 'Avatar hair ID'
-    requires :avatar_accessories_id, type: Integer, desc: 'Avatar accessories ID'
+    requires :answers_head_id, type: Integer, desc: 'Answers Head ID'
+ 
 
   end
-  post '/avatar' do
-    avatar_parameters = ActionController::Parameters.new(params)
+  post '/Answers' do
+    answers_parameters = ActionController::Parameters.new(params)
       .permit(
-        :avatar_head_id,
-        :avatar_torsos_id,
-        :avatar_hairs_id,
-        :avatar_accessories_id
+        :answers_head_id,
+   
       )
 
     # Auth...
 
-    result = Avatar.create!(avatar_parameters)
+    result = Answers.create!(answers_parameters)
 
     present result, with: Entities::AvatarEntity
   end
 
-  desc 'Allow updating of a Avatar'
+  desc 'Allow updating of a Answers'
   params do
     
-    optional :avatar_head_id, type: Integer, desc: 'Avatar Head ID'
-    optional :avatar_torsos_id, type: Integer, desc: 'Avatar torso ID'
-    optional :avatar_hairs_id, type: Integer, desc: 'Avatar hair ID'
-    optional :avatar_accessories_id, type: Integer, desc: 'Avatar accessories ID'
+    optional :answers_head_id, type: Integer, desc: 'Answers Head ID'
+
   end
-  put '/avatar/:id' do
-    avatar_parameters = ActionController::Parameters.new(params)
+  put '/Answers/:id' do
+    answers_parameters = ActionController::Parameters.new(params)
       .permit(
-        :avatar_head_id,
-        :avatar_torsos_id,
-        :avatar_hairs_id,
-        :avatar_accessories_id
+        :
       )
 
     # Auth
 
-    result = Avatar.find(params[:id])
-    result.update! avatar_parameters
+    result = Answers.find(params[:id])
+    result.update! answers_parameters
 
     present result, with: Entities::AvatarEntity
   end
 
-  desc 'Delete the Avatar with the indicated id'
+  desc 'Delete the Answers with the indicated id'
   params do
-    requires :id, type: Integer, desc: 'The id of the Avatar to delete'
+    requires :id, type: Integer, desc: 'The id of the Answers to delete'
   end
-  delete '/avatar/:id' do
-    Avatar.find(params[:id]).destroy!
+  delete '/Answers/:id' do
+    Answers.find(params[:id]).destroy!
     true
   end
 
-  get '/avatar' do
-    result = Avatar.all
+  get '/Answers' do
+    result = Answers.all
 
     present result, with: Entities::AvatarEntity
   end
