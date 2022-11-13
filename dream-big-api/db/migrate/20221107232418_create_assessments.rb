@@ -6,6 +6,6 @@ class CreateAssessments < ActiveRecord::Migration[7.0]
       t.timestamps
     end
     add_foreign_key :assessments, :journeys, ondelete: :cascade, column: :journey_id
-    add_foreign_key :assessments, :category, ondelete: :cascade, column: :category_id
+    add_foreign_key :assessments, :categories, ondelete: :cascade, column: :category_id
   end
 end

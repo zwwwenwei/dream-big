@@ -10,20 +10,23 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_11_07_232418) do
+ActiveRecord::Schema[7.0].define(version: 2022_11_13_035136) do
   create_table "answers", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "answer"
-    t.bigint "questionID"
-    t.bigint "assessmentID"
+    t.bigint "question_id"
+    t.bigint "assessment_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["assessment_id"], name: "fk_rails_6b44a1e939"
   end
 
   create_table "assessments", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
-    t.bigint "journeyID"
-    t.bigint "categoryID"
+    t.bigint "journey_id"
+    t.bigint "category_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["category_id"], name: "fk_rails_622567a6c4"
+    t.index ["journey_id"], name: "fk_rails_523a28d8ff"
   end
 
   create_table "avatar_accessories", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
@@ -60,46 +63,55 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_07_232418) do
 
   create_table "category_questions", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "question"
-    t.bigint "categoryID"
+    t.bigint "category_id"
+    t.bigint "assessment_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["assessment_id"], name: "fk_rails_2912916704"
   end
 
   create_table "goals", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "goalText"
     t.boolean "status"
+    t.bigint "section_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["section_id"], name: "fk_rails_d221e21327"
   end
 
   create_table "journeys", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
-    t.bigint "studentID"
-    t.bigint "assessmentID"
+    t.bigint "student_id"
+    t.bigint "assessment_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["student_id"], name: "fk_rails_339ec94246"
   end
 
   create_table "planets", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "name"
-    t.bigint "journeyID"
+    t.bigint "journey_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["journey_id"], name: "fk_rails_c2aa27ce2d"
   end
 
   create_table "plans", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
-    t.bigint "sectionID"
-    t.bigint "goalID"
+    t.bigint "section_id"
+    t.bigint "goal_id"
     t.string "planText"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["section_id"], name: "fk_rails_654aad63df"
   end
 
   create_table "reflections", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "reflectionText"
-    t.bigint "sectionID"
-    t.bigint "goalID"
+    t.bigint "section_id"
+    t.bigint "goal_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["goal_id"], name: "fk_rails_46829bb817"
+    t.index ["section_id"], name: "fk_rails_a0dafb49d1"
   end
 
   create_table "roles", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
@@ -107,10 +119,11 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_07_232418) do
   end
 
   create_table "sections", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
-    t.bigint "planetID"
-    t.bigint "categoryID"
+    t.bigint "planet_id"
+    t.bigint "category_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["planet_id"], name: "fk_rails_b68e7824b8"
   end
 
   create_table "students", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
@@ -141,10 +154,21 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_07_232418) do
     t.index ["role_id"], name: "fk_rails_642f17018b"
   end
 
+  add_foreign_key "answers", "assessments"
+  add_foreign_key "assessments", "categories"
+  add_foreign_key "assessments", "journeys"
   add_foreign_key "avatars", "avatar_accessories", column: "avatar_accessories_id"
   add_foreign_key "avatars", "avatar_hairs", column: "avatar_hairs_id"
   add_foreign_key "avatars", "avatar_heads"
   add_foreign_key "avatars", "avatar_torsos", column: "avatar_torsos_id"
+  add_foreign_key "category_questions", "assessments"
+  add_foreign_key "goals", "sections"
+  add_foreign_key "journeys", "students"
+  add_foreign_key "planets", "journeys"
+  add_foreign_key "plans", "sections"
+  add_foreign_key "reflections", "goals"
+  add_foreign_key "reflections", "sections"
+  add_foreign_key "sections", "planets"
   add_foreign_key "students", "avatars"
   add_foreign_key "students", "users"
   add_foreign_key "users", "roles"
