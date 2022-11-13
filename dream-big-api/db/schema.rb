@@ -10,24 +10,42 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[7.0].define(version: 2022_10_10_003518) do
-  create_table "avatar_accessories", charset: "utf8mb4", force: :cascade do |t|
+ActiveRecord::Schema[7.0].define(version: 2022_11_13_035136) do
+  create_table "answers", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+    t.string "answer"
+    t.bigint "question_id"
+    t.bigint "assessment_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["assessment_id"], name: "fk_rails_6b44a1e939"
+  end
+
+  create_table "assessments", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+    t.bigint "journey_id"
+    t.bigint "category_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["category_id"], name: "fk_rails_622567a6c4"
+    t.index ["journey_id"], name: "fk_rails_523a28d8ff"
+  end
+
+  create_table "avatar_accessories", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "imgpath"
   end
 
-  create_table "avatar_hairs", charset: "utf8mb4", force: :cascade do |t|
+  create_table "avatar_hairs", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "imgpath"
   end
 
-  create_table "avatar_heads", charset: "utf8mb4", force: :cascade do |t|
+  create_table "avatar_heads", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "imgpath"
   end
 
-  create_table "avatar_torsos", charset: "utf8mb4", force: :cascade do |t|
+  create_table "avatar_torsos", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "imgpath"
   end
 
-  create_table "avatars", charset: "utf8mb4", force: :cascade do |t|
+  create_table "avatars", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.bigint "avatar_head_id"
     t.bigint "avatar_torsos_id"
     t.bigint "avatar_hairs_id"
@@ -38,99 +56,77 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_10_003518) do
     t.index ["avatar_torsos_id"], name: "fk_rails_12f7f2f036"
   end
 
-  create_table "categories", charset: "utf8mb4", force: :cascade do |t|
+  create_table "categories", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "name"
     t.string "description"
-    t.bigint "weight_values_id"
-    t.index ["weight_values_id"], name: "fk_rails_1576e280c4"
   end
 
-  create_table "course_units", charset: "utf8mb4", force: :cascade do |t|
-  end
-
-  create_table "course_versions", charset: "utf8mb4", force: :cascade do |t|
-    t.date "startdate"
-    t.date "enddate"
-    t.date "datecensus"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-  end
-
-  create_table "courses", charset: "utf8mb4", force: :cascade do |t|
-    t.string "name"
-    t.string "courseDesc"
-  end
-
-  create_table "journey_stars", charset: "utf8mb4", force: :cascade do |t|
+  create_table "category_questions", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+    t.string "question"
     t.bigint "category_id"
-    t.boolean "isMaxed"
-    t.bigint "student_journey_id"
-    t.index ["category_id"], name: "fk_rails_a572deea0e"
-    t.index ["student_journey_id"], name: "fk_rails_c0c5585511"
-  end
-
-  create_table "planet_skins", charset: "utf8mb4", force: :cascade do |t|
-    t.string "name"
-    t.string "color"
-    t.string "asset"
-  end
-
-  create_table "planets", charset: "utf8mb4", force: :cascade do |t|
-    t.string "name"
-    t.boolean "status"
-    t.bigint "star_system_id"
-    t.bigint "skin_id"
+    t.bigint "assessment_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["skin_id"], name: "fk_rails_a26b5012c8"
-    t.index ["star_system_id"], name: "fk_rails_301d41c9cb"
+    t.index ["assessment_id"], name: "fk_rails_2912916704"
   end
 
-  create_table "roles", charset: "utf8mb4", force: :cascade do |t|
+  create_table "goals", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+    t.string "goalText"
+    t.boolean "status"
+    t.bigint "section_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["section_id"], name: "fk_rails_d221e21327"
+  end
+
+  create_table "journeys", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+    t.bigint "student_id"
+    t.bigint "assessment_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["student_id"], name: "fk_rails_339ec94246"
+  end
+
+  create_table "planets", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+    t.string "name"
+    t.bigint "journey_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["journey_id"], name: "fk_rails_c2aa27ce2d"
+  end
+
+  create_table "plans", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+    t.bigint "section_id"
+    t.bigint "goal_id"
+    t.string "planText"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["section_id"], name: "fk_rails_654aad63df"
+  end
+
+  create_table "reflections", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+    t.string "reflectionText"
+    t.bigint "section_id"
+    t.bigint "goal_id"
+    t.datetime "created_at", null: false
+    t.datetime "updated_at", null: false
+    t.index ["goal_id"], name: "fk_rails_46829bb817"
+    t.index ["section_id"], name: "fk_rails_a0dafb49d1"
+  end
+
+  create_table "roles", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "role_description"
   end
 
-  create_table "star_skins", charset: "utf8mb4", force: :cascade do |t|
-    t.string "colour"
-    t.string "asset"
-  end
-
-  create_table "star_systems", charset: "utf8mb4", force: :cascade do |t|
-    t.string "name"
-    t.boolean "status"
-    t.bigint "student_journey_id"
+  create_table "sections", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+    t.bigint "planet_id"
+    t.bigint "category_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["student_journey_id"], name: "fk_rails_b3ad9a271c"
+    t.index ["planet_id"], name: "fk_rails_b68e7824b8"
   end
 
-  create_table "stars", charset: "utf8mb4", force: :cascade do |t|
-    t.string "name"
-    t.string "goals"
-    t.string "reflection"
-    t.boolean "status"
-    t.bigint "star_system_id"
-    t.bigint "skin_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["skin_id"], name: "fk_rails_03e4effcfa"
-    t.index ["star_system_id"], name: "fk_rails_23decec5d5"
-  end
-
-  create_table "student_courses", charset: "utf8mb4", force: :cascade do |t|
-  end
-
-  create_table "student_journeys", charset: "utf8mb4", force: :cascade do |t|
-    t.float "timeline"
-    t.bigint "student_id"
-    t.bigint "journey_stars_id"
-    t.datetime "created_at", null: false
-    t.datetime "updated_at", null: false
-    t.index ["journey_stars_id"], name: "fk_rails_36daf1c6f2"
-    t.index ["student_id"], name: "fk_rails_cc2571c819"
-  end
-
-  create_table "students", charset: "utf8mb4", force: :cascade do |t|
+  create_table "students", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "firstName"
     t.string "lastName"
     t.integer "phone"
@@ -142,15 +138,12 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_10_003518) do
     t.index ["user_id"], name: "fk_rails_148c9e88f4"
   end
 
-  create_table "units", charset: "utf8mb4", force: :cascade do |t|
-    t.string "name"
-    t.string "description", limit: 4096
-    t.string "code"
+  create_table "teachers", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "users", charset: "utf8mb4", force: :cascade do |t|
+  create_table "users", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.string "name"
     t.string "username"
     t.string "email"
@@ -161,24 +154,21 @@ ActiveRecord::Schema[7.0].define(version: 2022_10_10_003518) do
     t.index ["role_id"], name: "fk_rails_642f17018b"
   end
 
-  create_table "weight_values", charset: "utf8mb4", force: :cascade do |t|
-    t.integer "weight"
-  end
-
+  add_foreign_key "answers", "assessments"
+  add_foreign_key "assessments", "categories"
+  add_foreign_key "assessments", "journeys"
   add_foreign_key "avatars", "avatar_accessories", column: "avatar_accessories_id"
   add_foreign_key "avatars", "avatar_hairs", column: "avatar_hairs_id"
   add_foreign_key "avatars", "avatar_heads"
   add_foreign_key "avatars", "avatar_torsos", column: "avatar_torsos_id"
-  add_foreign_key "categories", "weight_values", column: "weight_values_id"
-  add_foreign_key "journey_stars", "categories"
-  add_foreign_key "journey_stars", "student_journeys", on_delete: :cascade
-  add_foreign_key "planets", "planet_skins", column: "skin_id"
-  add_foreign_key "planets", "star_systems", on_delete: :cascade
-  add_foreign_key "star_systems", "student_journeys", on_delete: :cascade
-  add_foreign_key "stars", "star_skins", column: "skin_id"
-  add_foreign_key "stars", "star_systems", on_delete: :cascade
-  add_foreign_key "student_journeys", "journey_stars", column: "journey_stars_id"
-  add_foreign_key "student_journeys", "students", on_delete: :cascade
+  add_foreign_key "category_questions", "assessments"
+  add_foreign_key "goals", "sections"
+  add_foreign_key "journeys", "students"
+  add_foreign_key "planets", "journeys"
+  add_foreign_key "plans", "sections"
+  add_foreign_key "reflections", "goals"
+  add_foreign_key "reflections", "sections"
+  add_foreign_key "sections", "planets"
   add_foreign_key "students", "avatars"
   add_foreign_key "students", "users"
   add_foreign_key "users", "roles"

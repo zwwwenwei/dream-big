@@ -1,5 +1,6 @@
 import { Component, ViewChild, ElementRef, AfterViewInit, Input } from '@angular/core';
 import { Color, Path, Point, Project, PointText } from 'paper/dist/paper-core';
+import { calculateLinePoint, reorder } from 'src/app/helpers/canvas';
 import { Category, Polygon, StarCoord } from './types';
 
 @Component({
@@ -127,7 +128,7 @@ export class StarComponent implements AfterViewInit {
         if (!!Object.entries(this.collidedPolygon).length) {
             const collidedPolygonIdx = this.getPolygonIdx(this.collidedPolygon);
             // reorder the polygon array to ensure the one that has been collided with is last in the list (will be drawn ontop of the others)
-            this.catPolygons = this.reorder(this.catPolygons, collidedPolygonIdx + 1);
+            this.catPolygons = reorder(this.catPolygons, collidedPolygonIdx + 1);
         }
 
         this.drawCatPolygons();
@@ -136,9 +137,9 @@ export class StarComponent implements AfterViewInit {
 
 
     getScore(score: number) {
-        let newScore = this.minScore - ((score/100)*this.minScore)
+        let newScore = this.minScore - ((score / 100) * this.minScore)
 
-        return score+newScore;
+        return score + newScore;
     }
 
     private getCatPolygons() {
@@ -180,16 +181,16 @@ export class StarComponent implements AfterViewInit {
             var innerSpikeLength = Math.min(scaledInnerScore, this.starSize * this.innerRatio);
             var prevInnerSpikeLength = Math.min(scaledPrevInnerScore, this.starSize * this.innerRatio);
             var nextInnerSpikeLength = Math.min(scaledNextInnerScore, this.starSize * this.innerRatio);
-            
+
             let maxEdgeLengthL, maxEdgeLengthR;
             // determine the max length between this polygon and its neighbours
             maxEdgeLengthL = Math.max(prevInnerSpikeLength, innerSpikeLength);
             maxEdgeLengthR = Math.max(nextInnerSpikeLength, innerSpikeLength)
 
             // calculate the points on the corresponding inner spike lines, using the maximum edge length for each inner spike
-            const edgeL = this.calculateLinePoint(this.centrePoint.x, this.centrePoint.y, starCoord.edgeL.x, starCoord.edgeL.y, maxEdgeLengthL);
-            const edgeR = this.calculateLinePoint(this.centrePoint.x, this.centrePoint.y, starCoord.edgeR.x, starCoord.edgeR.y, maxEdgeLengthR);
-            const scoreXY = this.calculateLinePoint(this.centrePoint.x, this.centrePoint.y, starCoord.spike.x, starCoord.spike.y, outerSpikeLength);
+            const edgeL = calculateLinePoint(this.centrePoint.x, this.centrePoint.y, starCoord.edgeL.x, starCoord.edgeL.y, maxEdgeLengthL);
+            const edgeR = calculateLinePoint(this.centrePoint.x, this.centrePoint.y, starCoord.edgeR.x, starCoord.edgeR.y, maxEdgeLengthR);
+            const scoreXY = calculateLinePoint(this.centrePoint.x, this.centrePoint.y, starCoord.spike.x, starCoord.spike.y, outerSpikeLength);
 
             catPolygons.push({
                 points: {
@@ -305,28 +306,5 @@ export class StarComponent implements AfterViewInit {
         // path.fillColor = new Color('aliceblue');
         path.strokeWidth = 2
     }
-    /**
-     * Find the point on a line given by two coordinates that is distance units away from x1,y1
-     * 
-     * @param x1 x1 position on given line
-     * @param y1 y1 position on given line
-     * @param x2 x2 position on given line
-     * @param y2 y2 position on given line
-     * @param distance the distance to travel on the given line to find the desired point
-     * @returns a point on the given line that is distance units along it
-     */
-    private calculateLinePoint(x1: number, y1: number, x2: number, y2: number, distance: number) {
-        var vx = x2 - x1;
-        var vy = y2 - y1;
-        var mag = Math.sqrt(vx * vx + vy * vy);
-        vx /= mag;
-        vy /= mag;
-        var px = x1 + vx * (distance);
-        var py = y1 + vy * (distance);
-        return { x: px, y: py }
-    }
 
-    private reorder(data: Array<any>, index: number) {
-        return data.slice(index).concat(data.slice(0, index))
-    };
 }

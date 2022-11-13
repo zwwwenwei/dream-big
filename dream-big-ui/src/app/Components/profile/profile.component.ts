@@ -9,8 +9,6 @@ import { UserService } from 'src/app/services/user.service';
 
 import { AuthGuard } from 'src/app/services/authguard.service';
 
-import { StudentJourney } from 'src/app/model/student-journey';
-import { StudentJourneyService } from 'src/app/services/student-journey.service';
 
 @Component({
   selector: 'app-profile',
@@ -20,9 +18,9 @@ import { StudentJourneyService } from 'src/app/services/student-journey.service'
 export class ProfileComponent implements OnInit {
   loading = false;
   users: User[];
-  journey: StudentJourney[];
 
-    constructor(private userService: UserService, private router: Router, private authService: AuthService, private jouney: StudentJourneyService){
+
+    constructor(private userService: UserService, private router: Router, private authService: AuthService){
         
     }
     ngOnInit() {
@@ -31,10 +29,10 @@ export class ProfileComponent implements OnInit {
           this.loading = false;
           this.users = users;
       });
-      this.jouney.query().pipe(first()).subscribe(journey=> {
-        this.loading = false;
-        this.journey= journey;
-    });
+    //   this.jouney.query().pipe(first()).subscribe(journey=> {
+    //     this.loading = false;
+    //     this.journey= journey;
+    // });
   }
 
     onLogOut() {
