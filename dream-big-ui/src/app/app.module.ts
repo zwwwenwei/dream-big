@@ -1,36 +1,29 @@
+// library module imports
 import { NgModule } from '@angular/core';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { BrowserModule } from '@angular/platform-browser';
 import { HttpClientModule } from '@angular/common/http';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
+import { RouterModule } from '@angular/router';
+import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
 
+import { NgMaterialModule } from './ng-material/ng-material.module';
 import { AppRoutingModule } from './app-routing.module';
-import { AppComponent } from './app.component';
+// import { AdminModule } from './admin/admin.module';
 
+// service imports
 import { CategoryService } from './services/category.service';
-
 import { UserService } from './services/user.service';
-import { LandingPageComponent } from './Components/landing-page/landing-page.component';
+import { StudentService } from './services/student.service';
+import { AuthService } from './services/auth.service';
+
+// component imports
 import { NavbarComponent } from './Components/navbar/navbar.component';
 import { StarControlComponent } from './Components/StarControl/star-control.component';
 import { StarComponent } from './Components/Star/star.component';
-
-// import { AdminModule } from './admin/admin.module';
-import { TableComponentModule } from './admin/generic/table.component';
-import { StudentService } from './services/student.service';
-
+import { AppComponent } from './app.component';
 import { IntroPageComponent } from './Components/intro-page/intro-page.component';
-import { AvatarBuilderComponent } from './Components/avatar-builder/avatar-builder.component';
-
-import { MAT_DIALOG_DEFAULT_OPTIONS } from '@angular/material/dialog';
-import { NgMaterialModule } from './ng-material/ng-material.module';
-import { RgbPickerModule } from './rgb-picker/rgb-picker.module';
-import { LoginComponent } from './Components/login/login.component';
-import { ProfileComponent } from './Components/profile/profile.component';
-import { RouterModule } from '@angular/router';
-
-
-import { AuthService } from './services/auth.service';
+import { TableComponentModule } from './admin/generic/table.component';
 import { StarMapComponent } from './Components/StarMap/star-map.component';
 import { StepsComponent } from './Components/Wizard/steps/steps.component';
 import { StepTemplateComponent } from './Components/Wizard/steps-template/steps-template.component';
@@ -38,17 +31,17 @@ import { StarWizardComponent } from './Components/Wizard/star-wizard/star-wizard
 import { CompleteWizardComponent } from './Components/Wizard/complete-wizard/complete-wizard.component';
 import { HomeComponent } from './Components/home/home.component';
 import { WizardDialogComponent } from './wizard-dialog/wizard-dialog.component';
-
+import { LoginComponent } from './Components/login/login.component';
+import { ProfileComponent } from './Components/profile/profile.component';
+import { SolarSystemComponent } from './Components/SolarSystem/solar-system.component';
 
 @NgModule({
   declarations: [
     AppComponent,
-    LandingPageComponent,
     NavbarComponent,
     StarControlComponent,
     StarComponent,
     IntroPageComponent,
-    AvatarBuilderComponent,
     LoginComponent,
     StarMapComponent,
     StepsComponent,
@@ -56,7 +49,8 @@ import { WizardDialogComponent } from './wizard-dialog/wizard-dialog.component';
     StarWizardComponent,
     CompleteWizardComponent,
     WizardDialogComponent,
-    HomeComponent
+    HomeComponent,
+    SolarSystemComponent
   ],
   imports: [
     BrowserAnimationsModule,
@@ -68,7 +62,6 @@ import { WizardDialogComponent } from './wizard-dialog/wizard-dialog.component';
     // AdminModule,
     TableComponentModule,
     NgMaterialModule,
-    RgbPickerModule,
     RouterModule.forRoot([
       { path: '', redirectTo: '/login', pathMatch: 'full' },
       { path: 'login', component: LoginComponent },

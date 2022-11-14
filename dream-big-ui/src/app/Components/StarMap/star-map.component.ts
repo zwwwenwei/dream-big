@@ -55,12 +55,13 @@ export class StarMapComponent implements AfterViewInit {
 
     ngAfterViewInit(): void {
         this.project = new Project(this.canvas.nativeElement);
-
+        console.log('hello i am here!');
         setTimeout(() => {
             // get star systems from api
             // or use this test method
             this.createStarSystems();
             this.drawScene();
+            console.log(this.starSystemList);
         }, 0);
     }
 

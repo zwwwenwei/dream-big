@@ -5,7 +5,6 @@ import words from '../../../assets/words.json';
 import { StarComponent } from '../Star/star.component';
 import { Category } from '../Star/types';
 import { MatDialog } from '@angular/material/dialog';
-import { RgbPickerComponent } from 'src/app/rgb-picker/rgb-picker.component';
 
 @Component({
     selector: 'app-star-control',
@@ -14,18 +13,6 @@ import { RgbPickerComponent } from 'src/app/rgb-picker/rgb-picker.component';
 })
 export class StarControlComponent implements OnInit {
     constructor(public dialog: MatDialog) { }
-
-    openDialog(): void {
-        const dialogRef = this.dialog.open(RgbPickerComponent, {
-            width: '250px',
-            data: this.polygonFillColour,
-        });
-
-        dialogRef.afterClosed().subscribe(result => {
-            this.polygonFillColour = result;
-            console.log('The dialog was closed', result);
-        });
-    }
 
     @ViewChild(StarComponent) star: StarComponent = {} as StarComponent;
 
