@@ -71,7 +71,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_13_035136) do
   end
 
   create_table "goals", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
-    t.string "goalText"
+    t.string "goal_text"
     t.boolean "status"
     t.bigint "section_id"
     t.datetime "created_at", null: false
@@ -98,14 +98,14 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_13_035136) do
   create_table "plans", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
     t.bigint "section_id"
     t.bigint "goal_id"
-    t.string "planText"
+    t.string "plan_text"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["section_id"], name: "fk_rails_654aad63df"
   end
 
   create_table "reflections", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
-    t.string "reflectionText"
+    t.string "reflection_text"
     t.bigint "section_id"
     t.bigint "goal_id"
     t.datetime "created_at", null: false
