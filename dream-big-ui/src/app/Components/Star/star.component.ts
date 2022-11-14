@@ -105,10 +105,6 @@ export class StarComponent implements AfterViewInit {
     public fillWindow() {
         this.canvas.nativeElement.width = window.document.getElementById('c-div')?.clientWidth!
         this.canvas.nativeElement.height = window.document.getElementById('c-div')?.clientHeight!
-
-        // window.document.getElementById('c-div')?.clientWidth
-        // window.document.getElementById('c-div')?.clientHeight
-
     }
 
     public drawScene(hasChanged: boolean) {

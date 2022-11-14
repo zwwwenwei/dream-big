@@ -2,15 +2,13 @@ import { Component, NgModule } from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
 
 import { StarControlComponent } from './Components/StarControl/star-control.component';
-import { AvatarBuilderComponent } from './Components/avatar-builder/avatar-builder.component';
-
 import { IntroPageComponent } from './Components/intro-page/intro-page.component';
 import { LoginComponent } from './Components/login/login.component';
 // import { ProfileComponent } from './Components/profile/profile.component';
 import { StarMapComponent } from './Components/StarMap/star-map.component';
 import { AuthGuard } from './services/authguard.service';
-import { StarSystemComponent } from './Components/StarSystem/star-system.component';
 import { HomeComponent } from './Components/home/home.component';
+import { SolarSystemComponent } from './Components/SolarSystem/solar-system.component';
 
 
 
@@ -22,10 +20,8 @@ const routes: Routes = [
   // { path: 'profile', canActivate: [AuthGuard], component: ProfileComponent },
   { path: 'home', component: HomeComponent },
   { path: 'star', component: StarControlComponent },
-  { path: 'avatar-builder', canActivate: [AuthGuard], component: AvatarBuilderComponent },
   { path: 'star-map', component: StarMapComponent },
-  { path: 'star-system', component: StarSystemComponent },
-
+  { path: 'solar', component: SolarSystemComponent}
 ];
 
 @NgModule({

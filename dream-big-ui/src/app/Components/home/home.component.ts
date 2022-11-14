@@ -17,16 +17,9 @@ import { StarMapComponent } from '../StarMap/star-map.component';
 export class HomeComponent implements OnInit {
   @ViewChild(StarMapComponent) starmap: StarMapComponent = {} as StarMapComponent;
 
-  private user: User;
-  private student: Student;
-
-
-
   constructor(
     public dialog: MatDialog,
-    private authService: AuthService,
 
-    private studentService: StudentService,
 
   ) { }
 
