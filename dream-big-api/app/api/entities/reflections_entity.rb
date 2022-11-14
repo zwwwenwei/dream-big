@@ -1,9 +1,9 @@
 module Entities
     class ReflectionsEntity < Grape::Entity
       expose :id
-      expose :reflectionText
-      expose :sectionID
-      expose :goalID
+      expose :reflection_text
+      expose :section_id
+      expose :goal_id
       expose :timestamps
     end
   end

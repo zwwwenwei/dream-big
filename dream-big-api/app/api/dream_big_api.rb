@@ -53,6 +53,8 @@ class DreamBigApi < Grape::API
   mount AvatarHeadsApi
   mount AvatarAccessoriesApi
   mount AvatarTorsosApi
+  mount AnswersApi
+  mount AssessmentsApi
   
   add_swagger_documentation(
     base_path: nil,
