@@ -1,8 +1,8 @@
 module Entities
     class SectionsEntity < Grape::Entity
       expose :id
-      expose :planetID
-      expose :categoryID
+      expose :planet_id
+      expose :category_id
       expose :timestamps
     end
   end

@@ -10,4 +10,5 @@ class UpdateAllFk < ActiveRecord::Migration[7.0]
     add_foreign_key :reflections, :goals, ondelete: :cascade, column: :goal_id
     add_foreign_key :journeys, :students, ondelete: :cascade, column: :student_id
   end
+
 end
