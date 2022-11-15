@@ -25,7 +25,7 @@ class AnswersApi < Grape::API
     requires :assessment_id, type: Integer, desc: 'assessment ID'
     requires :question_text, type: String, desc: 'question text'
   end
-  post '/Answers' do
+  post '/answers' do
     answers_parameters = ActionController::Parameters.new(params)
       .permit(
         :id,
@@ -50,7 +50,7 @@ class AnswersApi < Grape::API
     optional :question_text, type: String, desc: 'question text'
 
   end
-  put '/Answers/:id' do
+  put '/answers/:id' do
     answers_parameters = ActionController::Parameters.new(params)
       .permit(
         :id,
@@ -71,12 +71,12 @@ class AnswersApi < Grape::API
   params do
     requires :id, type: Integer, desc: 'ID of Answer'
   end
-  delete '/Answers/:id' do
+  delete '/answers/:id' do
     Answers.find(params[:id]).destroy!
     true
   end
 
-  get '/Answers' do
+  get '/answers' do
     result = Answers.all
 
     present result, with: Entities::AnswersEntity
