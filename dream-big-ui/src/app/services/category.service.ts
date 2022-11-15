@@ -26,7 +26,6 @@ export class CategoryService extends CachedEntityService<Category> {
     'id',
     'name',
     'description',
-    'weight_value_id',
   );
   }
   public override createInstanceFrom(json: any, other?: any): Category {
