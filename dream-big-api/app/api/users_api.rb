@@ -3,11 +3,6 @@ require 'grape'
 class UsersApi < Grape::API
 
   get '/users/:id' do
-    user_parameters = ActionController::Parameters.new(params)
-      .permit(
-        :id
-      )
-
     # Auth
 
     result = User.find(params[:id])
@@ -54,7 +49,7 @@ class UsersApi < Grape::API
       )
 
     result = User.find(params[:id])
-    result.update! user_parameters
+    result.update!(user_parameters)
     present result, with: Entities::UsersEntity
   end
 
@@ -64,7 +59,8 @@ class UsersApi < Grape::API
   end
   delete '/users/:id' do
     User.find(params[:id]).destroy!
-    true
+
+    return true
   end
 
   params do

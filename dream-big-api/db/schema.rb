@@ -13,10 +13,12 @@
 ActiveRecord::Schema[7.0].define(version: 2022_11_13_035136) do
   create_table "answers", charset: "utf8mb4", force: :cascade do |t|
     t.string "answer"
-    t.bigint "question_id"
+    t.bigint "category_question_id"
     t.bigint "assessment_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["assessment_id"], name: "fk_rails_6b44a1e939"
+    t.index ["category_question_id"], name: "fk_rails_00d9fc308d"
   end
 
   create_table "assessments", charset: "utf8mb4", force: :cascade do |t|
@@ -79,7 +81,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_13_035136) do
 
   create_table "journeys", charset: "utf8mb4", force: :cascade do |t|
     t.bigint "student_id"
-    t.bigint "assessment_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["student_id"], name: "fk_rails_339ec94246"
@@ -152,6 +153,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_13_035136) do
     t.index ["role_id"], name: "fk_rails_642f17018b"
   end
 
+  add_foreign_key "answers", "assessments"
+  add_foreign_key "answers", "category_questions"
   add_foreign_key "assessments", "categories"
   add_foreign_key "assessments", "journeys"
   add_foreign_key "avatars", "avatar_accessories", column: "avatar_accessories_id"
