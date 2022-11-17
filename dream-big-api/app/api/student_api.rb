@@ -16,12 +16,11 @@ class StudentApi < Grape::API
 
   desc 'Allow creation of a Student'
   params do
-  
+    requires :user_id, type: Integer, desc: 'student user'
     requires :firstName, type: String, desc: 'student first Name'
     requires :lastName, type: String, desc: 'student last Name'
     requires :phone, type: String, desc: 'student Phone number'
     requires :address, type: String, desc: 'student address'
-    requires :user_id, type: Integer, desc: 'student user'
     optional :student_type, type: String, desc: 'student type'
     optional :avatar_id, type: Integer, desc: 'avatar ID once created'
 
