@@ -11,16 +11,17 @@
 # It's strongly recommended that you check this file into your version control system.
 
 ActiveRecord::Schema[7.0].define(version: 2022_11_13_035136) do
-  create_table "answers", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+  create_table "answers", charset: "utf8mb4", force: :cascade do |t|
     t.string "answer"
-    t.bigint "question_id"
+    t.bigint "category_question_id"
     t.bigint "assessment_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["assessment_id"], name: "fk_rails_6b44a1e939"
+    t.index ["category_question_id"], name: "fk_rails_00d9fc308d"
   end
 
-  create_table "assessments", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+  create_table "assessments", charset: "utf8mb4", force: :cascade do |t|
     t.bigint "journey_id"
     t.bigint "category_id"
     t.datetime "created_at", null: false
@@ -29,23 +30,23 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_13_035136) do
     t.index ["journey_id"], name: "fk_rails_523a28d8ff"
   end
 
-  create_table "avatar_accessories", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+  create_table "avatar_accessories", charset: "utf8mb4", force: :cascade do |t|
     t.string "imgpath"
   end
 
-  create_table "avatar_hairs", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+  create_table "avatar_hairs", charset: "utf8mb4", force: :cascade do |t|
     t.string "imgpath"
   end
 
-  create_table "avatar_heads", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+  create_table "avatar_heads", charset: "utf8mb4", force: :cascade do |t|
     t.string "imgpath"
   end
 
-  create_table "avatar_torsos", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+  create_table "avatar_torsos", charset: "utf8mb4", force: :cascade do |t|
     t.string "imgpath"
   end
 
-  create_table "avatars", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+  create_table "avatars", charset: "utf8mb4", force: :cascade do |t|
     t.bigint "avatar_head_id"
     t.bigint "avatar_torsos_id"
     t.bigint "avatar_hairs_id"
@@ -56,21 +57,20 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_13_035136) do
     t.index ["avatar_torsos_id"], name: "fk_rails_12f7f2f036"
   end
 
-  create_table "categories", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+  create_table "categories", charset: "utf8mb4", force: :cascade do |t|
     t.string "name"
     t.string "description"
   end
 
-  create_table "category_questions", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+  create_table "category_questions", charset: "utf8mb4", force: :cascade do |t|
     t.string "question"
     t.bigint "category_id"
-    t.bigint "assessment_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["assessment_id"], name: "fk_rails_2912916704"
+    t.index ["category_id"], name: "fk_rails_c8560d80b7"
   end
 
-  create_table "goals", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+  create_table "goals", charset: "utf8mb4", force: :cascade do |t|
     t.string "goal_text"
     t.boolean "status"
     t.bigint "section_id"
@@ -79,15 +79,14 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_13_035136) do
     t.index ["section_id"], name: "fk_rails_d221e21327"
   end
 
-  create_table "journeys", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+  create_table "journeys", charset: "utf8mb4", force: :cascade do |t|
     t.bigint "student_id"
-    t.bigint "assessment_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["student_id"], name: "fk_rails_339ec94246"
   end
 
-  create_table "planets", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+  create_table "planets", charset: "utf8mb4", force: :cascade do |t|
     t.string "name"
     t.bigint "journey_id"
     t.datetime "created_at", null: false
@@ -95,7 +94,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_13_035136) do
     t.index ["journey_id"], name: "fk_rails_c2aa27ce2d"
   end
 
-  create_table "plans", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+  create_table "plans", charset: "utf8mb4", force: :cascade do |t|
     t.bigint "section_id"
     t.bigint "goal_id"
     t.string "plan_text"
@@ -104,7 +103,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_13_035136) do
     t.index ["section_id"], name: "fk_rails_654aad63df"
   end
 
-  create_table "reflections", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+  create_table "reflections", charset: "utf8mb4", force: :cascade do |t|
     t.string "reflection_text"
     t.bigint "section_id"
     t.bigint "goal_id"
@@ -114,11 +113,11 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_13_035136) do
     t.index ["section_id"], name: "fk_rails_a0dafb49d1"
   end
 
-  create_table "roles", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+  create_table "roles", charset: "utf8mb4", force: :cascade do |t|
     t.string "role_description"
   end
 
-  create_table "sections", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+  create_table "sections", charset: "utf8mb4", force: :cascade do |t|
     t.bigint "planet_id"
     t.bigint "category_id"
     t.datetime "created_at", null: false
@@ -126,7 +125,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_13_035136) do
     t.index ["planet_id"], name: "fk_rails_b68e7824b8"
   end
 
-  create_table "students", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+  create_table "students", charset: "utf8mb4", force: :cascade do |t|
     t.string "firstName"
     t.string "lastName"
     t.integer "phone"
@@ -138,12 +137,12 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_13_035136) do
     t.index ["user_id"], name: "fk_rails_148c9e88f4"
   end
 
-  create_table "teachers", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+  create_table "teachers", charset: "utf8mb4", force: :cascade do |t|
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
   end
 
-  create_table "users", charset: "utf8mb4", collation: "utf8mb4_general_ci", force: :cascade do |t|
+  create_table "users", charset: "utf8mb4", force: :cascade do |t|
     t.string "name"
     t.string "username"
     t.string "email"
@@ -155,13 +154,14 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_13_035136) do
   end
 
   add_foreign_key "answers", "assessments"
+  add_foreign_key "answers", "category_questions"
   add_foreign_key "assessments", "categories"
   add_foreign_key "assessments", "journeys"
   add_foreign_key "avatars", "avatar_accessories", column: "avatar_accessories_id"
   add_foreign_key "avatars", "avatar_hairs", column: "avatar_hairs_id"
   add_foreign_key "avatars", "avatar_heads"
   add_foreign_key "avatars", "avatar_torsos", column: "avatar_torsos_id"
-  add_foreign_key "category_questions", "assessments"
+  add_foreign_key "category_questions", "categories"
   add_foreign_key "goals", "sections"
   add_foreign_key "journeys", "students"
   add_foreign_key "planets", "journeys"
