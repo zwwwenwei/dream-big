@@ -57,6 +57,7 @@ class DreamBigApi < Grape::API
   mount AssessmentsApi
   mount CategoryQuestionsApi
   mount JourneysApi
+  mount PlanetsApi
 
   add_swagger_documentation(
     base_path: nil,
