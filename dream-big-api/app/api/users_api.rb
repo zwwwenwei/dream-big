@@ -3,6 +3,11 @@ require 'grape'
 class UsersApi < Grape::API
 
   get '/users/:id' do
+    user_parameters = ActionController::Parameters.new(params)
+                                                  .permit(
+                                                    :id
+                                                  )
+
     # Auth
 
     result = User.find(params[:id])
@@ -19,13 +24,13 @@ class UsersApi < Grape::API
   end
   post '/users' do
     user_parameters = ActionController::Parameters.new(params)
-      .permit(
-        :username,
-        :name,
-        :email,
-        :password,
-        :role_id
-      )
+                                                  .permit(
+                                                    :username,
+                                                    :name,
+                                                    :email,
+                                                    :password,
+                                                    :role_id
+                                                  )
 
     User.create!(user_parameters)
   end
@@ -40,16 +45,16 @@ class UsersApi < Grape::API
   end
   put '/users/:id' do
     user_parameters = ActionController::Parameters.new(params)
-      .permit(
-        :username,
-        :name,
-        :email,
-        :password,
-        :role_id
-      )
+                                                  .permit(
+                                                    :username,
+                                                    :name,
+                                                    :email,
+                                                    :password,
+                                                    :role_id
+                                                  )
 
     result = User.find(params[:id])
-    result.update!(user_parameters)
+    result.update! user_parameters
     present result, with: Entities::UsersEntity
   end
 
@@ -59,8 +64,7 @@ class UsersApi < Grape::API
   end
   delete '/users/:id' do
     User.find(params[:id]).destroy!
-
-    return true
+    true
   end
 
   params do
