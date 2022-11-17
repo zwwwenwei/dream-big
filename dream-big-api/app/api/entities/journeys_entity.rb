@@ -3,4 +3,4 @@ module Entities
       expose :id
       expose :student_id
     end
-  end
+end
