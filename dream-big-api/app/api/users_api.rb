@@ -3,10 +3,11 @@ require 'grape'
 class UsersApi < Grape::API
 
   get '/users/:id' do
-    user_parameters = ActionController::Parameters.new(params)
-                                                  .permit(
-                                                    :id
-                                                  )
+    user_parameters = ActionController::Parameters
+      .new(params)
+      .permit(
+        :id
+      )
 
     # Auth
 
@@ -23,14 +24,15 @@ class UsersApi < Grape::API
     optional :role_id, type: Integer, desc: 'Role for the user'
   end
   post '/users' do
-    user_parameters = ActionController::Parameters.new(params)
-                                                  .permit(
-                                                    :username,
-                                                    :name,
-                                                    :email,
-                                                    :password,
-                                                    :role_id
-                                                  )
+    user_parameters = ActionController::Parameters
+      .new(params)
+      .permit(
+        :username,
+        :name,
+        :email,
+        :password,
+        :role_id
+      )
 
     User.create!(user_parameters)
   end
@@ -44,14 +46,15 @@ class UsersApi < Grape::API
     optional :role_id, type: Integer, desc: 'Role for the user'
   end
   put '/users/:id' do
-    user_parameters = ActionController::Parameters.new(params)
-                                                  .permit(
-                                                    :username,
-                                                    :name,
-                                                    :email,
-                                                    :password,
-                                                    :role_id
-                                                  )
+    user_parameters = ActionController::Parameters
+      .new(params)
+      .permit(
+        :username,
+        :name,
+        :email,
+        :password,
+        :role_id
+      )
 
     result = User.find(params[:id])
     result.update! user_parameters
