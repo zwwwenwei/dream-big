@@ -3,8 +3,7 @@ require 'grape'
 class UsersApi < Grape::API
 
   get '/users/:id' do
-    user_parameters = ActionController::Parameters
-      .new(params)
+    user_parameters = ActionController::Parameters.new(params)
       .permit(
         :id
       )
@@ -24,8 +23,7 @@ class UsersApi < Grape::API
     optional :role_id, type: Integer, desc: 'Role for the user'
   end
   post '/users' do
-    user_parameters = ActionController::Parameters
-      .new(params)
+    user_parameters = ActionController::Parameters.new(params)
       .permit(
         :username,
         :name,
@@ -46,8 +44,7 @@ class UsersApi < Grape::API
     optional :role_id, type: Integer, desc: 'Role for the user'
   end
   put '/users/:id' do
-    user_parameters = ActionController::Parameters
-      .new(params)
+    user_parameters = ActionController::Parameters.new(params)
       .permit(
         :username,
         :name,
