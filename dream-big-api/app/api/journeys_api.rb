@@ -11,7 +11,7 @@ class JourneysApi < Grape::API
 
   desc 'Allow creation of a Journey'
   params do
-    requires :id, type: Integer, desc: 'ID of Answer'
+    requires :id, type: Integer, desc: 'ID of Journey'
     requires :student_id, type: Integer, desc: 'student ID'
   end
   post '/journeys' do
@@ -31,7 +31,7 @@ class JourneysApi < Grape::API
 
   desc 'Allow updating of a Journey'
   params do
-    requires :id, type: Integer, desc: 'ID of Answer'
+    requires :id, type: Integer, desc: 'ID of Journey'
     optional :student_id, type: Integer, desc: 'student ID'
   end
   put '/journeys/:id' do
