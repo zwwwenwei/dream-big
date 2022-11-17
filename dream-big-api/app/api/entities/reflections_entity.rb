@@ -4,6 +4,5 @@ module Entities
       expose :reflection_text
       expose :section_id
       expose :goal_id
-      expose :timestamps
     end
-  end
+end
