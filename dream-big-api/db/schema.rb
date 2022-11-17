@@ -71,8 +71,8 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_13_035136) do
   end
 
   create_table "goals", charset: "utf8mb4", force: :cascade do |t|
-    t.string "goal_text"
-    t.boolean "status"
+    t.string "description"
+    t.string "status"
     t.bigint "section_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -100,6 +100,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_13_035136) do
     t.string "plan_text"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["goal_id"], name: "fk_rails_e8623212d5"
     t.index ["section_id"], name: "fk_rails_654aad63df"
   end
 
@@ -166,6 +167,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_13_035136) do
   add_foreign_key "goals", "sections"
   add_foreign_key "journeys", "students"
   add_foreign_key "planets", "journeys"
+  add_foreign_key "plans", "goals"
   add_foreign_key "plans", "sections"
   add_foreign_key "reflections", "goals"
   add_foreign_key "reflections", "sections"
