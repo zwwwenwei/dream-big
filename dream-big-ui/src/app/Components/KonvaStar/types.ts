@@ -23,31 +23,11 @@ export interface Polygon {
 
     highlight: boolean;
     category: Category;
-    path: {};
+    path: {}
 }
 
 export interface StarCoord {
     spike: Point;
     edgeL: Point;
     edgeR: Point;
-    category: Category;
-}
-
-export interface StarData {
-    starCoords: StarCoord[];
-    outerRatio: number;
-    innerRatio: number;
-    size: number;
-    rotation: number;
-    centre: Point;
-    categories: Category[];
-    catPolygons: Polygon[];
-}
-
-export interface BgStar {
-    center: Point;
-    outerRatio: number;
-    innerRatio: number;
-    size: number;
-    numPoints: number;
 }

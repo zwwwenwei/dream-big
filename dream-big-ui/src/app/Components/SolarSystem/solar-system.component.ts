@@ -20,6 +20,7 @@ export class SolarSystemComponent implements AfterViewInit {
 
     public planetList: Planet[] = [];
 
+    private iPlanets: { [id: number]: }
     public isViewingPlanet: boolean = false;
     public hasClicked: boolean = false;
     public hasClickedPlanet: boolean = false;
@@ -30,7 +31,7 @@ export class SolarSystemComponent implements AfterViewInit {
     public isSolarSystemView: boolean = true;
     private orbitTracker: any = {}
     private animationId: number = -1;
-
+    private mousePoint: paper.Point;
     private _circleStrokeColour = 'white';
     private _circleStrokeWidth = 2;
     private _selectStrokeWidth = 2;
@@ -52,6 +53,7 @@ export class SolarSystemComponent implements AfterViewInit {
 
     private _viewSystemZoom: number = 3;
     private _addOrbitAngle: number = 60;
+    private _numBgStars: number = 100;
 
     setCategories: Array<Category> = [
         {
@@ -91,11 +93,14 @@ export class SolarSystemComponent implements AfterViewInit {
 
 
     private fgLayer: any;
+    private bgLayer: any;
     ngAfterViewInit(): void {
         this.project = new Project(this.canvas.nativeElement);
 
         setTimeout(() => {
-            this.drawBackground();
+            this.bgLayer = new Layer();
+            this.drawBg();
+            this.bgLayer.view.draw();
 
             this.fgLayer = new Layer();
             this.createPlanetList();
@@ -110,9 +115,8 @@ export class SolarSystemComponent implements AfterViewInit {
      * draw the background in a different layer
      * for performance purposes
      */
-    public drawBackground() {
-        const bgLayer = new Layer();
-        const bgStars = getBackgroundStars(100, this.canvas.nativeElement.clientWidth, this.canvas.nativeElement.clientHeight);
+    public drawBg() {
+        const bgStars = getBackgroundStars(this._numBgStars, this.canvas.nativeElement.clientWidth, this.canvas.nativeElement.clientHeight);
         drawBackground(new Point(this.canvas.nativeElement.clientWidth, this.canvas.nativeElement.clientHeight), 'black');
         drawBackgroundStars(bgStars);
 
@@ -133,13 +137,17 @@ export class SolarSystemComponent implements AfterViewInit {
             if (this.isSolarSystemView) {
                 if (animate) {
                     this.animationId = window.requestAnimationFrame(() => {
-                        this.frames++;
+
                         this.planetsOrbitStar();
                         this.drawScene(true);
                     });
                 }
                 this.drawPlanets(this.planetList);
                 this.drawFPS();
+                if (this.collidingPlanet.name) {
+                    this.drawText(this.mousePoint, this.collidingPlanet.name, this.collidingPlanet.name.length, 0);
+
+                }
                 this.fgLayer.view.draw();
             } else {
                 // view planet
@@ -148,79 +156,90 @@ export class SolarSystemComponent implements AfterViewInit {
     }
 
     public drawFPS() {
-        const elapsedSeconds = Math.round((Date.now() - this.startTime)/1000);
-        const totalFrames = Math.round(this.frames/elapsedSeconds);
+        this.frames++;
+        const elapsedSeconds = Math.round((Date.now() - this.startTime) / 1000);
+        const totalFrames = Math.round(this.frames / elapsedSeconds);
         const frameStr = `FPS: ${totalFrames}`;
         this.drawText(new Point(20, 20), frameStr, 0, 0);
     }
 
     public onMouseMove(e: any) {
         let mousePoint = new Point(e.offsetX, e.offsetY);
-
+        console.log(this.fgLayer.hitTest(mousePoint))
+        this.mousePoint = mousePoint;
         if (this.isSolarSystemView) {
             // in solar system view
+            console.log('contains mouse', this.planetList[this.planetList.length - 1].orbitCirclePath.hitTest(mousePoint));
 
-            // check if the mouse has collided with a planet
-            const collidingCircle = this.collideCircles(mousePoint, this.planetList);
+            if (this.planetList[this.planetList.length - 1].orbitCirclePath.hitTest(mousePoint)) {
+                console.log('contains mouse', this.planetList[this.planetList.length - 1].orbitCirclePath.hitTest(mousePoint));
+                // check if the mouse has collided with a planet
+                const collidingCircle = this.collideCircles(mousePoint, this.planetList);
 
-            // check if the mouse has collided with an orbit circle
-            const collidingOrbit = this.getOrbitCircleCollision(mousePoint);
-            if (!!Object.entries(collidingCircle).length) {
-                // mouse collision with a planet
-                const collidingPlanet = this.getCollidedPlanet();
+                // check if the mouse has collided with an orbit circle
+                const collidingOrbit = this.getOrbitCircleCollision(mousePoint);
+                if (!!Object.entries(collidingCircle).length) {
+                    // mouse collision with a planet
+                    const collidingPlanet = this.getCollidedPlanet();
 
-                if (!!Object.entries(this.collidingPlanet).length && this.collidingPlanet != this.viewPlanet) {
-                    this.resetCircleStroke(this.collidingPlanet.orbitCircle, this._orbitStrokeColour, this._orbitStrokeWidth);
+                    if (!!Object.entries(this.collidingPlanet).length && this.collidingPlanet != this.viewPlanet) {
+                        this.resetCircleStroke(this.collidingPlanet.orbitCircle, this._orbitStrokeColour, this._orbitStrokeWidth);
+                    }
+
+                    this.collidingPlanet = collidingPlanet;
+                    if (this.collidingPlanet != this.viewPlanet) {
+                        this.highlightCircle(collidingPlanet.orbitCircle, this._highlightOrbitColour, this._hightlightOrbitWidth);
+                    }
+
+                    this.setCursor('pointer');
+                } else if (!!Object.entries(collidingOrbit).length) {
+                    // mouse collision with an orbit circle
+
+                    if (!!Object.entries(this.collidingPlanet).length && this.collidingPlanet != this.viewPlanet) {
+                        this.resetCircleStroke(this.collidingPlanet.orbitCircle, this._orbitStrokeColour, this._orbitStrokeWidth);
+                    }
+
+                    this.collidingPlanet = collidingOrbit;
+                    this.collidingPlanet.collided = true;
+                    if (this.collidingPlanet != this.viewPlanet) {
+                        this.highlightCircle(this.collidingPlanet.circle);
+                        this.highlightCircle(this.collidingPlanet.orbitCircle, this._highlightOrbitColour, this._hightlightOrbitWidth);
+                    }
+
+                    this.setCursor('default');
+                } else {
+                    // mouse collided with no objects
+
+                    this.setCursor('default');
+                    if (!!Object.entries(this.collidingPlanet).length && this.collidingPlanet != this.viewPlanet) {
+                        this.resetCircleStroke(this.collidingPlanet.orbitCircle, this._orbitStrokeColour, this._orbitStrokeWidth);
+                        this.collidingPlanet = {} as Planet;
+                    }
                 }
-
-                this.collidingPlanet = collidingPlanet;
-                if (this.collidingPlanet != this.viewPlanet) {
-                    this.highlightCircle(collidingPlanet.orbitCircle, this._highlightOrbitColour, this._hightlightOrbitWidth);
-                }
-
-                this.setCursor('pointer');
-            } else if (!!Object.entries(collidingOrbit).length) {
-                // mouse collision with an orbit circle
-
-                if (!!Object.entries(this.collidingPlanet).length && this.collidingPlanet != this.viewPlanet) {
-                    this.resetCircleStroke(this.collidingPlanet.orbitCircle, this._orbitStrokeColour, this._orbitStrokeWidth);
-                }
-
-                this.collidingPlanet = collidingOrbit;
-                this.collidingPlanet.collided = true;
-                if (this.collidingPlanet != this.viewPlanet) {
-                    this.highlightCircle(this.collidingPlanet.circle);
-                    this.highlightCircle(this.collidingPlanet.orbitCircle, this._highlightOrbitColour, this._hightlightOrbitWidth);
-                }
-                this.setCursor('default');
             } else {
-                // mouse collided with no objects
+                // view planet (must do section collision)
 
-                this.setCursor('default');
-                if (!!Object.entries(this.collidingPlanet).length && this.collidingPlanet != this.viewPlanet) {
-                    this.resetCircleStroke(this.collidingPlanet.orbitCircle, this._orbitStrokeColour, this._orbitStrokeWidth);
-                    this.collidingPlanet = {} as Planet;
-                }
+                // let collidingSystem = this.getStarCollision(mousePoint);
+                // if (!!Object.entries(collidingSystem).length) {
+                //     if (collidingSystem !== this.viewSystem) {
+                //         this.highlightCircle(collidingSystem.star.circle);
+                //         this.collideSystem = collidingSystem;
+                //     }
+                //     this.setCursor('pointer');
+                // } else {
+                //     this.setCursor('default');
+                //     if (!!Object.entries(this.collideSystem).length && this.collideSystem != this.viewSystem) {
+                //         this.resetCircleStroke(this.collideSystem.star.circle)
+                //         this.collideSystem = {} as SolarSystem;
+                //     }
+                // }
             }
-        } else {
-            // view planet (must do section collision)
+            this.drawScene(false);
 
-            // let collidingSystem = this.getStarCollision(mousePoint);
-            // if (!!Object.entries(collidingSystem).length) {
-            //     if (collidingSystem !== this.viewSystem) {
-            //         this.highlightCircle(collidingSystem.star.circle);
-            //         this.collideSystem = collidingSystem;
-            //     }
-            //     this.setCursor('pointer');
-            // } else {
-            //     this.setCursor('default');
-            //     if (!!Object.entries(this.collideSystem).length && this.collideSystem != this.viewSystem) {
-            //         this.resetCircleStroke(this.collideSystem.star.circle)
-            //         this.collideSystem = {} as SolarSystem;
-            //     }
-            // }
+        } else {
+            this.drawScene(true);
         }
-        this.drawScene(true);
+
 
     }
 
@@ -369,6 +388,7 @@ export class SolarSystemComponent implements AfterViewInit {
         this.planetList.forEach((planet) => {
             if (planet.collided) {
                 collision = planet;
+                return;
             }
         });
 
@@ -432,7 +452,7 @@ export class SolarSystemComponent implements AfterViewInit {
                 orbitCirclePath: {} as paper.Path,
                 clicked: false,
                 collided: false,
-                speed: 3 / (i + randInt(1, 5))
+                speed: 1
             }
             this.planetList.push(planet);
         }
