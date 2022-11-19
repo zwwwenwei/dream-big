@@ -30,7 +30,6 @@ import { StepTemplateComponent } from './Components/Wizard/steps-template/steps-
 import { StarWizardComponent } from './Components/Wizard/star-wizard/star-wizard.component';
 import { CompleteWizardComponent } from './Components/Wizard/complete-wizard/complete-wizard.component';
 // import { HomeComponent } from './Components/home/home.component';
-import { WizardDialogComponent } from './wizard-dialog/wizard-dialog.component';
 import { LoginComponent } from './Components/login/login.component';
 import { ProfileComponent } from './Components/profile/profile.component';
 // import { SolarSystemComponent } from './Components/SolarSystem/solar-system.component';
@@ -50,7 +49,6 @@ import { KonvStarComponent } from './Components/KonvaStar/konv-star.component';
     StepTemplateComponent,
     StarWizardComponent,
     CompleteWizardComponent,
-    WizardDialogComponent,
     // HomeComponent,
     // SolarSystemComponent,
     KonvStarComponent
