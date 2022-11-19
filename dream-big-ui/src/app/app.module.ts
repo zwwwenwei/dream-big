@@ -32,7 +32,7 @@ import { CompleteWizardComponent } from './Components/Wizard/complete-wizard/com
 // import { HomeComponent } from './Components/home/home.component';
 import { LoginComponent } from './Components/login/login.component';
 import { ProfileComponent } from './Components/profile/profile.component';
-// import { SolarSystemComponent } from './Components/SolarSystem/solar-system.component';
+import { SolarSystemComponent } from './Components/SolarSystem/solar-system.component';
 import { KonvStarComponent } from './Components/KonvaStar/konv-star.component';
 
 
@@ -50,7 +50,7 @@ import { KonvStarComponent } from './Components/KonvaStar/konv-star.component';
     StarWizardComponent,
     CompleteWizardComponent,
     // HomeComponent,
-    // SolarSystemComponent,
+    SolarSystemComponent,
     KonvStarComponent
   ],
   imports: [

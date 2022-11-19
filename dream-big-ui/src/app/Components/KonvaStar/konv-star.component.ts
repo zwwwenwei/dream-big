@@ -131,8 +131,8 @@ export class KonvStarComponent implements AfterViewInit {
             catPolygons.push({
                 points: {
                     spike: scoreXY,
-                    edgeR: edgeL,
-                    edgeL: edgeR,
+                    edgeR: edgeR,
+                    edgeL: edgeL,
                     centre: this.centrePoint,
                 },
                 highlight: false,
@@ -144,14 +144,6 @@ export class KonvStarComponent implements AfterViewInit {
         return catPolygons;
     }
 
-    private onPointerEnter(shape: any): any {
-        console.log('pointer enter!');
-        return shape;
-        // poly.highlight = true;
-        // shape.setAttr('stroke', poly.category.colour);
-        // shape.setAttr('StrokeWidth', 3);
-        // shape.moveToTop();
-    }
     private addPolyToLayer() {
         this.polyLayer.destroyChildren();
         for (var i = 0; i < this.catPolygons.length; i++) {
@@ -197,12 +189,9 @@ export class KonvStarComponent implements AfterViewInit {
                 this.setAttr('stroke', 'black');
                 this.setAttr('StrokeWidth', 1);
                 text.setAttr('text', '');
-                // highlight = false;
             });
-
             this.polyLayer.add(polygon);
-            this.textLayer.add(text);
-            
+            this.textLayer.add(text);   
         }
     }
 

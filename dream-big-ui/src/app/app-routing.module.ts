@@ -8,7 +8,7 @@ import { LoginComponent } from './Components/login/login.component';
 // import { StarMapComponent } from './Components/StarMap/star-map.component';
 import { AuthGuard } from './services/authguard.service';
 // import { HomeComponent } from './Components/home/home.component';
-// import { SolarSystemComponent } from './Components/SolarSystem/solar-system.component';
+import { SolarSystemComponent } from './Components/SolarSystem/solar-system.component';
 import { KonvStarComponent } from './Components/KonvaStar/konv-star.component';
 
 
@@ -22,7 +22,7 @@ const routes: Routes = [
   // { path: 'home', component: HomeComponent },
   { path: 'star', component: StarControlComponent },
   // { path: 'star-map', component: StarMapComponent },
-  // { path: 'solar', component: SolarSystemComponent},
+  { path: 'solar', component: SolarSystemComponent},
   { path: 'konv-star', component: KonvStarComponent}
 ];
 

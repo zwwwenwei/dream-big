@@ -4,9 +4,9 @@ import words from '../../../assets/words.json';
 
 // import { StarComponent } from '../Star/star.component';
 // import { Category } from '../Star/types';
-import { Category } from 'src/app/helpers/journey-star-types';
+import { Category } from 'src/app/helpers/types';
 import { MatDialog } from '@angular/material/dialog';
-import { Point } from 'src/app/helpers/journey-star-types';
+import { Point } from 'src/app/helpers/types';
 import { KonvStarComponent } from '../KonvaStar/konv-star.component';
 
 @Component({
