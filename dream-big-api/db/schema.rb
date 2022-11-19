@@ -13,11 +13,12 @@
 ActiveRecord::Schema[7.0].define(version: 2022_11_13_035136) do
   create_table "answers", charset: "utf8mb4", force: :cascade do |t|
     t.string "answer"
-    t.bigint "question_id"
+    t.bigint "category_question_id"
     t.bigint "assessment_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["assessment_id"], name: "fk_rails_6b44a1e939"
+    t.index ["category_question_id"], name: "fk_rails_00d9fc308d"
   end
 
   create_table "assessments", charset: "utf8mb4", force: :cascade do |t|
@@ -64,15 +65,14 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_13_035136) do
   create_table "category_questions", charset: "utf8mb4", force: :cascade do |t|
     t.string "question"
     t.bigint "category_id"
-    t.bigint "assessment_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
-    t.index ["assessment_id"], name: "fk_rails_2912916704"
+    t.index ["category_id"], name: "fk_rails_c8560d80b7"
   end
 
   create_table "goals", charset: "utf8mb4", force: :cascade do |t|
-    t.string "goal_text"
-    t.boolean "status"
+    t.string "description"
+    t.string "status"
     t.bigint "section_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
@@ -81,7 +81,6 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_13_035136) do
 
   create_table "journeys", charset: "utf8mb4", force: :cascade do |t|
     t.bigint "student_id"
-    t.bigint "assessment_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
     t.index ["student_id"], name: "fk_rails_339ec94246"
@@ -101,6 +100,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_13_035136) do
     t.string "plan_text"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["goal_id"], name: "fk_rails_e8623212d5"
     t.index ["section_id"], name: "fk_rails_654aad63df"
   end
 
@@ -123,6 +123,7 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_13_035136) do
     t.bigint "category_id"
     t.datetime "created_at", null: false
     t.datetime "updated_at", null: false
+    t.index ["category_id"], name: "fk_rails_ae2a3fc026"
     t.index ["planet_id"], name: "fk_rails_b68e7824b8"
   end
 
@@ -155,19 +156,22 @@ ActiveRecord::Schema[7.0].define(version: 2022_11_13_035136) do
   end
 
   add_foreign_key "answers", "assessments"
+  add_foreign_key "answers", "category_questions"
   add_foreign_key "assessments", "categories"
   add_foreign_key "assessments", "journeys"
   add_foreign_key "avatars", "avatar_accessories", column: "avatar_accessories_id"
   add_foreign_key "avatars", "avatar_hairs", column: "avatar_hairs_id"
   add_foreign_key "avatars", "avatar_heads"
   add_foreign_key "avatars", "avatar_torsos", column: "avatar_torsos_id"
-  add_foreign_key "category_questions", "assessments"
+  add_foreign_key "category_questions", "categories"
   add_foreign_key "goals", "sections"
   add_foreign_key "journeys", "students"
   add_foreign_key "planets", "journeys"
+  add_foreign_key "plans", "goals"
   add_foreign_key "plans", "sections"
   add_foreign_key "reflections", "goals"
   add_foreign_key "reflections", "sections"
+  add_foreign_key "sections", "categories"
   add_foreign_key "sections", "planets"
   add_foreign_key "students", "avatars"
   add_foreign_key "students", "users"

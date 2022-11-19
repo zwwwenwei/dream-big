@@ -5,4 +5,4 @@ module Entities
       expose :section_id
       expose :goal_id
     end
-  end
+end

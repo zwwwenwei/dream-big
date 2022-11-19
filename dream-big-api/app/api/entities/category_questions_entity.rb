@@ -3,6 +3,5 @@ module Entities
       expose :id
       expose :question
       expose :category_id
-      expose :timestamps
     end
   end
