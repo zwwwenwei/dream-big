@@ -145,7 +145,7 @@ export class SolarSystemComponent implements AfterViewInit {
         const minOrbitDist = 40;
         const midPoint = this.getCanvasMidPoint();
 
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < randInt(2, 7); i++) {
 
             let orbitDist = (minOrbitDist * this._viewSystemZoom) + ((++orbitCtr * addOrbitDist) % maxOrbitDist)
             let angle = angleCtr;
@@ -156,8 +156,9 @@ export class SolarSystemComponent implements AfterViewInit {
             let orbitCircle = this.getCircle(this.getCanvasMidPoint(), orbitDist, '', ORBIT_CIRCLE_STROKE_COLOUR, ORBIT_CIRCLE_STROKE_WIDTH);
             let planetCircle = this.getRandomCircle(planetPoint, 15, 20);
 
-            var planetImg = new Image(planetCircle.radius, planetCircle.radius);
-            planetImg.src = `assets/Planets/planet-${i + 1}.png`;
+            let imgPath = `assets/Planets/planet-${randInt(1, 8)}.png`
+            var planetImgObj = new Image();
+            planetImgObj.src = imgPath;
 
             const planet: Planet = {
                 id: i,
@@ -175,8 +176,8 @@ export class SolarSystemComponent implements AfterViewInit {
                 collided: false,
                 speed: 1,
                 lostFrames: 0,
-                image: planetImg,
-                imagePath: `../../../assets/Planets/planet-${i + 1}.png`
+                image: planetImgObj,
+                imagePath: imgPath
             }
             planetList.push(planet);
         }
@@ -196,22 +197,28 @@ export class SolarSystemComponent implements AfterViewInit {
     private addPlanetsToLayer() {
         this.planetLayer.destroyChildren();
         const planetCircles = [];
+        const planetImgs = [];
         const planetList = this.planetList;
         for (let i = 0; i < planetList.length; i++) {
             const planet = planetList[i];
-            console.log(planet)
-
             var planetCircle = new Konva.Circle({
                 x: planet.circle.center.x,
                 y: planet.circle.center.y,
                 stroke: planet.circle.strokeColour,
                 strokeWidth: planet.circle.strokeWidth,
-                fill: planet.circle.fillColour,
                 radius: planet.circle.radius
             });
-            planetCircle.fillPatternImage(planet.image)
+            var planetImg = new Konva.Image({
+                image: planet.image,
+                x: planet.circle.center.x - planet.circle.radius,
+                y: planet.circle.center.y - planet.circle.radius,
+                width: planet.circle.radius*2,
+                height: planet.circle.radius*2,
+            });
 
             this.planetLayer.add(planetCircle);
+            this.planetLayer.add(planetImg);
+
             planetCircle.on('mouseover', function () {
                 planet.collided = true;
                 this.setAttr('stroke', HIGHLIGHT_CIRCLE_STROKE_COLOUR);
@@ -232,6 +239,7 @@ export class SolarSystemComponent implements AfterViewInit {
                 fill: planet.orbitCircle.fillColour,
                 radius: planet.orbitCircle.radius
             });
+            this.planetLayer.add(orbitCircle);
 
             // orbitCircle.on('mouseover', function () {
             //     planet.collided = true;
@@ -244,9 +252,11 @@ export class SolarSystemComponent implements AfterViewInit {
             //     planet.collided = false;
             // });
 
-            this.planetLayer.add(orbitCircle);
-            orbitCircle.moveToBottom();
+
+            planetImgs.push(planetImg);
             planetCircles.push(planetCircle);
+            orbitCircle.moveToBottom();
+            planetCircle.moveToTop();
         }
         var midpoint = this.getCanvasMidPoint();
         var animation = new Konva.Animation(function (frame) {
@@ -263,6 +273,8 @@ export class SolarSystemComponent implements AfterViewInit {
                     );
                     planetCircles[i].x(newCentre.x);
                     planetCircles[i].y(newCentre.y);
+                    planetImgs[i].x(newCentre.x - planetList[i].circle.radius);
+                    planetImgs[i].y(newCentre.y - planetList[i].circle.radius);
                 } else {
                     planetList[i].lostFrames += frame.timeDiff;
                 }
