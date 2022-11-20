@@ -40,6 +40,7 @@ export class HomeComponent implements OnInit {
     //   console.log('The dialog was closed');
     //   // this.animal = result;
     // });
+
   }
 
   public viewStarSystem() {
