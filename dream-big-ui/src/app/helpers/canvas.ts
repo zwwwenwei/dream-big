@@ -1,5 +1,4 @@
-import { Color, Path, Point } from "paper/dist/paper-core";
-import { BgStar, Category, Polygon, StarCoord, StarData } from "./journey-star-types";
+import { BgStar, Category, Polygon, StarCoord, StarData, Point } from "./types";
 
 /**
  * Find the point on a line given by two coordinates that is distance units away from x1,y1
@@ -26,18 +25,18 @@ export function reorder(data: Array<any>, index: number) {
 	return data.slice(index).concat(data.slice(0, index))
 };
 
-export function getCirclePoint(center: paper.Point, radius: number, angle: number) {
-	return new Point(
-		center.x + (radius * Math.cos(angle)),
-		center.y + (radius * Math.sin(angle)),
-	)
+export function getCirclePoint(center: Point, radius: number, angle: number): Point {
+	return {
+		x: center.x + (radius * Math.cos(angle)),
+		y: center.y + (radius * Math.sin(angle)),
+	}
 }
 
-export function getDistance(point1: paper.Point, point2: paper.Point) {
+export function getDistance(point1: Point, point2: Point) {
 	return Math.sqrt((point1.x - point2.x) ** 2 + (point1.y - point2.y) ** 2)
 }
 
-export function getAngle(point1: paper.Point, point2: paper.Point) {
+export function getAngle(point1: Point, point2: Point) {
 	var dy = point2.y - point1.y;
 	var dx = point2.x - point1.x;
 	var theta = Math.atan2(dy, dx); // range (-PI, PI]
@@ -58,16 +57,30 @@ export function randInt(min: number, max: number) {
 	return Math.floor(Math.random() * (max - min + 1) + min);
 }
 
+
 /**
- * 
- * @param score 
- * @param minScore 
- * @returns score scaled to be between minScore and 100
- */
+* @param score 
+* @returns score scaled to ensure a minimum inner star size
+*/
 export function getScaledMinScore(score: number, minScore = 20) {
 	let newScore = minScore - ((score / 100) * minScore)
-
 	return score + newScore;
+}
+
+export function getBackgroundStars(numStars: number, width: number, height: number): BgStar[] {
+	const bgStars: BgStar[] = [];
+	for (let i = 0; i < numStars; i++) {
+		const x = randInt(0, width);
+		const y = randInt(0, height);
+		const brightness = randInt(0, 7) + Math.random();
+		const radius = randInt(0, 2) + Math.random();
+		bgStars.push({
+			center: {x, y},
+			brightness,
+			radius
+		});
+	}
+	return bgStars
 }
 
 export function getCatPolygons(starData: StarData) {
@@ -126,45 +139,45 @@ export function getCatPolygons(starData: StarData) {
 
 		catPolygons.push({
 			points: {
-				spike: new Point(scoreXY),
-				edgeR: new Point(edgeL),
-				edgeL: new Point(edgeR),
+				spike: scoreXY,
+				edgeR: edgeL,
+				edgeL: edgeR,
 				centre: starData.centre,
 			},
 			highlight: false,
 			category: categories[i],
-			path: {} as paper.Path,
+			path: {},
 		});
 		prevCategory = categories[i];
 	}
 	return catPolygons;
 }
 
-export function drawCatPolygons(catPolygons: Polygon[], fillColor = '#EADA87', strokeColour = 'black', strokeWidth = 1, highlightWidth = 3) {
-	for (var i = 0; i < catPolygons.length; i++) {
-		const poly = catPolygons[i];
+// export function drawCatPolygons(catPolygons: Polygon[], fillColor = '#EADA87', strokeColour = 'black', strokeWidth = 1, highlightWidth = 3) {
+// 	for (var i = 0; i < catPolygons.length; i++) {
+// 		const poly = catPolygons[i];
 
-		var polyPath = new Path();
-		polyPath.moveTo(poly.points.centre);
-		polyPath.lineTo(poly.points.edgeL);
-		polyPath.lineTo(poly.points.spike);
-		polyPath.lineTo(poly.points.edgeR);
-		polyPath.lineTo(poly.points.centre);
-		polyPath.closePath();
+// 		var polyPath = new Path();
+// 		polyPath.moveTo(poly.points.centre);
+// 		polyPath.lineTo(poly.points.edgeL);
+// 		polyPath.lineTo(poly.points.spike);
+// 		polyPath.lineTo(poly.points.edgeR);
+// 		polyPath.lineTo(poly.points.centre);
+// 		polyPath.closePath();
 
-		polyPath.strokeWidth = strokeWidth;
-		polyPath.strokeColor = new Color(strokeColour);
+// 		polyPath.strokeWidth = strokeWidth;
+// 		polyPath.strokeColor = new Color(strokeColour);
 
-		if (poly.highlight) {
-			polyPath.strokeWidth = highlightWidth;
-			polyPath.strokeColor = new Color(poly.category.colour);
-		}
-		polyPath.fillColor = new Color(fillColor);
-		catPolygons[i].path = polyPath;
-	}
-}
+// 		if (poly.highlight) {
+// 			polyPath.strokeWidth = highlightWidth;
+// 			polyPath.strokeColor = new Color(poly.category.colour);
+// 		}
+// 		polyPath.fillColor = new Color(fillColor);
+// 		catPolygons[i].path = polyPath;
+// 	}
+// }
 
-export function getStarData(categories: Category[], centre: paper.Point, size = 20, rotation = 0, outerRatio = 8, innerRatio = 3): StarData {
+export function getStarData(categories: Category[], centre: Point, size = 20, rotation = 0, outerRatio = 8, innerRatio = 3): StarData {
 	// one spike for each category
 	const spikes = categories.length;
 
@@ -178,18 +191,18 @@ export function getStarData(categories: Category[], centre: paper.Point, size = 
 	var x = centre.x + Math.cos(rot) * outerRadius;
 	var y = centre.y + Math.sin(rot) * outerRadius;
 
-	var prevEdge = new Point(
-		centre.x + Math.cos(rot + (step * (spikes * 2 - 1))) * innerRadius,
-		centre.y + Math.sin(rot + (step * (spikes * 2 - 1))) * innerRadius
-	);
+	var prevEdge = {
+		x: centre.x + Math.cos(rot + (step * (spikes * 2 - 1))) * innerRadius,
+		y: centre.y + Math.sin(rot + (step * (spikes * 2 - 1))) * innerRadius
+	};
 
 	const starCoords: StarCoord[] = [];
 
 	for (var i = 0; i < spikes; i++) {
 		let starCoord: StarCoord = {
-			spike: new Point({ x: 0, y: 0 }),
-			edgeR: new Point({ x: 0, y: 0 }),
-			edgeL: new Point({ x: 0, y: 0 }),
+			spike: { x: 0, y: 0 },
+			edgeR: { x: 0, y: 0 },
+			edgeL: { x: 0, y: 0 },
 			category: categories[i]
 		};
 
@@ -209,7 +222,7 @@ export function getStarData(categories: Category[], centre: paper.Point, size = 
 		rot += step
 
 		starCoords.push(starCoord);
-		prevEdge = new Point(x, y)
+		prevEdge = { x, y }
 	}
 
 	return {
@@ -223,64 +236,3 @@ export function getStarData(categories: Category[], centre: paper.Point, size = 
 	} as StarData
 }
 
-export function drawStarPointCategories(starCoords: StarCoord[], strokeWidth = 4) {
-	for (var i = 0; i < starCoords.length; i++) {
-		var spikePath = new Path();
-		spikePath.moveTo(starCoords[i].edgeR);
-		spikePath.lineTo(starCoords[i].spike);
-		spikePath.lineTo(starCoords[i].edgeL);
-		spikePath.strokeWidth = strokeWidth;
-		spikePath.strokeColor = new Color(starCoords[i].category.colour);
-	}
-}
-
-export function drawStar(starCoords: StarCoord[], strokeColour = 'black', strokeWidth = 1, fillColour = 'white') {
-	var starPath = new Path();
-
-	for (let i = 0; i < starCoords.length; i++) {
-		starPath.add(starCoords[i].edgeL);
-		starPath.add(starCoords[i].spike);
-		starPath.add(starCoords[i].edgeR);
-	}
-
-	starPath.closePath();
-	starPath.strokeWidth = strokeWidth;
-	starPath.strokeColor = new Color(strokeColour);
-	starPath.fillColor = new Color(fillColour);
-	return starPath;
-}
-
-export function getBackgroundStars(numStars: number, width: number, height: number) {
-	const bgStars: BgStar[] = [];
-	for (let i = 0; i < numStars; i++) {
-		const x = randInt(0, width);
-		const y = randInt(0, height);
-		const size = Math.random()
-		const outerRatio = size * randInt(8, 11);
-		const innerRatio = size * randInt(3, 5);
-		const numPoints = randInt(10, 20);
-
-		bgStars.push({
-			center: new Point(x, y),
-			outerRatio,
-			innerRatio,
-			numPoints,
-			size
-		})
-	}
-	return bgStars;
-}
-
-export function drawBackground(corner: paper.Point, fillColour: string) {
-	const bgPath = new Path.Rectangle(new Point(0, 0), corner);
-	bgPath.fillColor = new Color(fillColour);
-}
-
-export function drawBackgroundStars(bgStars:BgStar[]) {
-	for (let i = 0; i < bgStars.length; i++) {
-		const bgStar = bgStars[i];
-		const bgStarPath = new Path.Star(bgStar.center, bgStar.numPoints, bgStar.outerRatio, bgStar.innerRatio);
-		bgStarPath.fillColor = new Color('white');
-		bgStarPath.opacity = 1 - bgStar.size;
-	}
-}

@@ -1,10 +1,11 @@
 import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
-import { Color, Path, Point, Project, PointText, Layer } from 'paper/dist/paper-core';
-import { drawBackground, drawBackgroundStars, drawCatPolygons, drawStar, drawStarPointCategories, getAngle, getBackgroundStars, getCatPolygons, getCirclePoint, getDistance, getStarData, randInt } from 'src/app/helpers/canvas';
-import { BgStar, Polygon, StarData } from 'src/app/helpers/journey-star-types';
-import { Category } from '../Star/types';
-import { Star, CircleData, Planet, SolarSystem, CircleSprite } from './types';
 
+import { getAngle, getBackgroundStars, getCatPolygons, getCirclePoint, getDistance, getRandomColourCode, getStarData, randInt } from 'src/app/helpers/canvas';
+import { BgStar, Polygon, StarData, Category, StarCoord } from 'src/app/helpers/types';
+import { Point, CircleData, Planet, SolarSystem } from 'src/app/helpers/types';
+import Konva from 'konva';
+
+import { CIRCLE_STROKE_COLOUR, CIRCLE_STROKE_WIDTH, HIGHLIGHT_CIRCLE_STROKE_COLOUR, HIGHLIGHT_CIRCLE_STROKE_WIDTH, HIGHLIGHT_ORBIT_CIRCLE_COLOUR, HIGHLIGHT_ORBIT_CIRCLE_WIDTH, NUM_BG_STARS, ORBIT_CIRCLE_STROKE_COLOUR, ORBIT_CIRCLE_STROKE_WIDTH, SELECT_CIRCLE_STROKE_COLOUR, SELECT_CIRCLE_STROKE_WIDTH } from './constants';
 @Component({
     selector: 'app-solar-system',
     templateUrl: './solar-system.component.html',
@@ -14,44 +15,23 @@ import { Star, CircleData, Planet, SolarSystem, CircleSprite } from './types';
 export class SolarSystemComponent implements AfterViewInit {
     // @Input() loadedStarSystems!: any[];
 
-    @ViewChild('canvas') canvas: ElementRef<HTMLCanvasElement> = {} as ElementRef<HTMLCanvasElement>;
+    private stage: Konva.Stage;
+    private bgLayer: Konva.Layer;
+    private planetLayer: Konva.Layer;
+    private starLayer: Konva.Layer;
+    private bgRect: Konva.Rect;
+    private planetImageList: HTMLImageElement[] = [];
+    private planetList: Planet[] = [];
+    private bgStarList: BgStar[] = [];
+    private viewSystem: SolarSystem = {} as SolarSystem;
+    private viewPlanet: Planet = {} as Planet;
+    private isSolarSystemView: boolean = true;
 
-    public project: any; // paper.js root project
-
-    public planetList: Planet[] = [];
-
-    public isViewingPlanet: boolean = false;
-    public hasClicked: boolean = false;
-    public hasClickedPlanet: boolean = false;
-    public viewSystem: SolarSystem = {} as SolarSystem;
-
-    public viewPlanet: Planet = {} as Planet;
-    private collidingPlanet: Planet = {} as Planet;
-    public isSolarSystemView: boolean = true;
     private orbitTracker: any = {}
     private animationId: number = -1;
-
-    private _circleStrokeColour = 'white';
-    private _circleStrokeWidth = 2;
-    private _selectStrokeWidth = 2;
-    private _selectStrokeColour = 'red';
-
-    private _highlightStrokeWidth = 2;
-    private _highlightStrokeColour = 'yellow';
-    private _hightlightOrbitWidth = 0.5;
-    private _highlightOrbitColour = 'white';
-
-    private _selectOrbitWidth = 1;
-    private _selectOrbitColour = 'white';
-    private _orbitStrokeWidth = 0.2;
-    private _orbitStrokeColour = 'lightgray';
-
-    private _textColour: string = 'white';
-    private _textFont: string = 'Arial'
-    private _textSize: number = 15;
-
     private _viewSystemZoom: number = 3;
     private _addOrbitAngle: number = 60;
+
 
     setCategories: Array<Category> = [
         {
@@ -84,321 +64,95 @@ export class SolarSystemComponent implements AfterViewInit {
     private catPolygons: Polygon[] = [];
     private starData: StarData = {} as StarData;
 
-    private bgStars: BgStar[] = [];
-
-    private frames: number;
-    private startTime: number;
 
 
-    private fgLayer: any;
     ngAfterViewInit(): void {
-        this.project = new Project(this.canvas.nativeElement);
+        // initialise the main konvajs stage object
+        this.stage = new Konva.Stage({
+            container: 'container',   // id of container <div>
+            width: window.document.getElementById('container').clientWidth,
+            height: window.document.getElementById('container').clientHeight,
+        });
+        // initialize each layer that will be required
+        this.bgLayer = new Konva.Layer();
+        this.planetLayer = new Konva.Layer();
+        this.starLayer = new Konva.Layer();
+
+        // generate the background of the stage by randomly placing different white circles
+        this.bgStarList = getBackgroundStars(NUM_BG_STARS, window.document.getElementById('container').clientWidth, window.document.getElementById('container').clientWidth);
+        this.addBgStarsToLayer();
+        this.stage.add(this.bgLayer);
+
+        // randomly generate a random number of planets to be displayed
+        // assign a random image from /assets/Planets/ to each planet
+        this.planetList = this.getPlanetList();
 
         setTimeout(() => {
-            this.drawBackground();
-
-            this.fgLayer = new Layer();
-            this.createPlanetList();
-            this.isSolarSystemView = true;
-            this.startTime = Date.now();
-            this.frames = 1;
-            this.drawScene(true);
+            // draw the solar system, including the journey star in the centre
+            // this has been separated so the user can switch between viewing their solar system and viewing an individual planet
+            this.drawSolarSystem();
         }, 0);
     }
 
-    /**
-     * draw the background in a different layer
-     * for performance purposes
-     */
-    public drawBackground() {
-        const bgLayer = new Layer();
-        const bgStars = getBackgroundStars(100, this.canvas.nativeElement.clientWidth, this.canvas.nativeElement.clientHeight);
-        drawBackground(new Point(this.canvas.nativeElement.clientWidth, this.canvas.nativeElement.clientHeight), 'black');
-        drawBackgroundStars(bgStars);
+    private drawSolarSystem() {
+        // add planets from this.planetList to this.planetLayer
+        // start planets watching for mouse events and create the orbiting animation
+        this.addPlanetsToLayer();
 
+        // generate and retrieve the data for a star
         this.starData = getStarData(
             this.setCategories,
             this.getCanvasMidPoint(),
             10
         );
+        // generate the polygons that make up the inner star
+        // this uses the scores from this.starData.
         this.catPolygons = getCatPolygons(this.starData);
-        drawStar(this.starData.starCoords);
-        drawCatPolygons(this.catPolygons);
-        drawStarPointCategories(this.starData.starCoords);
+        var starGroup = this.getStarGroup(this.starData.starCoords, { x: 0, y: 0 }, 'gold');
+        this.starLayer.add(starGroup);
+        this.stage.add(this.planetLayer);
+        this.stage.add(this.starLayer);
     }
 
-    public drawScene(animate = false) {
-        setTimeout(() => {
-            this.fgLayer.clear();
-            if (this.isSolarSystemView) {
-                if (animate) {
-                    this.animationId = window.requestAnimationFrame(() => {
-                        this.frames++;
-                        this.planetsOrbitStar();
-                        this.drawScene(true);
-                    });
-                }
-                this.drawPlanets(this.planetList);
-                this.drawFPS();
-                this.fgLayer.view.draw();
-            } else {
-                // view planet
-            }
-        });
-    }
-
-    public drawFPS() {
-        const elapsedSeconds = Math.round((Date.now() - this.startTime)/1000);
-        const totalFrames = Math.round(this.frames/elapsedSeconds);
-        const frameStr = `FPS: ${totalFrames}`;
-        this.drawText(new Point(20, 20), frameStr, 0, 0);
-    }
-
-    public onMouseMove(e: any) {
-        let mousePoint = new Point(e.offsetX, e.offsetY);
-
-        if (this.isSolarSystemView) {
-            // in solar system view
-
-            // check if the mouse has collided with a planet
-            const collidingCircle = this.collideCircles(mousePoint, this.planetList);
-
-            // check if the mouse has collided with an orbit circle
-            const collidingOrbit = this.getOrbitCircleCollision(mousePoint);
-            if (!!Object.entries(collidingCircle).length) {
-                // mouse collision with a planet
-                const collidingPlanet = this.getCollidedPlanet();
-
-                if (!!Object.entries(this.collidingPlanet).length && this.collidingPlanet != this.viewPlanet) {
-                    this.resetCircleStroke(this.collidingPlanet.orbitCircle, this._orbitStrokeColour, this._orbitStrokeWidth);
-                }
-
-                this.collidingPlanet = collidingPlanet;
-                if (this.collidingPlanet != this.viewPlanet) {
-                    this.highlightCircle(collidingPlanet.orbitCircle, this._highlightOrbitColour, this._hightlightOrbitWidth);
-                }
-
-                this.setCursor('pointer');
-            } else if (!!Object.entries(collidingOrbit).length) {
-                // mouse collision with an orbit circle
-
-                if (!!Object.entries(this.collidingPlanet).length && this.collidingPlanet != this.viewPlanet) {
-                    this.resetCircleStroke(this.collidingPlanet.orbitCircle, this._orbitStrokeColour, this._orbitStrokeWidth);
-                }
-
-                this.collidingPlanet = collidingOrbit;
-                this.collidingPlanet.collided = true;
-                if (this.collidingPlanet != this.viewPlanet) {
-                    this.highlightCircle(this.collidingPlanet.circle);
-                    this.highlightCircle(this.collidingPlanet.orbitCircle, this._highlightOrbitColour, this._hightlightOrbitWidth);
-                }
-                this.setCursor('default');
-            } else {
-                // mouse collided with no objects
-
-                this.setCursor('default');
-                if (!!Object.entries(this.collidingPlanet).length && this.collidingPlanet != this.viewPlanet) {
-                    this.resetCircleStroke(this.collidingPlanet.orbitCircle, this._orbitStrokeColour, this._orbitStrokeWidth);
-                    this.collidingPlanet = {} as Planet;
-                }
-            }
-        } else {
-            // view planet (must do section collision)
-
-            // let collidingSystem = this.getStarCollision(mousePoint);
-            // if (!!Object.entries(collidingSystem).length) {
-            //     if (collidingSystem !== this.viewSystem) {
-            //         this.highlightCircle(collidingSystem.star.circle);
-            //         this.collideSystem = collidingSystem;
-            //     }
-            //     this.setCursor('pointer');
-            // } else {
-            //     this.setCursor('default');
-            //     if (!!Object.entries(this.collideSystem).length && this.collideSystem != this.viewSystem) {
-            //         this.resetCircleStroke(this.collideSystem.star.circle)
-            //         this.collideSystem = {} as SolarSystem;
-            //     }
-            // }
-        }
-        this.drawScene(true);
+    private drawPlanet() {
+        /**
+         * this function is for creating a new layer for the selected planet
+         * will need a random generator which creates:
+         * four sections, each with a random number of goals
+         * each goal might have some plans and reflections
+         */
 
     }
 
-    public onMouseClick(e: any) {
-        let mousePoint = new Point(e.offsetX, e.offsetY);
-        if (this.isSolarSystemView) {
-            // solar system view
-
-            const clickedCircle = this.clickCircles(mousePoint, this.planetList);
-            const collidingOrbit = this.getOrbitCircleCollision(mousePoint);
-
-            // check collision with the planets
-            if (!!Object.entries(clickedCircle).length) {
-                // a planet was clicked
-                const clickedPlanet = this.getClickedPlanet();
-
-                if (!!Object.entries(this.viewPlanet).length && !this.viewPlanet.clicked) {
-                    // reset the currently selected planet so a new planet can be selected
-                    this.resetCircleStroke(this.viewPlanet.orbitCircle, this._orbitStrokeColour, this._orbitStrokeWidth);
-                }
-
-                // set the select planet and highlight its orbit circle
-                this.viewPlanet = clickedPlanet;
-                this.hasClickedPlanet = true;
-                this.highlightCircle(this.viewPlanet.orbitCircle, this._selectOrbitColour, this._selectOrbitWidth);
-
-            } else if (!!Object.entries(collidingOrbit).length) {
-                // mouse click on orbit circle
-
-                if (!!Object.entries(this.viewPlanet).length && !this.viewPlanet.clicked) {
-                    // reset the currently selected planet so a new planet can be selected
-                    this.resetCircleStroke(this.viewPlanet.orbitCircle, this._orbitStrokeColour, this._orbitStrokeWidth);
-                }
-
-                // set the planet for the collided orbit
-                // manually update planet attributes
-                // force stroke colour and width to required values
-                this.viewPlanet = collidingOrbit;
-                this.viewPlanet.clicked = true;
-                this.viewPlanet.collided = false;
-                this.hasClickedPlanet = true;
-                this.selectCircle(this.viewPlanet.circle);
-                this.selectCircle(this.viewPlanet.orbitCircle, this._selectOrbitColour, this._selectOrbitWidth);
-            } else {
-                // the user clicked but not on a star or planet
-
-                // unset the currently selected planet
-                this.resetCircleStroke(this.viewPlanet.orbitCircle, this._orbitStrokeColour, this._orbitStrokeWidth);
-                this.viewPlanet = {} as Planet;
-                this.hasClickedPlanet = false;
-            }
-        } else {
-            // planet view
-            // must do section collision handling
-
-            // const clickedSystem = this.getStarCollision(mousePoint);
-            // if (!!Object.entries(clickedSystem).length) {
-            //     if (!!Object.entries(this.viewSystem).length) {
-            //         this.resetCircleStroke(this.viewSystem.star.circle);
-            //     }
-            //     this.selectCircle(clickedSystem.star.circle);
-            //     this.viewSystem = clickedSystem;
-            //     this.hasClicked = true;
-            // } else {
-            //     this.hasClicked = false;
-            //     this.resetCircleStroke(this.viewSystem.star.circle);
-
-            //     this.viewSystem = {} as SolarSystem;
-            // }
-        }
-
-        this.drawScene();
-    }
-
-    private fixCircleStroke(circle: CircleSprite) {
-        if (circle.clicked) {
-            this.selectCircle(circle.circle);
-        } else if (circle.collided) {
-            this.highlightCircle(circle.circle);
-        } else {
-            this.resetCircleStroke(circle.circle);
-        }
-    }
-
-    private highlightCircle(circle: CircleData, strokeColour = this._highlightStrokeColour, strokeWidth = this._highlightStrokeWidth) {
-        circle.strokeColour = strokeColour;
-        circle.strokeWidth = strokeWidth;
-    }
-
-    private selectCircle(circle: CircleData, strokeColour = this._selectStrokeColour, strokeWidth = this._selectStrokeWidth) {
-        circle.strokeColour = strokeColour;
-        circle.strokeWidth = strokeWidth;
-    }
-
-    public resetCircleStroke(circle: CircleData, strokeColour = this._circleStrokeColour, strokeWidth = this._circleStrokeWidth) {
-        circle.strokeColour = strokeColour;
-        circle.strokeWidth = strokeWidth;
-    }
-
-    private setCursor(type: string) {
-        window.document.getElementById("solar-system").style.cursor = type;
-    }
-
-    private getOrbitCircleCollision(xy: paper.Point) {
-        let collision = {} as Planet;
-        for (let i = 0; i < this.planetList.length; i++) {
-            if (!!Object.entries(this.planetList[i].orbitCirclePath).length && (this.planetList[i].orbitCirclePath.contains(xy))) {
-                collision = this.planetList[i];
-                break;
-            }
-        }
-        return collision;
-    }
 
 
-    private collideCircles(xy: paper.Point, circleList: CircleSprite[]) {
-        var collidedCircle = {} as CircleSprite;
-        circleList.forEach((circle) => {
-            const collision = circle.circlePath.contains(xy)
-            circle.collided = collision;
-            this.fixCircleStroke(circle);
-            if (collision) {
-                collidedCircle = circle;
-            }
-        });
-        return collidedCircle;
-    }
-
-    private clickCircles(xy: paper.Point, circleList: CircleSprite[]) {
-        var clickedCircle = {} as CircleSprite;
-        circleList.forEach((circle) => {
-            const clicked = circle.circlePath.contains(xy);
-            circle.clicked = clicked;
-
-            this.fixCircleStroke(circle);
-            if (clicked) {
-                clickedCircle = circle;
-            }
-        });
-        return clickedCircle;
-    }
-
-    private getCollidedPlanet() {
-        var collision = {} as Planet
-
-        this.planetList.forEach((planet) => {
-            if (planet.collided) {
-                collision = planet;
-            }
-        });
-
-        return collision;
-    }
-
-    private getClickedPlanet() {
-        var clicked = {} as Planet
-
-        this.planetList.forEach((planet) => {
-            if (planet.clicked) {
-                clicked = planet;
-            }
-        });
-
-        return clicked;
-    }
-
-    private getRandomCircle(point: paper.Point, minSize: number, maxSize: number): CircleData {
-        let fillColour = this.getRandomColourCode();
+    /**
+     * Generates a random circle with the assigned centre point and minimum and max sizes.
+     * @param point 
+     * @param minSize 
+     * @param maxSize 
+     * @returns circleData
+     */
+    private getRandomCircle(point: Point, minSize: number, maxSize: number): CircleData {
+        let fillColour = getRandomColourCode();
         let size = randInt(minSize, maxSize)
-        return this.getCircle(
+        const circleData = this.getCircle(
             point,
             size,
             fillColour,
         )
+        return circleData;
     }
 
-    public createPlanetList() {
-        this.planetList = [];
+    /**
+     * Creates a random number of planets and their orbit circles
+     * 
+     * Each planet has a random radius and speed
+     * 
+     * @returns planetList -> A list of randomly generated planets 
+     */
+    public getPlanetList() {
+        const planetList = [];
 
         let angleCtr = 0;
         let addOrbitDist = 40;
@@ -407,7 +161,7 @@ export class SolarSystemComponent implements AfterViewInit {
         const minOrbitDist = 40;
         const midPoint = this.getCanvasMidPoint();
 
-        for (let i = 0; i < 5; i++) {
+        for (let i = 0; i < randInt(2, 7); i++) {
 
             let orbitDist = (minOrbitDist * this._viewSystemZoom) + ((++orbitCtr * addOrbitDist) % maxOrbitDist)
             let angle = angleCtr;
@@ -415,8 +169,12 @@ export class SolarSystemComponent implements AfterViewInit {
             angleCtr += this._addOrbitAngle;
 
             let planetPoint = getCirclePoint(this.getCanvasMidPoint(), orbitDist, angle);
-            let orbitCircle = this.getCircle(this.getCanvasMidPoint(), orbitDist, '', this._orbitStrokeColour, this._orbitStrokeWidth);
+            let orbitCircle = this.getCircle(this.getCanvasMidPoint(), orbitDist, '', ORBIT_CIRCLE_STROKE_COLOUR, ORBIT_CIRCLE_STROKE_WIDTH);
             let planetCircle = this.getRandomCircle(planetPoint, 15, 20);
+
+            let imgPath = `assets/Planets/planet-${randInt(1, 8)}.png`
+            var planetImgObj = new Image();
+            planetImgObj.src = imgPath;
 
             const planet: Planet = {
                 id: i,
@@ -426,114 +184,379 @@ export class SolarSystemComponent implements AfterViewInit {
                 offset: {
                     x: midPoint.x - planetCircle.center.x,
                     y: midPoint.y - planetCircle.center.y,
-                } as paper.Point,
+                } as Point,
                 name: 'Planet ' + (i),
-                circlePath: {} as paper.Path,
-                orbitCirclePath: {} as paper.Path,
+                kplanetCircle: {} as Konva.Circle,
+                korbitCircle: {} as Konva.Circle,
                 clicked: false,
                 collided: false,
-                speed: 3 / (i + randInt(1, 5))
+                speed: 1 + Math.random(),
+                lostFrames: 0,
+                image: planetImgObj,
+                imagePath: imgPath
             }
-            this.planetList.push(planet);
+            planetList.push(planet);
         }
+        return planetList
     }
 
-    private getCircle(center: paper.Point, radius: number, fillColour = 'yellow', strokeColour = this._circleStrokeColour, strokeWidth = this._circleStrokeWidth): CircleData {
+    /**
+     * Creates a CircleData object, with optional parameters filled with constant values
+     * @param center 
+     * @param radius 
+     * @param fillColour 
+     * @param strokeColour 
+     * @param strokeWidth 
+     * @returns 
+     */
+    private getCircle(center: Point, radius: number, fillColour = 'yellow', strokeColour = CIRCLE_STROKE_COLOUR, strokeWidth = CIRCLE_STROKE_WIDTH): CircleData {
         return {
             center,
             radius,
             fillColour,
             strokeColour,
             strokeWidth
+        } as CircleData;
+    }
+
+    /**
+     * Uses the planets from this.planetList to create konva circles and images
+     * 
+     * Creates circles for the planets, images to display for the planets and orbit circles which the planets follow in their animation
+     * 
+     * The circles are used for hit detection (mouseover, mouseout, click)
+     * 
+     * Both are animated to simulate orbiting around the central star.
+     *   
+    */
+    private addPlanetsToLayer() {
+        this.planetLayer.destroyChildren();
+        const planetCircles = [];
+        const planetImgs = [];
+
+        for (let i = 0; i < this.planetList.length; i++) {
+            const planet = this.planetList[i];
+
+            var planetCircle = new Konva.Circle({
+                x: planet.circle.center.x,
+                y: planet.circle.center.y,
+                stroke: planet.circle.strokeColour,
+                strokeWidth: planet.circle.strokeWidth,
+                radius: planet.circle.radius
+            });
+
+            var planetImg = new Konva.Image({
+                image: planet.image,
+                x: planet.circle.center.x - planet.circle.radius,
+                y: planet.circle.center.y - planet.circle.radius,
+                width: planet.circle.radius * 2,
+                height: planet.circle.radius * 2,
+            });
+
+            this.planetList[i].kplanetCircle = planetCircle;
+
+            this.planetLayer.add(planetCircle);
+            this.planetLayer.add(planetImg);
+
+            var text = new Konva.Text({
+                x: 0,
+                y: 0,
+                text: '',
+                fontSize: 15,
+                fontFamily: 'Arial',
+                fill: 'white'
+            });
+            this.planetLayer.add(text);
+            // tell konva not to track any events on the text object for optimisation purposes
+            text.listening(false);
+
+            planetCircle.on('mouseover', function (e) {
+                if (!planet.clicked) {
+                    planet.collided = true;
+                    text.x(e.target.getAttr('x') - planet.name.length * 3);
+                    text.y(e.target.getAttr('y') - 40);
+                    text.text(planet.name);
+
+                    this.setAttr('stroke', HIGHLIGHT_CIRCLE_STROKE_COLOUR);
+                    this.setAttr('strokeWidth', HIGHLIGHT_CIRCLE_STROKE_WIDTH);
+
+                    this.moveToTop();
+                    text.moveToTop();
+                }
+            });
+            planetCircle.on('mouseout', function () {
+                // keep the clicked planet selected on mouseout
+                if (!planet.clicked) {
+                    planet.collided = false;
+
+                    text.text('');
+
+                    this.setAttr('stroke', CIRCLE_STROKE_COLOUR);
+                    this.setAttr('strokeWidth', CIRCLE_STROKE_WIDTH);
+                }
+            });
+
+            planetCircle.on('click', (e) => {
+                // reset any other clicked planets when a planet is clicked
+                for (let i = 0; i < this.planetList.length; i++) {
+                    this.planetList[i].collided = false;
+                    this.planetList[i].clicked = false;
+                    this.planetList[i].kplanetCircle.setAttrs({
+                        'stroke': CIRCLE_STROKE_COLOUR,
+                        'strokeWidth': CIRCLE_STROKE_WIDTH
+                    });
+                }
+                planet.clicked = true;
+                planet.collided = true;
+
+                text.text(planet.name);
+                text.x(e.target.getAttr('x') - planet.name.length * 3);
+                text.y(e.target.getAttr('y') - 40);
+
+                e.target.setAttr('stroke', SELECT_CIRCLE_STROKE_COLOUR);
+                e.target.setAttr('strokeWidth', SELECT_CIRCLE_STROKE_WIDTH);
+                e.target.moveToTop();
+                text.moveToTop();
+            })
+
+
+            var orbitCircle = new Konva.Circle({
+                x: planet.orbitCircle.center.x,
+                y: planet.orbitCircle.center.y,
+                stroke: planet.orbitCircle.strokeColour,
+                strokeWidth: planet.orbitCircle.strokeWidth,
+                fill: planet.orbitCircle.fillColour,
+                radius: planet.orbitCircle.radius
+            });
+
+
+            // currently, just clear any currently clicked planets if an orbit circle is clicked
+            orbitCircle.on('click', (e) => {
+                text.text('');
+                for (let i = 0; i < this.planetList.length; i++) {
+                    this.planetList[i].collided = false;
+                    this.planetList[i].clicked = false;
+                    this.planetList[i].kplanetCircle.setAttrs({
+                        'stroke': CIRCLE_STROKE_COLOUR,
+                        'strokeWidth': CIRCLE_STROKE_WIDTH
+                    });
+                }
+            })
+            this.planetLayer.add(orbitCircle);
+
+            // TODO: highlight orbit circles on mouseover?
+            // orbitCircle.on('mouseover', function () {
+            //     planet.collided = true;
+            //     this.setAttr('stroke', HIGHLIGHT_ORBIT_CIRCLE_COLOUR);
+            //     this.setAttr('strokeWidth', HIGHLIGHT_ORBIT_CIRCLE_WIDTH);
+            // });
+            // orbitCircle.on('mouseout', function () {
+            //     this.setAttr('stroke', ORBIT_CIRCLE_STROKE_COLOUR);
+            //     this.setAttr('strokeWidth', ORBIT_CIRCLE_STROKE_WIDTH);
+            //     planet.collided = false;
+            // });
+
+
+            planetImgs.push(planetImg);
+            planetCircles.push(planetCircle);
+            orbitCircle.moveToBottom();
+            planetCircle.moveToTop();
+        }
+
+        // unselect any clicked planets when the background is clicked
+        this.bgRect.on('click', (evt) => {
+            text.text('');
+            for (let i = 0; i < this.planetList.length; i++) {
+                this.planetList[i].collided = false;
+                this.planetList[i].clicked = false;
+                this.planetList[i].kplanetCircle.setAttrs({
+                    'stroke': CIRCLE_STROKE_COLOUR,
+                    'strokeWidth': CIRCLE_STROKE_WIDTH
+                });
+            }
+        });
+
+        var midpoint = this.getCanvasMidPoint();
+
+        // animate the planets orbiting in perfect circles around the centre of the page
+        var animation = new Konva.Animation((frame) => {
+            for (var i = 0; i < this.planetList.length; i++) {
+                // freeze the planet if it has collided with the cursor
+                if (!this.planetList[i].collided) {
+                    // obtain the current angle of the planet to the centre of the page
+                    var angle = getAngle(midpoint, this.planetList[i].circle.center);
+                    // calculate an amount to add the current angle to simulate the planet moving around the circle
+                    // this uses the current frame.time value in the calculation
+                    // since planets can be frozen during mouse events, the number of lost frames for each planet must also be tracked
+                    // the lost frames are subtracted from the frame.time value to ensure smooth movement for planets
+                    var add = ((frame.time - this.planetList[i].lostFrames) / 10) * this.planetList[i].speed / this.planetList[i].size;
+                    angle = angle + add;
+                    angle = (Math.PI * angle) / 180;
+                    // a new centre for the planet is calculated using the new angle
+                    var newCentre = getCirclePoint(
+                        midpoint,
+                        getDistance(midpoint, this.planetList[i].circle.center),
+                        angle
+                    );
+                    // the planet circle is assigned to its new centre point
+                    planetCircles[i].x(newCentre.x);
+                    planetCircles[i].y(newCentre.y);
+                    // the planet image must have its point adjusted, to ensure it is placed in the centre of the circle
+                    planetImgs[i].x(newCentre.x - this.planetList[i].circle.radius);
+                    planetImgs[i].y(newCentre.y - this.planetList[i].circle.radius);
+                } else {
+                    // increase the lost frames counter whenever the planet misses a frame due to mouse events
+                    this.planetList[i].lostFrames += frame.timeDiff;
+                }
+            }
+        }, this.planetLayer);
+        animation.start();
+    }
+
+    // TODO: a private centrePoint value should be created in AfterInit function rather than relying on this function
+    private getCanvasMidPoint(): Point {
+        return {
+            x: window.document.getElementById('container').clientWidth / 2,
+            y: window.document.getElementById('container').clientHeight / 2
         };
     }
 
-    private drawCirclePath(circle: CircleData) {
-        let path = new Path.Circle({ center: circle.center, radius: circle.radius });
-        if (circle.strokeColour) {
-            path.strokeColor = new Color(circle.strokeColour);
-        }
-        if (circle.fillColour) {
-            path.fillColor = new Color(circle.fillColour);
-
-        }
-        if (circle.strokeWidth) {
-            path.strokeWidth = circle.strokeWidth;
-        }
-        return path;
-    }
-
-    private drawText(xy: paper.Point, content: string, x_offset: number, y_offset: number) {
-        const point = {
-            x: xy.x + x_offset,
-            y: xy.y + y_offset
-        }
-
-        const pt = new PointText({
-            point,
-            content,
-            fillColor: this._textColour,
-            fontFamily: this._textFont,
-            fontSize: this._textSize,
-        });
-    }
-
-    public drawPlanets(planets: Planet[]) {
-        planets.forEach((planet) => {
-            planet.orbitCirclePath = this.drawCirclePath(planet.orbitCircle);
+    /**
+     * Create a black rectangle that fills the canvas container
+     * 
+     * Uses this.bgStarList to create Konva.Circles to create a starry background
+     * 
+     * Each star has a random opacity to simulate brightness
+     */
+    private addBgStarsToLayer() {
+        this.bgLayer.destroyChildren();
+        this.bgRect = new Konva.Rect({
+            x: 0,
+            y: 0,
+            width: window.document.getElementById('container').clientWidth,
+            height: window.document.getElementById('container').clientHeight,
+            fill: 'black'
         });
 
-        planets.forEach((planet) => {
-            planet.circle = this.getCircle(planet.circle.center, planet.circle.radius, planet.circle.fillColour, planet.circle.strokeColour, planet.circle.strokeWidth);
-            planet.circlePath = this.drawCirclePath(planet.circle);
+        this.bgLayer.add(this.bgRect);
+
+        for (let i = 0; i < this.bgStarList.length; i++) {
+            const bgStar = this.bgStarList[i];
+            var starCircle = new Konva.Circle({
+                x: bgStar.center.x,
+                y: bgStar.center.y,
+                radius: bgStar.radius,
+                opacity: bgStar.brightness / 10,
+                fill: 'white'
+            });
+            this.bgLayer.add(starCircle);
+            // turn off events for all the stars for optimisation purposes
+            starCircle.listening(false);
+        }
+    }
+
+    /**
+     * Creates a Konva.Group containing the category polygons and the category star spikes, both as Konva.Shape
+     * 
+     * Sets up all mouse events for each of the category polygons to allow them to be highlighted and have their name displayed onscreen
+     * 
+     * @param starCoords 
+     * @param center 
+     * @param polyFillColour 
+     * @returns Konva.Group
+     */
+    private getStarGroup(starCoords: StarCoord[], center: Point, polyFillColour: string): Konva.Group {
+        var starGroup = new Konva.Group({
+            x: center.x,
+            y: center.y
         });
+        const polyList = [];
+        for (var i = 0; i < this.catPolygons.length; i++) {
+            const poly = this.catPolygons[i];
 
-        return planets;
-    }
+            var polygon = new Konva.Shape({
+                x: center.x,
+                y: center.y,
+                fill: polyFillColour,
+                stroke: 'gold',
+                strokeWidth: 1,
+                // a Konva.Canvas renderer is passed into the sceneFunc function
+                sceneFunc(context, shape) {
+                    context.beginPath();
+                    context.moveTo(poly.points.centre.x, poly.points.centre.y);
+                    context.lineTo(poly.points.edgeL.x, poly.points.edgeL.y);
+                    context.lineTo(poly.points.spike.x, poly.points.spike.y);
+                    context.lineTo(poly.points.edgeR.x, poly.points.edgeR.y);
+                    context.lineTo(poly.points.centre.x, poly.points.centre.y);
+                    context.closePath();
+                    // Konva specific method
+                    context.fillStrokeShape(shape);
+                }
+            });
+            var mid = this.getCanvasMidPoint();
+            var text = new Konva.Text({
+                x: mid.x,
+                y: mid.y,
+                text: '',
+                fontSize: 15,
+                fontFamily: 'Arial',
+                fill: 'white'
+            });
 
-
-    private getCanvasMidPoint(): paper.Point {
-        return new Point(
-            this.canvas.nativeElement.clientWidth / 2,
-            this.canvas.nativeElement.clientHeight / 2
-        );
-    }
-
-
-    private getRandomColourCode() {
-        let makeColorCode = '0123456789ABCDEF';
-        let code = '#';
-        for (let count = 0; count < 6; count++) {
-            code = code + makeColorCode[Math.floor(Math.random() * 16)];
+            polygon.on('pointerenter', function (evt) {
+                this.setAttr('stroke', poly.category.colour);
+                this.setAttr('StrokeWidth', 3);
+                this.moveToTop();
+                text.setAttr('text', poly.category.name);
+                text.setAttr('x', mid.x - 35);
+                text.setAttr('y', mid.y + 75);
+            });
+            polygon.on('pointerleave', function () {
+                this.setAttr('stroke', 'gold');
+                this.setAttr('StrokeWidth', 1);
+                text.setAttr('text', '');
+            });
+            starGroup.add(text);
+            starGroup.add(polygon);
+            polyList.push(polygon);
         }
-        return code;
-    }
+        for (var i = 0; i < starCoords.length; i++) {
+            const starCoord = starCoords[i];
+            const kPoly = polyList[i];
+            const poly = this.catPolygons[i];
+            var catSpike = new Konva.Shape({
+                x: center.x,
+                y: center.y,
+                fill: 'black',
+                stroke: this.setCategories[i].colour,
+                strokeWidth: 5,
+                sceneFunc: function (context, shape) {
+                    context.beginPath();
+                    context.moveTo(starCoord.edgeR.x, starCoord.edgeR.y)
+                    context.lineTo(starCoord.spike.x, starCoord.spike.y)
+                    context.lineTo(starCoord.edgeL.x, starCoord.edgeL.y)
 
-    private planetsOrbitStar() {
-        for (var i = 0; i < this.planetList.length; i++) {
-            if (this.planetList[i].collided || this.planetList[i].clicked) {
-                // dont animate any planets that have collided or clicked
-                continue;
-            }
+                    context.fillStrokeShape(shape)
+                }
+            });
 
-            if (Object.keys(this.orbitTracker).includes(this.orbitTracker[i])) {
-                this.orbitTracker[i]++;
-            } else {
-                this.orbitTracker[i] = 1
-            }
-
-            var orbitSpeed = this.orbitTracker[i];
-            var angle = getAngle(this.getCanvasMidPoint(), this.planetList[i].circle.center);
-            angle = angle + orbitSpeed * this.planetList[i].speed / this.planetList[i].size;
-            angle = (Math.PI * angle) / 180;
-
-            this.planetList[i].circle.center = getCirclePoint(
-                this.getCanvasMidPoint(),
-                getDistance(this.getCanvasMidPoint(), this.planetList[i].circle.center),
-                angle
-            );
+            catSpike.on('pointerenter', (evt) => {
+                kPoly.setAttr('stroke', poly.category.colour);
+                kPoly.setAttr('StrokeWidth', 3);
+                kPoly.moveToTop();
+                text.setAttr('text', poly.category.name);
+                text.setAttr('x', mid.x - 35);
+                text.setAttr('y', mid.y + 75);
+            });
+            catSpike.on('pointerleave', (evt) => {
+                kPoly.setAttr('stroke', 'gold');
+                kPoly.setAttr('StrokeWidth', 1);
+                text.setAttr('text', '');
+            });
+            starGroup.add(catSpike);
+            catSpike.moveToBottom();
         }
+
+        return starGroup;
     }
-
-
 }

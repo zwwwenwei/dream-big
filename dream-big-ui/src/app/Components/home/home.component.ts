@@ -6,7 +6,6 @@ import { User } from 'src/app/model/user';
 import { AuthService } from 'src/app/services/auth.service';
 
 import { StudentService } from 'src/app/services/student.service';
-//import { WizardDialogComponent } from 'src/app/wizard-dialog/wizard-dialog.component';
 import { StarMapComponent } from '../StarMap/star-map.component';
 
 @Component({
@@ -32,15 +31,16 @@ export class HomeComponent implements OnInit {
 
 
   public addStarSystem() {
-    //const dialogRef = this.dialog.open(WizardDialogComponent, {
-      // width: '100',
-      // data: { name: this.name, animal: this.animal },
-    //});
+    // const dialogRef = this.dialog.open(WizardDialogComponent, {
+    //   // width: '100',
+    //   // data: { name: this.name, animal: this.animal },
+    // });
 
-    //dialogRef.afterClosed().subscribe(result => {
-      //console.log('The dialog was closed');
-      // this.animal = result;
-    //});
+    // dialogRef.afterClosed().subscribe(result => {
+    //   console.log('The dialog was closed');
+    //   // this.animal = result;
+    // });
+
   }
 
   public viewStarSystem() {

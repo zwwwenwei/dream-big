@@ -5,10 +5,11 @@ import { StarControlComponent } from './Components/StarControl/star-control.comp
 import { IntroPageComponent } from './Components/intro-page/intro-page.component';
 import { LoginComponent } from './Components/login/login.component';
 // import { ProfileComponent } from './Components/profile/profile.component';
-import { StarMapComponent } from './Components/StarMap/star-map.component';
+// import { StarMapComponent } from './Components/StarMap/star-map.component';
 import { AuthGuard } from './services/authguard.service';
-import { HomeComponent } from './Components/home/home.component';
+// import { HomeComponent } from './Components/home/home.component';
 import { SolarSystemComponent } from './Components/SolarSystem/solar-system.component';
+import { KonvStarComponent } from './Components/KonvaStar/konv-star.component';
 
 
 
@@ -18,10 +19,11 @@ const routes: Routes = [
   { path: 'login', component: LoginComponent },
   { path: 'intro', component: IntroPageComponent },
   // { path: 'profile', canActivate: [AuthGuard], component: ProfileComponent },
-  { path: 'home', component: HomeComponent },
+  // { path: 'home', component: HomeComponent },
   { path: 'star', component: StarControlComponent },
-  { path: 'star-map', component: StarMapComponent },
-  { path: 'solar', component: SolarSystemComponent}
+  // { path: 'star-map', component: StarMapComponent },
+  { path: 'solar', component: SolarSystemComponent},
+  { path: 'konv-star', component: KonvStarComponent}
 ];
 
 @NgModule({

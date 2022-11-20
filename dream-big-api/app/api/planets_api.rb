@@ -11,7 +11,7 @@ class PlanetsApi < Grape::API
 
   desc 'Allow creation of a Planet'
   params do
-    requires :id, type: Integer, desc: 'ID of Answer'
+    requires :id, type: Integer, desc: 'ID of Planet'
     requires :name, type: String, desc: 'name of the planet'
     requires :journey_id, type: Integer, desc: 'journey ID'
   end
@@ -31,9 +31,9 @@ class PlanetsApi < Grape::API
     present planet, with: Entities::PlanetsEntity
   end
 
-  desc 'Allow updating of a Answers'
+  desc 'Allow updating of a Planet'
   params do
-    requires :id, type: Integer, desc: 'ID of Answer'
+    requires :id, type: Integer, desc: 'ID of Planet'
     optional :name, type: String, desc: 'name of the planet'
     optional :journey_id, type: Integer, desc: 'journey ID'
   end
@@ -53,9 +53,9 @@ class PlanetsApi < Grape::API
     present planet, with: Entities::PlanetsEntity
   end
 
-  desc 'Delete the Answers with the indicated id'
+  desc 'Delete the Planet with the indicated id'
   params do
-    requires :id, type: Integer, desc: 'ID of Answer'
+    requires :id, type: Integer, desc: 'ID of Planet'
   end
   delete '/planets/:id' do
     Planet.find(params[:id]).destroy!
