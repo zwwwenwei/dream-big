@@ -1,11 +1,12 @@
 import { Component, ViewChild, ElementRef, AfterViewInit } from '@angular/core';
 
 import { getAngle, getBackgroundStars, getCatPolygons, getCirclePoint, getDistance, getRandomColourCode, getStarData, randInt } from 'src/app/helpers/canvas';
-import { BgStar, Polygon, StarData, Category, StarCoord } from 'src/app/helpers/types';
+import { BgStar, Polygon, StarData, Category, StarCoord, TextData, Goal, Section } from 'src/app/helpers/types';
 import { Point, CircleData, Planet, SolarSystem } from 'src/app/helpers/types';
 import Konva from 'konva';
-
+import { Dialog, DialogRef, DIALOG_DATA } from '@angular/cdk/dialog';
 import { CIRCLE_STROKE_COLOUR, CIRCLE_STROKE_WIDTH, HIGHLIGHT_CIRCLE_STROKE_COLOUR, HIGHLIGHT_CIRCLE_STROKE_WIDTH, HIGHLIGHT_ORBIT_CIRCLE_COLOUR, HIGHLIGHT_ORBIT_CIRCLE_WIDTH, NUM_BG_STARS, ORBIT_CIRCLE_STROKE_COLOUR, ORBIT_CIRCLE_STROKE_WIDTH, SELECT_CIRCLE_STROKE_COLOUR, SELECT_CIRCLE_STROKE_WIDTH } from './constants';
+import { SectionDialogComponent } from './section-dialog.component';
 @Component({
     selector: 'app-solar-system',
     templateUrl: './solar-system.component.html',
@@ -13,22 +14,34 @@ import { CIRCLE_STROKE_COLOUR, CIRCLE_STROKE_WIDTH, HIGHLIGHT_CIRCLE_STROKE_COLO
 
 })
 export class SolarSystemComponent implements AfterViewInit {
+    constructor(public dialog: Dialog) { }
+
+    openDialog(section:Section): void {
+        const dialogRef = this.dialog.open<string>(SectionDialogComponent, {
+            width: '250px',
+            data: section
+        });
+        const wedgeImg = document.getElementById('dialog-image');
+        wedgeImg.setAttribute('src', section.wedge.src);
+        dialogRef.closed.subscribe(result => {
+            console.log('The dialog was closed', result);
+        });
+    }
     // @Input() loadedStarSystems!: any[];
 
     private stage: Konva.Stage;
     private bgLayer: Konva.Layer;
     private planetLayer: Konva.Layer;
     private starLayer: Konva.Layer;
+    private sectionLayer: Konva.Layer;
     private bgRect: Konva.Rect;
-    private planetImageList: HTMLImageElement[] = [];
     private planetList: Planet[] = [];
+    private sectionList: Section[] = [];
     private bgStarList: BgStar[] = [];
-    private viewSystem: SolarSystem = {} as SolarSystem;
     private viewPlanet: Planet = {} as Planet;
     private isSolarSystemView: boolean = true;
 
-    private orbitTracker: any = {}
-    private animationId: number = -1;
+    private orbitAnimation: Konva.Animation;
     private _viewSystemZoom: number = 3;
     private _addOrbitAngle: number = 60;
 
@@ -75,17 +88,21 @@ export class SolarSystemComponent implements AfterViewInit {
         });
         // initialize each layer that will be required
         this.bgLayer = new Konva.Layer();
+
         this.planetLayer = new Konva.Layer();
         this.starLayer = new Konva.Layer();
+        this.sectionLayer = new Konva.Layer();
 
         // generate the background of the stage by randomly placing different white circles
         this.bgStarList = getBackgroundStars(NUM_BG_STARS, window.document.getElementById('container').clientWidth, window.document.getElementById('container').clientWidth);
         this.addBgStarsToLayer();
-        this.stage.add(this.bgLayer);
 
         // randomly generate a random number of planets to be displayed
         // assign a random image from /assets/Planets/ to each planet
         this.planetList = this.getPlanetList();
+
+        this.stage.add(this.bgLayer);
+
 
         setTimeout(() => {
             // draw the solar system, including the journey star in the centre
@@ -95,6 +112,9 @@ export class SolarSystemComponent implements AfterViewInit {
     }
 
     private drawSolarSystem() {
+        this.sectionLayer.destroy();
+        this.stage.add(this.planetLayer);
+        this.stage.add(this.starLayer);
         // add planets from this.planetList to this.planetLayer
         // start planets watching for mouse events and create the orbiting animation
         this.addPlanetsToLayer();
@@ -110,18 +130,67 @@ export class SolarSystemComponent implements AfterViewInit {
         this.catPolygons = getCatPolygons(this.starData);
         var starGroup = this.getStarGroup(this.starData.starCoords, { x: 0, y: 0 }, 'gold');
         this.starLayer.add(starGroup);
-        this.stage.add(this.planetLayer);
-        this.stage.add(this.starLayer);
+
     }
 
-    private drawPlanet() {
-        /**
-         * this function is for creating a new layer for the selected planet
-         * will need a random generator which creates:
-         * four sections, each with a random number of goals
-         * each goal might have some plans and reflections
-         */
+    // has to be async so the toImage promise can be waited on
+    // TODO: create a BACK button to return to solar system view
+    private async startViewingPlanet(planet: Planet) {
+        this.orbitAnimation.stop();
+        this.planetLayer.destroy();
+        this.starLayer.destroy();
+        this.stage.add(this.sectionLayer);
 
+        for (let i = 0; i < planet.sections.length; i++) {
+            const section = planet.sections[i];
+            var wedge = new Konva.Wedge({
+                x: this.stage.width() / 2,
+                y: this.stage.height() / 2,
+                radius: 150,
+                angle: 90,
+                fill: section.category.colour,
+                stroke: CIRCLE_STROKE_COLOUR,
+                strokeWidth: CIRCLE_STROKE_WIDTH,
+                rotation: i * 90,
+            });
+            // this will eventually be the actual planet section image (still waiting on graphics)
+            section.wedge = await wedge.toImage({
+            }) as HTMLImageElement;
+            var text = new Konva.Text({
+                x: 0,
+                y: 0,
+                text: '',
+                fontSize: 15,
+                fontFamily: 'Arial',
+                fill: 'white'
+            });
+            // tell konva not to track any events on the text object for optimisation purposes
+            text.listening(false);
+
+            wedge.on('mouseover', (e) => {
+                text.x(e.target.getAttr('x'));
+                text.y(e.target.getAttr('y') + (wedge.radius() + 20));
+                text.text(`${section.category.name}\n${section.goals.length} Goals`);
+
+                e.target.setAttr('stroke', HIGHLIGHT_CIRCLE_STROKE_COLOUR);
+                e.target.setAttr('strokeWidth', HIGHLIGHT_CIRCLE_STROKE_WIDTH);
+
+                e.target.moveToTop();
+                text.moveToTop();
+
+            });
+            wedge.on('mouseout', (e) => {
+                text.text('');
+                e.target.setAttr('stroke', CIRCLE_STROKE_COLOUR);
+                e.target.setAttr('strokeWidth', CIRCLE_STROKE_WIDTH);
+            });
+            wedge.on('click', (e) => {
+                this.openDialog(section);
+                // this.drawSolarSystem();
+            });
+            this.sectionLayer.add(text);
+            this.sectionLayer.add(wedge);
+        }
     }
 
 
@@ -142,6 +211,44 @@ export class SolarSystemComponent implements AfterViewInit {
             fillColour,
         )
         return circleData;
+    }
+
+    private getRandomSections() {
+        const sections: Section[] = [];
+        for (let i = 0; i < 4; i++) {
+            const category = this.setCategories[i];
+
+            const goals: Goal[] = [];
+            // create goals for the section
+            for (let j = 0; j < randInt(1, 4); j++) {
+                const plans: TextData[] = [];
+                for (let k = 0; k < randInt(0, 3); k++) {
+                    plans.push({
+                        title: 'Plan' + k + j + i,
+                        content: 'This is some quality plan content'
+                    });
+                }
+                const reflections: TextData[] = [];
+                for (let k = 0; k < randInt(0, 3); k++) {
+                    reflections.push({
+                        title: 'Reflection' + k + j + i,
+                        content: 'This is some quality reflection content'
+                    });
+                }
+                goals.push({
+                    title: 'Goal ' + j + i,
+                    content: 'This is some good goal content right here!',
+                    plans,
+                    reflections
+                })
+            }
+
+            sections.push({
+                category,
+                goals
+            });
+        }
+        return sections;
     }
 
     /**
@@ -193,7 +300,8 @@ export class SolarSystemComponent implements AfterViewInit {
                 speed: 1 + Math.random(),
                 lostFrames: 0,
                 image: planetImgObj,
-                imagePath: imgPath
+                imagePath: imgPath,
+                sections: this.getRandomSections()
             }
             planetList.push(planet);
         }
@@ -305,18 +413,24 @@ export class SolarSystemComponent implements AfterViewInit {
                         'stroke': CIRCLE_STROKE_COLOUR,
                         'strokeWidth': CIRCLE_STROKE_WIDTH
                     });
+                    this.planetList[i].lostFrames = 0;
                 }
-                planet.clicked = true;
-                planet.collided = true;
+                // we open planet view as soon as a planet is clicked
+                // so all the below formatting is not required (at the moment)
 
-                text.text(planet.name);
-                text.x(e.target.getAttr('x') - planet.name.length * 3);
-                text.y(e.target.getAttr('y') - 40);
+                // planet.clicked = true;
+                // planet.collided = true;
 
-                e.target.setAttr('stroke', SELECT_CIRCLE_STROKE_COLOUR);
-                e.target.setAttr('strokeWidth', SELECT_CIRCLE_STROKE_WIDTH);
-                e.target.moveToTop();
-                text.moveToTop();
+                // text.text(planet.name);
+                // text.x(e.target.getAttr('x') - planet.name.length * 3);
+                // text.y(e.target.getAttr('y') - 40);
+
+                // e.target.setAttr('stroke', SELECT_CIRCLE_STROKE_COLOUR);
+                // e.target.setAttr('strokeWidth', SELECT_CIRCLE_STROKE_WIDTH);
+                // e.target.moveToTop();
+                // text.moveToTop();
+
+                this.startViewingPlanet(this.planetList[i]);
             })
 
 
@@ -379,7 +493,7 @@ export class SolarSystemComponent implements AfterViewInit {
         var midpoint = this.getCanvasMidPoint();
 
         // animate the planets orbiting in perfect circles around the centre of the page
-        var animation = new Konva.Animation((frame) => {
+        this.orbitAnimation = new Konva.Animation((frame) => {
             for (var i = 0; i < this.planetList.length; i++) {
                 // freeze the planet if it has collided with the cursor
                 if (!this.planetList[i].collided) {
@@ -410,14 +524,14 @@ export class SolarSystemComponent implements AfterViewInit {
                 }
             }
         }, this.planetLayer);
-        animation.start();
+        this.orbitAnimation.start();
     }
 
     // TODO: a private centrePoint value should be created in AfterInit function rather than relying on this function
     private getCanvasMidPoint(): Point {
         return {
-            x: window.document.getElementById('container').clientWidth / 2,
-            y: window.document.getElementById('container').clientHeight / 2
+            x: this.stage.width() / 2,
+            y: this.stage.height() / 2
         };
     }
 
@@ -528,6 +642,7 @@ export class SolarSystemComponent implements AfterViewInit {
                 x: center.x,
                 y: center.y,
                 fill: 'black',
+                opacity: 0.5,
                 stroke: this.setCategories[i].colour,
                 strokeWidth: 5,
                 sceneFunc: function (context, shape) {
@@ -543,12 +658,15 @@ export class SolarSystemComponent implements AfterViewInit {
             catSpike.on('pointerenter', (evt) => {
                 kPoly.setAttr('stroke', poly.category.colour);
                 kPoly.setAttr('StrokeWidth', 3);
+                evt.target.setAttr('opacity', 1);
                 kPoly.moveToTop();
                 text.setAttr('text', poly.category.name);
                 text.setAttr('x', mid.x - 35);
                 text.setAttr('y', mid.y + 75);
             });
             catSpike.on('pointerleave', (evt) => {
+                evt.target.setAttr('opacity', 0.5);
+
                 kPoly.setAttr('stroke', 'gold');
                 kPoly.setAttr('StrokeWidth', 1);
                 text.setAttr('text', '');

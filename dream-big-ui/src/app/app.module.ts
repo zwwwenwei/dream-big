@@ -34,7 +34,7 @@ import { LoginComponent } from './Components/login/login.component';
 import { ProfileComponent } from './Components/profile/profile.component';
 import { SolarSystemComponent } from './Components/SolarSystem/solar-system.component';
 import { KonvStarComponent } from './Components/KonvaStar/konv-star.component';
-
+import { SectionDialogComponent } from './Components/SolarSystem/section-dialog.component';
 
 @NgModule({
   declarations: [
@@ -51,7 +51,8 @@ import { KonvStarComponent } from './Components/KonvaStar/konv-star.component';
     CompleteWizardComponent,
     // HomeComponent,
     SolarSystemComponent,
-    KonvStarComponent
+    KonvStarComponent,
+    SectionDialogComponent
   ],
   imports: [
     BrowserAnimationsModule,
