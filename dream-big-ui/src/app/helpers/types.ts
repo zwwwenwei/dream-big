@@ -76,6 +76,23 @@ export interface Planet extends CircleSprite {
     lostFrames: number
     image: HTMLImageElement;
     imagePath: string;
+    sections: Section[];
+}
+
+export interface Section {
+    wedge?: HTMLImageElement
+    category: Category,
+    goals?: Goal[]
+}
+
+export interface TextData {
+    title: string,
+    content: string
+}
+
+export interface Goal extends TextData {
+    plans?: TextData[]
+    reflections?: TextData[]
 }
 
 export interface CircleData {
