@@ -12,18 +12,18 @@ class AuthenticationController < ApplicationController
       end
     end
   
-  end
-
-    def sso
-    
-    @user = User.find_by_email(params[:email])
-
-    
-    if @user.present?
+    # POST /auth/sso_login
+    def sso_login
+      sso_token = params[:sso_token]
+      user_info = SSO.verify(sso_token)
+  
+      @user = User.find_by_email(user_info[:email])
+      unless @user
+        
+        @user = User.create(email: user_info[:email], username: user_info[:username])
+      end
+  
       token = jwt_encode(user_id: @user.id)
       render json: { token: token }, status: :ok
-    else
-      
-      render json: { error: 'unauthorized' }, status: :unauthorized
     end
   end
