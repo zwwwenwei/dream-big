@@ -1,5 +1,4 @@
 class UsersController < ApplicationController
-    skip_before_action :authenticate_request, only: [:create]
     before_action :set_user, only: [:show, :destroy]
   
     # GET /users
@@ -31,12 +30,13 @@ class UsersController < ApplicationController
                status: :unprocessable_entity
       end
     end
-
+  
     def find_user
       @user = User.find_by_username!(params[:_username])
       rescue ActiveRecord::RecordNotFound
         render json: { errors: 'User not found' }, status: :not_found
     end
+  
     # DELETE /users/{username}
     def destroy
       @user.destroy
@@ -46,11 +46,17 @@ class UsersController < ApplicationController
       def user_params
         params.permit(:username, :email, :password)
       end
-
-    def set_user
-      @user = User.find(params[:id])
-    end
-
-
-
+  
+      def set_user
+        @user = User.find(params[:id])
+      end
+  
+      def authenticate_sso_request
+        token = request.headers['Authorization']
+        @user = User.find_by_sso_token(token)
+  
+        unless @user
+          render json: { error: 'unauthorized' }, status: :unauthorized
+        end
+      end
   end
