@@ -13,3 +13,17 @@ class AuthenticationController < ApplicationController
     end
   
   end
+
+    def sso
+    
+    @user = User.find_by_email(params[:email])
+
+    
+    if @user.present?
+      token = jwt_encode(user_id: @user.id)
+      render json: { token: token }, status: :ok
+    else
+      
+      render json: { error: 'unauthorized' }, status: :unauthorized
+    end
+  end
